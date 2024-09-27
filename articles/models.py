@@ -19,7 +19,7 @@ class Articles(models.Model):
         User, symmetrical=False, related_name="like_article", through="Likes"
         )
     comment = models.ManyToManyField(
-        User, symmetrical=False, related_name="comments", through="Comments"
+        User, symmetrical=False, related_name="article_comments", through="Comments"
         )
 
 

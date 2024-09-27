@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+class Positions(models.Model):
+    position_name = models.CharField(max_length=7)
+
 class User(AbstractUser):
     username = models.CharField(max_length=15, unique=True) 
     riot_username = models.CharField(max_length=15, unique=True)  # 리그 오브 레전드 유저명
@@ -17,6 +20,8 @@ class User(AbstractUser):
     is_notified = models.BooleanField(default=False)
     is_blacklist = models.BooleanField(default=False)
     riot_tier = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 티어
+    positions = models.ManyToManyField(positions, blank=True, related_name="user")
+
 
     def __str__(self):
         return self.username

@@ -20,7 +20,7 @@ class User(AbstractUser):
     is_notified = models.BooleanField(default=False)
     is_blacklist = models.BooleanField(default=False)
     riot_tier = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 티어
-    positions = models.ManyToManyField(positions, blank=True, related_name="user")
+    positions = models.ManyToManyField(Positions, blank=True, related_name="user")
 
 
     def __str__(self):

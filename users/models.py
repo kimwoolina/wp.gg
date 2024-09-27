@@ -9,6 +9,7 @@ class Platform(models.Model):
     platform_name = models.CharField(max_length=50)
 
 
+# User-Platform 중계테이블
 class UserPlatform(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE) #FK
@@ -25,7 +26,8 @@ class UserPlatform(models.Model):
 
 
 class Evaluations(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #evaluation_id = models.CharField(max_length=20) #메모리 관리를 위한 고유 ID (ex: EV0001) # 뷰에서 로직구현 필요
+    user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
     kindness = models.IntegerField(default=0) # 상냥함
     teamwork = models.IntegerField(default=0) # 팀워크
     communication = models.IntegerField(default=0) # 소통

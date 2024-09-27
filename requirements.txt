@@ -1,5 +1,4 @@
 asgiref==3.8.1
-backports.zoneinfo==0.2.1
 Django==4.2
 django-extensions==3.2.3
 django-seed==0.3.1

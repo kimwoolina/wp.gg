@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    pass
+    platforms = models.ManyToManyField('Platform', through='UserPlatform', related_name='users')
 
 
 class Platform(models.Model):

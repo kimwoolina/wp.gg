@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     # Allauth 관련 앱
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',  # 소셜 로그인 기능을 원하지 않으면 이 앱은 생략 가능
-    'allauth.socialaccount.providers.google',  # 필요한 소셜 제공자 추가 (예: 구글 로그인)
+    'allauth.socialaccount',  # 소셜 로그인
+    'allauth.socialaccount.providers.google',  # 필요한 소셜 제공자 추가 (구글 로그인)
     'dj_rest_auth',
     'dj_rest_auth.registration',
     #local_apps
@@ -68,10 +68,11 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth 백엔드
 )
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일로 로그인 가능
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일로 로그인 
 ACCOUNT_EMAIL_REQUIRED = True  # 이메일 필수
-# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # 이메일 인증 필수
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 이메일 인증 설정 (필요에 따라 설정 / 'mandatory' 이메일 인증 필수 )
 ACCOUNT_UNIQUE_EMAIL = True  # 이메일 중복 방지
+
 
 # 이메일 발송을 위한 기본 설정, 실제 배포시에는 SMTP 서버 설정 해야함
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 테스트용으로 콘솔에 출력

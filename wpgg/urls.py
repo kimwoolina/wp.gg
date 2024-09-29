@@ -20,7 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # django-allauth URL 설정
-    path('auth/', include('users.urls')),
-    path('auth/', include('dj_rest_auth.urls')),  # dj-rest-auth 인증 URL (로그인 & 로그아웃)
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),  # 회원가입
+    path('auth/', include('users.urls')),  # 사용자 정의 URL 설정
 ]

@@ -68,9 +68,9 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth 백엔드
 )
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # 유저네임이나 이메일로 로그인 가능
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일로 로그인 가능
 ACCOUNT_EMAIL_REQUIRED = True  # 이메일 필수
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # 이메일 인증 필수
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # 이메일 인증 필수
 ACCOUNT_UNIQUE_EMAIL = True  # 이메일 중복 방지
 
 # 이메일 발송을 위한 기본 설정, 실제 배포시에는 SMTP 서버 설정 해야함
@@ -80,7 +80,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware', 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -113,6 +113,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
 }
+
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

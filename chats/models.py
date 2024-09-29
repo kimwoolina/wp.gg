@@ -22,8 +22,8 @@ class Chats(models.Model):
 
 
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    chat = models.ForeignKey(Chats, null=True, blank=True, related_name='notifications', on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='u_noti') 
+    chat = models.ForeignKey(Chats, null=True, blank=True, related_name='c_noti', on_delete=models.CASCADE) 
     is_read = models.BooleanField(default=False)  
     created_at = models.DateTimeField(auto_now_add=True)  
 
@@ -40,11 +40,3 @@ class Notification(models.Model):
             return f'{self.chat.receiver}님, {self.chat.sender}님에게 새 메시지가 왔습니다!'
         return f'{self.user}님 새로운 알림을 확인해보세요📮'
 
-
-class Reports(models.Model):
-    chat = models.ForeignKey(Chats, on_delete=models.CASCADE) #FK
-    reporter =  models.ForeignKey(User, on_delete=models.CASCADE) # 신고하는 사람(FK)
-    reported = models.ForeignKey(User, on_delete=models.CASCADE) # 신고당하는 사람 (FK)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 
 class Positions(models.Model):
     position_name = models.CharField(max_length=7)
@@ -69,4 +70,5 @@ class Evaluations(models.Model):
     afk = models.IntegerField(default=0) #탈주/자리비움
     cheating = models.IntegerField(default=0) #핵사용
     verbal_abuse= models.IntegerField(default=0) #언어폭력
+    
     

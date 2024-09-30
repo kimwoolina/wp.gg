@@ -9,10 +9,13 @@ from django.contrib.auth import logout
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        
+
         # 회원가입 완료시 메시지
-        if response.status_code == status.HTTP_201_CREATED:
-            response.data['message'] = '회원가입이 완료되었습니다😊'
+        if response.status_code == status.HTTP_204_NO_CONTENT:
+            response = Response({"message": "회원가입이 완료되었습니다😊"}, status=status.HTTP_201_CREATED)
+        
+        # if response.status_code == status.HTTP_201_CREATED:
+        #     response.data['message'] = '회원가입이 완료되었습니다😊'
         
         return response
 
@@ -30,7 +33,7 @@ class CustomLoginView(LoginView):
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_204_NO_CONTENT:
+        if response.status_code == status.HTTP_200_OK:
             return Response({"message": "logout👌"}, status=status.HTTP_204_NO_CONTENT)
         
         return Response(status=response.status_code)

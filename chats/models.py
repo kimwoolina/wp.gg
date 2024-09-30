@@ -43,8 +43,8 @@ class Notification(models.Model):
 
 class Reports(models.Model):
     chat = models.ForeignKey(Chats, on_delete=models.CASCADE) #FK
-    reporter =  models.ForeignKey(User, on_delete=models.CASCADE) # 신고하는 사람(FK)
-    reported = models.ForeignKey(User, on_delete=models.CASCADE) # 신고당하는 사람 (FK)
+    reporter =  models.ForeignKey(User, related_name='reports_made', on_delete=models.CASCADE) # 신고하는 사람(FK)
+    reported = models.ForeignKey(User, related_name='reports_received', on_delete=models.CASCADE) # 신고당하는 사람 (FK)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     

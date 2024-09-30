@@ -6,6 +6,11 @@ from dj_rest_auth.registration.views import RegisterView
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserProfileSerializer
+from django.contrib.auth import update_session_auth_hash
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 # 회원가입
 class CustomRegisterView(RegisterView):
@@ -67,3 +72,33 @@ class CustomDeleteUserView(APIView):
         logout(request)
 
         return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)
+    
+
+class UserProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  
+
+    def get(self, request):
+        user = request.user
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        user = request.user
+        serializer = UserProfileSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        form = PasswordChangeForm(user, request.data)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user) 
+            return Response({"message": "비밀번호가 변경되었습니다."}, status=status.HTTP_200_OK)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)

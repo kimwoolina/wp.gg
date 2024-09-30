@@ -9,4 +9,5 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Access와 Refresh 토큰 발급
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh 토큰 갱신
     path('delete/', views.CustomDeleteUserView.as_view(), name='delete_user'), 
+    path('profile/', views.UserProfileView.as_view(), name='user_profile'),
 ]

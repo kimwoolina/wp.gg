@@ -47,5 +47,4 @@ class Reports(models.Model):
     reported = models.ForeignKey(User, related_name='reports_received', on_delete=models.CASCADE) # 신고당하는 사람 (FK)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
 

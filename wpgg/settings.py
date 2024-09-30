@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 from . import config
 
@@ -28,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,12 +38,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     #thid_party
     'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_seed',
+    # Allauth 관련 앱
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',  # 소셜 로그인
+    'allauth.socialaccount.providers.google',  # 필요한 소셜 제공자 추가 (구글 로그인)
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     #local_apps
     'users',
     'articles',
@@ -53,14 +62,30 @@ INSTALLED_APPS = [
     'credits',
 ]
 
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # 기본 백엔드
+    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth 백엔드
+)
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 이메일로 로그인 
+ACCOUNT_EMAIL_REQUIRED = True  # 이메일 필수
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 이메일 인증 설정 (필요에 따라 설정 / 'mandatory' 이메일 인증 필수 )
+ACCOUNT_UNIQUE_EMAIL = True  # 이메일 중복 방지
+
+
+# 이메일 발송을 위한 기본 설정, 실제 배포시에는 SMTP 서버 설정 해야함
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 테스트용으로 콘솔에 출력
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware', 
 ]
 
 ROOT_URLCONF = 'wpgg.urls'
@@ -68,7 +93,7 @@ ROOT_URLCONF = 'wpgg.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,6 +108,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wpgg.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

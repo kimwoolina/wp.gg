@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 # Create your models here.
+
 class Parties(models.Model):
     # 성별 선택
     GENDER_CHOICES = [
@@ -87,3 +88,4 @@ class Parties(models.Model):
     mid2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_mid2")
     support2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support2")
     adc2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc2")
+    

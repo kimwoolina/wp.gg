@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from rest_framework_simplejwt.tokens import RefreshToken
 
+# 회원가입
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -20,7 +21,7 @@ class CustomRegisterView(RegisterView):
         
         return response
 
-
+# 로그인
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -46,13 +47,14 @@ class CustomLoginView(LoginView):
 
         return response
     
-
+# 로그아웃
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
 
         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)
 
 
+# 회원탈퇴
 User = get_user_model()
 
 class CustomDeleteUserView(APIView):
@@ -60,8 +62,8 @@ class CustomDeleteUserView(APIView):
 
     def delete(self, request, *args, **kwargs):
         user = request.user  
-        user.delete()
+        user.delete() # 유저 정보 아예 삭제할건지 팀원들과 이야기해봐야 함
 
         logout(request)
 
-        return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)

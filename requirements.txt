@@ -12,11 +12,6 @@ django-seed==0.3.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 Faker==30.0.0
-pillow==10.4.0
-idna==3.10
-pillow==10.4.0
-pycparser==2.22
-pillow==10.4.0
 idna==3.10
 pillow==10.4.0
 pycparser==2.22
@@ -26,5 +21,5 @@ requests==2.32.3
 six==1.16.0
 sqlparse==0.5.1
 toposort==1.10
-typing_extensions==4.12.2
+typing-extensions==4.12.2
 urllib3==2.2.3

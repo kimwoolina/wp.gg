@@ -16,6 +16,10 @@ pillow==10.4.0
 idna==3.10
 pillow==10.4.0
 pycparser==2.22
+pillow==10.4.0
+idna==3.10
+pillow==10.4.0
+pycparser==2.22
 PyJWT==2.9.0
 python-dateutil==2.9.0.post0
 requests==2.32.3

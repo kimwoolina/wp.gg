@@ -19,7 +19,7 @@ class PositionSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articles
-        fields = ['id', 'title', 'created_at', 'reviewer'] 
+        fields = ['id', 'title', 'article_score', 'created_at', 'reviewer'] 
 
 class UserSerializer(serializers.ModelSerializer):
     evaluations = EvaluationSerializer(read_only=True)

@@ -139,7 +139,9 @@ class UserDetailView(generics.GenericAPIView):
                 serializer_data['evaluations'] = None
                 
             # articles를 serializer_data에 추가
-            serializer_data['articles'] = ArticleSerializer(articles, many=True).data
+            article_serializer = ArticleSerializer(articles, many=True)
+            serializer_data['articles'] = article_serializer.data
+            
             return Response(serializer_data)
 
         return Response({"message": "해당 소환사에 대한 평판 정보가 없습니다."})

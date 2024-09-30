@@ -5,6 +5,7 @@ from dj_rest_auth.views import LoginView, LogoutView
 from dj_rest_auth.registration.views import RegisterView
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
@@ -23,20 +24,33 @@ class CustomRegisterView(RegisterView):
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
+        
         if response.status_code == status.HTTP_200_OK:
             user = self.request.user
             username = user.username
-            response.data['message'] = f'{username}님 안녕하세요😊'
-        return response
 
+            # JWT 토큰 생성
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            response.data = {
+                'message': f'{username}님 안녕하세요😊',
+                'access': access_token,
+                'refresh': refresh_token
+            }
+            
+            # access_token, refresh_token 없으면 에러 메시지 
+            if not access_token or not refresh_token:
+                response.data['error'] = '토큰을 발급받지 못했습니다.'
+
+        return response
+    
 
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            return Response({"message": "logout👌"}, status=status.HTTP_204_NO_CONTENT)
-        
-        return Response(status=response.status_code)
+
+        return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)
 
 
 User = get_user_model()

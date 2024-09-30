@@ -40,6 +40,10 @@ class Notification(models.Model):
             return f'{self.chat.receiver}님, {self.chat.sender}님에게 새 메시지가 왔습니다!'
         return f'{self.user}님 새로운 알림을 확인해보세요📮'
 
+    def create_notification(user, chat=None):
+        notification = Notification.objects.create(user=user, chat=chat)
+    # 추가적인 로직: 방장 지정 등
+        return notification
 
 class Reports(models.Model):
     chat = models.ForeignKey(Chats, on_delete=models.CASCADE) #FK

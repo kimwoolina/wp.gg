@@ -23,8 +23,8 @@ class User(AbstractUser):
     positions = models.ManyToManyField(Positions, blank=True, related_name="user")
     platforms = models.ManyToManyField('Platform', through='UserPlatform', related_name='users')
 
-    # def __str__(self):
-    #     return self.username
+    def __str__(self):
+        return self.username
     
     class Meta:
         ordering = ['-date_joined']  # 가입일 기준 내림차순 정렬
@@ -68,4 +68,6 @@ class Evaluations(models.Model):
     afk = models.IntegerField(default=0) #탈주/자리비움
     cheating = models.IntegerField(default=0) #핵사용
     verbal_abuse= models.IntegerField(default=0) #언어폭력
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     

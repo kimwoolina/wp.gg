@@ -7,7 +7,7 @@ from articles.models import Articles
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluations
-        fields = '__all__'
+        exclude = ('created_at', 'updated_at')
 
 
 class PositionSerializer(serializers.ModelSerializer):
@@ -29,3 +29,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'evaluations', 'articles']
+
+class UserRankingSerializer(serializers.ModelSerializer):
+    evaluations = EvaluationSerializer(read_only=True)
+    positions = PositionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'score', 'evaluations',]
+        

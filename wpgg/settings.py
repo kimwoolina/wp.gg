@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'parties',
     'llm',
     'credits',
+    'channels',
 ]
 
 Q_CLUSTER = {
@@ -75,6 +76,8 @@ Q_CLUSTER = {
     'cpu_affinity': 1,
     'sync': False,  # True로 설정하면 동기화 모드로 실행됨
 }
+
+ASGI_APPLICATION = 'your_project_name.asgi.application'
 
 SITE_ID = 1
 

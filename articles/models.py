@@ -12,10 +12,10 @@ class Articles(models.Model):
     article_score = models.IntegerField(default=0)
     reviewer = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reviewers"
-        )
+        ) # reviewer == 평가 하는 사람 id
     reviewee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reviewees"
-        )
+        ) # reviewee == 평가 받는 사람 id
     like_users = models.ManyToManyField(
         User, symmetrical=False, related_name="like_article", through="Likes"
         )

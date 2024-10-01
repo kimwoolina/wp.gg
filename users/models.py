@@ -23,8 +23,8 @@ class User(AbstractUser):
     positions = models.ManyToManyField(Positions, blank=True, related_name="user")
     platforms = models.ManyToManyField('Platform', through='UserPlatform', related_name='users')
 
-    def __str__(self):
-        return self.username
+    # def __str__(self):
+    #     return self.username
     
     class Meta:
         ordering = ['-date_joined']  # 가입일 기준 내림차순 정렬
@@ -52,7 +52,8 @@ class UserPlatform(models.Model):
 
 class Evaluations(models.Model):
     #evaluation_id = models.CharField(max_length=20) #메모리 관리를 위한 고유 ID (ex: EV0001) # 뷰에서 로직구현 필요
-    user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
+    #user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # 1:1 관계
     kindness = models.IntegerField(default=0) # 상냥함
     teamwork = models.IntegerField(default=0) # 팀워크
     communication = models.IntegerField(default=0) # 소통

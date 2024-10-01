@@ -6,6 +6,11 @@ from dj_rest_auth.registration.views import RegisterView
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer
+from rest_framework import generics
+from .models import Evaluations
+from articles.models import Articles 
+
 
 # 회원가입
 class CustomRegisterView(RegisterView):
@@ -67,3 +72,77 @@ class CustomDeleteUserView(APIView):
         logout(request)
 
         return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)
+    
+
+
+class UserDetailView(generics.GenericAPIView):
+    """
+    유저를 검색하여 해당하는 유저의 상세정보 조회
+    작성자: 김우린
+    작성 날짜: 2024.09.30
+
+    메서드:
+        GET: 특정 사용자의 riot_username과 riot_tag에 따른 정보를 반환합니다.
+    """
+    
+    serializer_class = UserSerializer
+
+    def get(self, request, *args, **kwargs):
+        username = kwargs.get('username')
+        riot_tag = request.query_params.get('riot_tag')
+
+        # riot_tag가 있으면 같이 필터링, 없으면 riot_username만 필터링
+        filters = {'riot_username': username}
+        if riot_tag:
+            filters['riot_tag'] = riot_tag
+        
+        ''' 
+        # test
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True)  # 직렬화
+        return Response(serializer.data)
+        '''
+        
+        # 유저검색
+        if riot_tag:
+            user = User.objects.filter(**filters).first()
+        else:
+            # riot_tag가 없을 때 해당 유저네임으로 필터링
+            user_queryset = User.objects.filter(riot_username=username)
+
+            if user_queryset.exists():
+                # 검색 결과가 있을 때
+                if user_queryset.count() == 1:
+                    # 유저가 한 명인 경우, 상세 정보 바로 조회
+                    user = user_queryset.first()
+                else:
+                    # 유저가 여러 명인 경우, 필요한 필드만 가져오기
+                    user_list = user_queryset.values('riot_username', 'riot_tag')
+                    return Response({
+                        "users": list(user_list)
+                    })
+            else:
+                return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})
+        
+        
+        if user:
+            # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
+            articles = Articles.objects.filter(reviewee=user)
+            serializer = self.get_serializer(user)
+            serializer_data = serializer.data
+            
+            # Evaluations를 serializer_data에 추가
+            try:
+                evaluations = Evaluations.objects.get(user=user)
+                serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
+            except Evaluations.DoesNotExist:
+                serializer_data['evaluations'] = None
+                
+            # articles를 serializer_data에 추가
+            article_serializer = ArticleSerializer(articles, many=True)
+            serializer_data['articles'] = article_serializer.data
+            
+            return Response(serializer_data)
+
+        return Response({"message": "해당 소환사에 대한 평판 정보가 없습니다."})
+        

@@ -64,6 +64,15 @@ INSTALLED_APPS = [
     'channels',
 ]
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Redis 서버 주소와 포트
+        },
+    },
+}
+
 Q_CLUSTER = {
     'name': 'wp.gg',
     'workers': 4,

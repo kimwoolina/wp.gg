@@ -38,3 +38,6 @@ class ReportsViewSet(viewsets.ModelViewSet):
     def apply_llm_moderation(self):
         """LLM 적용 예정"""
         pass
+
+def index(request):
+    return render(request, "chat/index.html")

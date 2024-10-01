@@ -24,7 +24,7 @@ class Articles(models.Model):
         )
 
 
-class Article_images(models.Model):
+class ArticleImages(models.Model):
     article = models.ForeignKey(
         Articles, on_delete=models.CASCADE, related_name="article_images"
         )

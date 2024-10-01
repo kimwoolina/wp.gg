@@ -1,15 +1,17 @@
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from dj_rest_auth.views import LoginView, LogoutView
 from dj_rest_auth.registration.views import RegisterView
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer
 from rest_framework import generics
+from django.db.models import F, Q
 from .models import Evaluations
-from articles.models import Articles 
+from articles.models import Articles
+from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer
 
 
 # 회원가입
@@ -145,4 +147,63 @@ class UserDetailView(generics.GenericAPIView):
             return Response(serializer_data)
 
         return Response({"message": "해당 소환사에 대한 평판 정보가 없습니다."})
-        
+
+
+class MannerRankingView(ListAPIView):
+    """
+    유저 매너 랭킹 - 총점, 평가항목 순으로 정렬 기능, 포지션과 티어 필터 기능
+    작성자: 김우린
+    작성 날짜: 2024.10.01
+    """
+    
+    serializer_class = UserRankingSerializer
+
+    def list(self, request, *args, **kwargs):
+        # 기본 정렬 기준은 'User.score'
+        sort_by = self.request.query_params.get('sort_by', 'score')
+
+        # 가능한 정렬 기준 필드를 딕셔너리로 정의 (Evaluations 필드 포함)
+        sort_fields = {
+            'score': 'score',
+            'kindness': 'evaluations__kindness',
+            'teamwork': 'evaluations__teamwork',
+            'communication': 'evaluations__communication',
+            'mental_strength': 'evaluations__mental_strength',
+            'punctualiity': 'evaluations__punctualiity',
+            'positivity': 'evaluations__positivity',
+            'mvp': 'evaluations__mvp',
+            'mechanical_skill': 'evaluations__mechanical_skill',
+            'operation': 'evaluations__operation',
+            'negativity': 'evaluations__negativity',
+            'profanity': 'evaluations__profanity',
+            'afk': 'evaluations__afk',
+            'cheating': 'evaluations__cheating',
+            'verbal_abuse': 'evaluations__verbal_abuse',
+        }
+
+        # 쿼리 매개변수에 따라 정렬 기준 설정, 없으면 'score'로 정렬
+        sort_by_field = sort_fields.get(sort_by, 'score')
+
+        # 포지션 필터링 처리
+        positions = request.query_params.getlist('positions')  # 다중 포지션 가져오기
+        # 리뷰가 존재하는 유저 정보만 가져오기
+        queryset = User.objects.filter(evaluations__isnull=False).select_related('evaluations')
+
+        # 여러 포지션으로 필터링
+        if positions:
+            position_query = Q()
+            for position in positions:
+                position_query |= Q(positions__position_name=position)  # OR 조건 추가
+            queryset = queryset.filter(position_query)
+
+        # 쿼리셋을 정렬
+        queryset = queryset.order_by(F(sort_by_field).desc(nulls_last=True))
+
+        # 쿼리셋이 비어 있을 경우 메시지와 빈 리스트를 반환
+        if not queryset.exists():
+            return Response({"message": "해당 조건에 맞는 유저 정보가 없습니다.", "users": []}, status=status.HTTP_200_OK)
+
+        # 정상적인 결과가 있을 경우
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

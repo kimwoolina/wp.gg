@@ -64,6 +64,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if "비속어" in message: 
             return True
         return False
+    
     def remove_user_from_room(user, room_id):
         """
         유저 단톡에서 제거하는 로직.

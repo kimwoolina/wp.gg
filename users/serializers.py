@@ -3,21 +3,8 @@ from .models import User
 from rest_framework import serializers
 from .models import User, Evaluations, Positions
 from articles.models import Articles 
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'username', 
-            'email', 
-            'profile_image', 
-            'platforms', 
-            'riot_username', 
-            'riot_tag', 
-            'introduction', 
-            'is_notification_sound_on',  # 알람 소리 설정
-            'is_notification_message_on'  # 알람 메시지 설정
-        ]
+from rest_framework import serializers
+from .models import User
 
 
 class EvaluationSerializer(serializers.ModelSerializer):
@@ -53,3 +40,19 @@ class UserRankingSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'score', 'evaluations',]
+        
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username', 
+            'email', 
+            'profile_image', 
+            'platforms', 
+            'riot_username', 
+            'riot_tag', 
+            'introduction', 
+            'is_notification_sound_on',  # 알람 소리 설정
+            'is_notification_message_on'  # 알람 메시지 설정
+        ]

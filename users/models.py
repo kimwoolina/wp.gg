@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 
 class Positions(models.Model):
     position_name = models.CharField(max_length=7)
@@ -7,7 +8,7 @@ class Positions(models.Model):
 class User(AbstractUser):
     username = models.CharField(max_length=15, unique=True) 
     riot_username = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 유저명
-    riot_tag = models.CharField(max_length=15)  # 리그 오브 레전드 서버명
+    riot_tag = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 서버명
     discord_username = models.CharField(max_length=15, null=True, blank=True)  # 디스코드 유저명
     discord_tag = models.CharField(max_length=15, null=True, blank=True)  # 디스코드 태그명
     email = models.EmailField(unique=True)  
@@ -22,6 +23,8 @@ class User(AbstractUser):
     riot_tier = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 티어
     positions = models.ManyToManyField(Positions, blank=True, related_name="user")
     platforms = models.ManyToManyField('Platform', through='UserPlatform', related_name='users')
+    is_notification_sound_on = models.BooleanField(default=True)  # 알람 소리 
+    is_notification_message_on = models.BooleanField(default=True)  # 알람 메시지
 
     def __str__(self):
         return self.username
@@ -70,4 +73,5 @@ class Evaluations(models.Model):
     verbal_abuse= models.IntegerField(default=0) #언어폭력
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     

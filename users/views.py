@@ -74,6 +74,7 @@ class CustomDeleteUserView(APIView):
         return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)
     
 
+# 마이페이지 조회 및 수정
 class UserProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
 
@@ -91,6 +92,7 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 비밀번호 변경
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 

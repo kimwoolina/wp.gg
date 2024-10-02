@@ -58,7 +58,7 @@ class Evaluations(models.Model):
     teamwork = models.IntegerField(default=0) # 팀워크
     communication = models.IntegerField(default=0) # 소통
     mental_strength = models.IntegerField(default=0) #멘탈
-    punctualiity= models.IntegerField(default=0) #시간약속
+    punctuality= models.IntegerField(default=0) #시간약속
     positivity = models.IntegerField(default=0) #긍정적
     mvp = models.IntegerField(default=0) 
     mechanical_skill = models.IntegerField(default=0) #피지컬

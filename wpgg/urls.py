@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # django-allauth URL 설정
     path('auth/', include('users.urls')),  # 사용자 정의 URL 설정
+    path('articles/', include('articles.urls')),  # articles URL 설정
 ]

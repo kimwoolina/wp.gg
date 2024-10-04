@@ -1,8 +1,11 @@
+from requests import request
 from rest_framework import serializers
 from articles.models import (
     Articles, 
     ArticleImages, 
 )
+from users.models import Evaluations
+from users.serializers import EvaluationSerializer
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta :
@@ -22,24 +25,39 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
+    article_images = ArticleImageSerializer(many=True, read_only=True)
+
     class Meta :
         model=Articles
-        fields='__all__'
+        fields= ['title', 'content', 'article_score', 'reviewee', 'article_images']
         read_only_fields = ['reviewer',]
     
     def create(self, validated_data):
-        return Articles.objects.create(**validated_data)
+        print('여긴 되나?')
+        print(validated_data)
+        article = Articles.objects.create(**validated_data)
+        print('여긴 되나2')
+        # img_files = request.FILES.getlist('images') 아예 출력 불가
+        print(self.context)
+        img_files = self.context['request'].FILES
+        print('이미지 파일임다: ', img_files)
+        for img_file in img_files.getlist('img'):
+            ArticleImages.objects.create(article=article, img=img_file)
+        return article
     
     # def update(self, instance, validated_data):
     #     pass
     
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        article_images = instance.article_images.all()
-        article_image_serializer = ArticleImageSerializer(article_images, many=True)
-        ret['article_images'] = article_image_serializer.data
-        return ret
+    # def to_representation(self, instance):
+    #     ret = super().to_representation(instance)
+    #     article_images = instance.article_images.all()
+    #     # evaluations = instance.Evaluations.objects.all()
+    #     article_image_serializer = ArticleImageSerializer(article_images, many=True)
+    #     # evaluation_serializer = EvaluationSerializer(evaluations, many=True)
+    #     ret['article_images'] = article_image_serializer.data
+    #     # ret['evaluations'] = evaluation_serializer
+    #     return ret
 
 
-class ArticleDetailSerializer(ArticleSerializer):
+class ArticleDetailSerializer(ArticleSerializer):                    
     pass

@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from articles.serializers import ArticleSerializer
+from articles.serializers import ArticleSerializer, ArticleImageSerializer
 from articles.models import ArticleImages
 from rest_framework.generics import ListAPIView
 from users.models import Evaluations
@@ -11,11 +11,14 @@ from rest_framework import status
 
 User = get_user_model()
 
+
 class ArticleListAPIView(ListAPIView):
         def post(self, request): # 글 생성
                 if request.user.is_authenticated:
                         req_data = request.data
                         req_files = request.FILES
+                        print('데이터임다(사진 포함): ', req_data)
+                        print('파일즈임다: ', req_files)
 
                         reviewee_id = int(req_data.get('reviewee'))
                         reviewee = User.objects.get(id=reviewee_id)
@@ -30,10 +33,11 @@ class ArticleListAPIView(ListAPIView):
                                 'content' : req_data.get('content'),
                                 'article_score' : int(req_data.get('article_score')),
                                 'reviewee' : int(req_data.get('reviewee')),
+                                
                         }
 
                         try:
-                                serializer = ArticleSerializer(data=target_article_data)
+                                serializer = ArticleSerializer(data=target_article_data, context={'request':request, 'img':req_files.getlist('img')})
                                 if serializer.is_valid():
                                         article = serializer.save(reviewer=request.user)
                                 else:
@@ -74,14 +78,6 @@ class ArticleListAPIView(ListAPIView):
                                                 return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
                         except Exception as e:
                                 return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-
-                        img_files = req_files.getlist('img')
-                        if img_files:
-                                for img_file in img_files:
-                                        try:
-                                                ArticleImages.objects.create(article=article, img=img_file)
-                                        except Exception as e:
-                                                return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
                         # 최종적으로 생성된 아티클 데이터 반환
                         article_serializer = ArticleSerializer(article)

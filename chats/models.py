@@ -18,7 +18,7 @@ class PrivateChatRoom(models.Model):
         unique_together = ('user1', 'user2')  
 
     def save(self, *args, **kwargs):
-        # 방 이름이나 이미지가 지정되지 않으면 유저2의 이름과 유저2의 프로필 이미지로 설정
+        # 개인 채팅방의 이름이나 이미지가 지정되지 않으면 유저2의 이름과 유저2의 프로필 이미지로 설정
         if not self.room_name:
             self.room_name = self.user2.username
         super().save(*args, **kwargs)
@@ -38,15 +38,16 @@ class GroupChatRoom(models.Model):
     def __str__(self):
         return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
 
+
 # 중계 테이블 (RoomUsers)
 class RoomUsers(models.Model):
-    room = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE)  # 단체 채팅방 ID
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 참여하는 유저
-    joined_at = models.DateTimeField(auto_now_add=True)
+    room = models.ForeignKey('GroupChatRoom', on_delete=models.CASCADE)  # 단체 채팅방 ID
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # 참여하는 유저
+    joined_at = models.DateTimeField(auto_now_add=True)  # 참여한 날짜 및 시간
 
     # 같은 채팅방에 중복된 유저가 없도록 설정
     class Meta:
-        unique_together = ('room', 'user')  
+        unique_together = ('room', 'user')
 
     def __str__(self):
         return f'{self.user.username}님이 {self.room.room_name}에 참여중'
@@ -86,15 +87,16 @@ class Reports(models.Model):
 
 class Notification(models.Model):
     notification_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # 유저 FK
-    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)  # Chat FK
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # user FK
+    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)  # chat FK
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.user}님이게 온 새로운 메세지:{self.message}'
-    
+
+
 class Message(models.Model):
     room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
     sender_email = models.EmailField()

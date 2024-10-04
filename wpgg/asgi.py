@@ -11,7 +11,7 @@ django_asgi_app = get_asgi_application()
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
-import chat.routing  # 이 코드는 안전하게 실행될 수 있음
+import chats.routing  
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
@@ -19,7 +19,7 @@ application = ProtocolTypeRouter({
         AuthMiddlewareStack(
             AllowedHostsOriginValidator(
             URLRouter(
-                chat.routing.websocket_urlpatterns
+                chats.routing.websocket_urlpatterns
             )     
         ),
     ),

@@ -41,16 +41,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     
     # def update(self, instance, validated_data):
     #     pass
-    
-    # def to_representation(self, instance):
-    #     ret = super().to_representation(instance)
-    #     article_images = instance.article_images.all()
-    #     # evaluations = instance.Evaluations.objects.all()
-    #     article_image_serializer = ArticleImageSerializer(article_images, many=True)
-    #     # evaluation_serializer = EvaluationSerializer(evaluations, many=True)
-    #     ret['article_images'] = article_image_serializer.data
-    #     # ret['evaluations'] = evaluation_serializer
-    #     return ret
 
 
 class ArticleDetailSerializer(ArticleSerializer):                    

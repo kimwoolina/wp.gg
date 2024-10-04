@@ -69,7 +69,7 @@ class ArticleListAPIView(ListAPIView):
                                                 return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
                                 else:
                                         serializer = EvaluationSerializer(data=target_evaluation_data)
-                                        if serializer.is_valid(raise_exception=True):
+                                        if serializer.is_valid():
                                                 serializer.save(user=reviewee)
                                         else:
                                                 return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)

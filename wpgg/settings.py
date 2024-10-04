@@ -62,6 +62,30 @@ INSTALLED_APPS = [
     'credits',
 ]
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Redis 서버 주소와 포트
+        },
+    },
+}
+
+Q_CLUSTER = {
+    'name': 'wp.gg',
+    'workers': 4,
+    'recycle': 500,
+    'timeout': 60,
+    'django_redis': 'default',  # Redis 사용 시
+    'compress': True,
+    'save_limit': 250,
+    'queue_limit': 500,
+    'cpu_affinity': 1,
+    'sync': False,  # True로 설정하면 동기화 모드로 실행됨
+}
+
+ASGI_APPLICATION = 'wpgg.asgi.application'
+
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
@@ -167,11 +191,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 #Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

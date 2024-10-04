@@ -17,8 +17,6 @@ class ArticleListAPIView(ListAPIView):
                 if request.user.is_authenticated:
                         req_data = request.data
                         req_files = request.FILES
-                        print('데이터임다(사진 포함): ', req_data)
-                        print('파일즈임다: ', req_files)
 
                         reviewee_id = int(req_data.get('reviewee'))
                         reviewee = User.objects.get(id=reviewee_id)
@@ -33,7 +31,6 @@ class ArticleListAPIView(ListAPIView):
                                 'content' : req_data.get('content'),
                                 'article_score' : int(req_data.get('article_score')),
                                 'reviewee' : int(req_data.get('reviewee')),
-                                
                         }
 
                         try:

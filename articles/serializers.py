@@ -33,14 +33,8 @@ class ArticleSerializer(serializers.ModelSerializer):
         read_only_fields = ['reviewer',]
     
     def create(self, validated_data):
-        print('여긴 되나?')
-        print(validated_data)
         article = Articles.objects.create(**validated_data)
-        print('여긴 되나2')
-        # img_files = request.FILES.getlist('images') 아예 출력 불가
-        print(self.context)
         img_files = self.context['request'].FILES
-        print('이미지 파일임다: ', img_files)
         for img_file in img_files.getlist('img'):
             ArticleImages.objects.create(article=article, img=img_file)
         return article

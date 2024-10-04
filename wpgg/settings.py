@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from datetime import timedelta
+import os
 from pathlib import Path
 from . import config
 
@@ -39,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_q',
-    #thid_party
+    # third_party
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 필요한 소셜 제공자 추가 (구글 로그인)
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    #local_apps
+    # local_apps
     'users',
     'articles',
     'chats',
@@ -68,22 +68,9 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # Redis 서버 주소와 포트
+            "hosts": [(os.environ.get('REDIS_HOST', 'localhost'), 6379)],
         },
     },
-}
-
-Q_CLUSTER = {
-    'name': 'wp.gg',
-    'workers': 4,
-    'recycle': 500,
-    'timeout': 60,
-    'django_redis': 'default',  # Redis 사용 시
-    'compress': True,
-    'save_limit': 250,
-    'queue_limit': 500,
-    'cpu_affinity': 1,
-    'sync': False,  # True로 설정하면 동기화 모드로 실행됨
 }
 
 ASGI_APPLICATION = 'wpgg.asgi.application'
@@ -195,7 +182,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-#Media files
+# Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

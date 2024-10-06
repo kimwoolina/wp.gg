@@ -41,8 +41,9 @@ class ArticleSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         article = Articles.objects.create(**validated_data)
         img_files = self.context['request'].FILES
-        for img_file in img_files.getlist('img'):
-            ArticleImages.objects.create(article=article, img=img_file)
+        if img_files:
+            for img_file in img_files.getlist('img'):
+                ArticleImages.objects.create(article=article, img=img_file)
         req_data = self.context['request'].data
         target_evaluation_data = {
             'kindness': int(req_data.get('kindness', 0)),

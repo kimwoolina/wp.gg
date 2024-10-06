@@ -8,6 +8,9 @@ from articles.models import (
 )
 from users.models import Evaluations
 from users.serializers import EvaluationSerializer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta :
@@ -32,8 +35,8 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta :
         model=Articles
-        fields= '__all__'
-        read_only_fields = ['reviewer',]
+        fields= ['title', 'content', 'article_score', 'article_images', 'evaluations']
+        read_only_fields = ['reviewer', 'reviewee']
     
     def create(self, validated_data):
         article = Articles.objects.create(**validated_data)
@@ -46,7 +49,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'teamwork': int(req_data.get('teamwork', 0)),
             'communication': int(req_data.get('communication', 0)),
             'mental_strength': int(req_data.get('mental_strength', 0)),
-            'punctualiity': int(req_data.get('punctualiity', 0)),
+            'punctuality': int(req_data.get('punctuality', 0)),
             'positivity': int(req_data.get('positivity', 0)),
             'mvp': int(req_data.get('mvp', 0)),
             'mechanical_skill': int(req_data.get('mechanical_skill', 0)),

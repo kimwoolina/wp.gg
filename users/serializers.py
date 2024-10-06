@@ -24,9 +24,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluations
-        fields = '__all__'
         read_only_fields = ['user',]
-        exclude = ('created_at', 'updated_at')
+        exclude = ['created_at', 'updated_at',]
 
     def create(self, validated_data):
         return Evaluations.objects.create(**validated_data)

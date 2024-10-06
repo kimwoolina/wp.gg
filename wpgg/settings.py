@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     # third_party
+    'channels',
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
@@ -66,7 +67,6 @@ INSTALLED_APPS = [
     'parties',
     'llm',
     'credits',
-    'channels',
 ]
 
 CHANNEL_LAYERS = {

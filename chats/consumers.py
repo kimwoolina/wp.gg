@@ -8,13 +8,15 @@ from django.conf import settings
 User = get_user_model()
 
 # OpenAI API 설정
-openai.api_key = settings.OPENAI_API_KEY  # settings.py에서 API 키 가져오기
+openai.api_key = settings.OPENAI_API_KEY  
 
 # 욕설 및 공격적인 발언 감지 함수
 def detect_profanity_and_aggression(message):
-    prompt = (f"상대방의 마음을 상하게 하는 다양한 언어 표현을 걸러야 합니다. "
+    prompt = (f"비속어도 걸러야 하고, 상대방의 마음을 상하게 하는 다양한 언어 표현을 걸러야 합니다. "
               f"예를 들어 '너 엄마는 있냐?' 같은 말은 단순한 질문이 아니라, 상대방에게 "
               f"엄마 없이 자랐냐는 뉘앙스를 줘서 마음을 상하게 하는 말입니다. "
+              f"또 다른 예로, '죽고싶냐?'와 같은 질문은 실제로 죽음을 묻는 것이 아니라, 상대방에게 위협을 주거나 상처를 줄 수 있습니다. "
+              f"또한, 상대방을 성적으로 모욕하는 음란한 표현도 필터링해야 합니다. 그리고 상대방을 비꼬거나 빈정거리는 표현도 걸러야 합니다."
               f"다음 메시지가 공격적이거나 상대방을 상처 줄 수 있는 말인지 확인해주세요: '{message}'")
 
     response = openai.Completion.create(

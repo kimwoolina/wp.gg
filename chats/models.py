@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -6,31 +7,33 @@ User = get_user_model()
 
 # 1:1 개인 채팅방
 class PrivateChatRoom(models.Model):
-    user1 = models.ForeignKey(User, related_name='private_chats_initiated', on_delete=models.CASCADE)  # 채팅 신청한 유저
-    user2 = models.ForeignKey(User, related_name='private_chats_received', on_delete=models.CASCADE)  # 채팅 신청받은 유저
-    room_name = models.CharField(max_length=15, blank=True, null=True)  # 지정하지 않았다면 유저2의 이름으로
-    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)  # 유저2의 프로필 이미지로 지정
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user2')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    room_name = models.CharField(max_length=15, blank=True, null=True)
+    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
 
     class Meta:
-        # 같은 유저 간 중복 허용 X
-        unique_together = ('user1', 'user2')  
+        # 장고 3.2 이상부터는 unique_together보다 UniqueConstraint이 권장된다고 함
+        constraints = [
+            models.UniqueConstraint(fields=['user1', 'user2'], name='unique_private_chatroom') 
+        ]
 
     def save(self, *args, **kwargs):
-        # 개인 채팅방의 이름이나 이미지가 지정되지 않으면 유저2의 이름과 유저2의 프로필 이미지로 설정
+        # 방 이름 없으면 user2의 유저네임으로 설정
         if not self.room_name:
             self.room_name = self.user2.username
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'1:1 채팅방: {self.user1}님과 {self.user2}님'
+        return f'1:1 채팅방: {self.user1.username}님과 {self.user2.username}님'
+
 
 
 # 단체 채팅방
 class GroupChatRoom(models.Model):
-    room_name = models.CharField(max_length=15)  # 단체 채팅방 이름
-    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)  # 단체 채팅방 이미지
+    room_name = models.CharField(max_length=15)
+    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
     owner = models.ForeignKey(User, related_name='owned_group_chats', on_delete=models.CASCADE)  # 방장
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,25 +42,41 @@ class GroupChatRoom(models.Model):
         return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
 
 
-# 중계 테이블 (RoomUsers)
-class RoomUsers(models.Model):
-    room = models.ForeignKey('GroupChatRoom', on_delete=models.CASCADE)  # 단체 채팅방 ID
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # 참여하는 유저
-    joined_at = models.DateTimeField(auto_now_add=True)  # 참여한 날짜 및 시간
-
-    # 같은 채팅방에 중복된 유저가 없도록 설정
-    class Meta:
-        unique_together = ('room', 'user')
+# 1:1 개인 채팅 저장
+class Message(models.Model):
+    room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")  # 발신자
+    text = models.CharField(max_length=500)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.username}님이 {self.room.room_name}에 참여중'
+        return f'{self.sender.username}: {self.text[:10]}'  # 첫 10자만 표시
+    
 
+# 그룹 채팅 저장
+class GroupChat(models.Model):
+    name = models.CharField(max_length=15)  # 그룹 이름
+    members = models.ManyToManyField(User)  # 그룹에 속한 유저
 
+    def __str__(self):
+        return self.name
+
+class GroupChatMessage(models.Model):
+    group_chat = models.ForeignKey(GroupChat, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)  # 메시지를 보낸 유저
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content[:20]}"
+    
+
+# 채팅
 class Chats(models.Model):
-    chat_id = models.AutoField(primary_key=True)  # PK
-    sender = models.ForeignKey(User, related_name='sent_chats', on_delete=models.CASCADE)  # 보낸 사람
-    chat_room = models.ForeignKey(GroupChatRoom, related_name='group_chats', on_delete=models.CASCADE, null=True, blank=True)  # 단체 채팅방 시 사용
-    private_room = models.ForeignKey(PrivateChatRoom, related_name='private_chats', on_delete=models.CASCADE, null=True, blank=True)  # 1:1 채팅방 시 사용
+    chat_id = models.AutoField(primary_key=True)
+    sender = models.ForeignKey(User, related_name='sent_chats', on_delete=models.CASCADE)
+    chat_room = models.ForeignKey(GroupChatRoom, related_name='group_chats', on_delete=models.CASCADE, null=True, blank=True)
+    private_room = models.ForeignKey(PrivateChatRoom, related_name='private_chats', on_delete=models.CASCADE, null=True, blank=True)
     content = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -69,37 +88,33 @@ class Chats(models.Model):
 
     def __str__(self):
         if self.private_room:
-            return f'{self.private_room.user2}님! {self.sender}님이 1:1 메시지를 보냈어요💌'
+            return f'{self.private_room.user2.username}님! {self.sender.username}님이 1:1 메시지를 보냈어요💌'
         if self.chat_room:
-            return f'{self.sender}님이 {self.chat_room.room_name}에서 메시지를 보냈어요💌'
+            return f'{self.sender.username}님이 {self.chat_room.room_name}에서 메시지를 보냈어요💌'
 
 
+# 신고
 class Reports(models.Model):
-    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)
+    chat_private = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, null=True, blank=True)
+    chat_group = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, null=True, blank=True)
     reporter = models.ForeignKey(User, related_name='reports_made', on_delete=models.CASCADE)
     reported = models.ForeignKey(User, related_name='reports_received', on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.reporter}님이 {self.reported}님을 신고함 사유: {self.content}'
+        return f'{self.reporter}님이 {self.reported}님을 신고함. 사유: {self.content}'
 
 
+# 알림
 class Notification(models.Model):
     notification_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # user FK
-    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)  # chat FK
-    message = models.TextField()
+    chat_private = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, null=True, blank=True)
+    chat_group = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user}님이게 온 새로운 메세지:{self.message}'
+        return f'{self.user}님에게 온 새로운 메시지: {self.chat}'  # chat의 __str__ 메서드 사용 > 메시지 자동 생성
 
-
-class Message(models.Model):
-    room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
-    sender_email = models.EmailField()
-    text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    

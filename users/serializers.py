@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'evaluations', 'articles']
+        fields = ['username', 'email', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'evaluations', 'articles']
 
 class UserRankingSerializer(serializers.ModelSerializer):
     evaluations = EvaluationSerializer(read_only=True)

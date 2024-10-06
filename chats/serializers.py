@@ -1,25 +1,28 @@
 from rest_framework import serializers
-from .models import Notification, Chats, Reports
+from .models import Notification, Chats, Reports, Message, PrivateChatRoom, GroupChat, GroupChatMessage
+
 
 class NotificationSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Notification
-        fields = ['id', 'chat', 'is_read', 'created_at', 'message'] 
+        fields = ['chat_private', 'chat_group', 'is_read', 'created_at'] 
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if instance.chat:
-            data['message'] = f'{instance.chat.sender}님이 {instance.chat.receiver}님에게 메시지를 보냈어요💌'
+        if instance.chat_private:
+            data['message'] = f'{instance.chat_private.user2}님이 메시지를 보냈어요💌'
+        elif instance.chat_group:
+            data['message'] = f'{instance.chat_group.room_name}에서 새로운 메시지가 있습니다📩'
         else:
-            data['message'] = instance.message or '새로운 알림이 있어요📩'  # message 필드 활용
+            data['message'] = '새로운 알림이 있어요📩'
         return data
+
 
 class ChatsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chats
-        fields = ['sender', 'receiver', 'content', 'is_read', 'created_at']
+        fields = ['sender', 'content', 'is_read', 'created_at']
 
     def filter_profanity(self, content):
         """금지어 필터링 및 치환"""
@@ -44,3 +47,46 @@ class ReportsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reports
         fields = ['chat', 'reporter', 'reported', 'content']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ('sender', 'content', 'timestamp')
+
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    latest_message = serializers.SerializerMethodField()
+    opponent_username = serializers.SerializerMethodField()
+    messages = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PrivateChatRoom
+        fields = ['room_name', 'user1', 'user2', 'latest_message', 'opponent_username', 'messages']
+
+    def get_latest_message(self, obj):
+        latest_msg = Message.objects.filter(room=obj).order_by('-timestamp').first()
+        return latest_msg.text if latest_msg else None
+
+    def get_opponent_username(self, obj):
+        request_user = self.context['request'].user
+        if request_user == obj.user1:
+            return obj.user2.username
+        return obj.user1.username
+
+    def get_messages(self, obj):
+        messages = Message.objects.filter(room=obj).order_by('timestamp')
+        return MessageSerializer(messages, many=True).data
+    
+
+class GroupChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupChat
+        fields = ['username', 'roomname', 'members']
+
+
+class GroupChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupChatMessage
+        fields = ['username', 'group_chat', 'sender', 'content', 'timestamp']

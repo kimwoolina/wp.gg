@@ -15,8 +15,10 @@ class ArticleListAPIView(ListAPIView):
                         req_data = request.data
                         req_files = request.FILES
 
-                        reviewee_id = int(req_data.get('reviewee'))
+                        reviewer = request.user
                         reviewer_id = request.user.pk
+                        reviewee = User.objects.get(id=reviewee_id)
+                        reviewee_id = int(req_data.get('reviewee'))
 
                         if reviewee_id == reviewer_id:
                                 return Response({"message":"자기 자신에게 평가는 불가능합니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -34,7 +36,7 @@ class ArticleListAPIView(ListAPIView):
                         try:
                                 serializer = ArticleSerializer(data=target_article_data, context={'request':request, 'img':req_files.getlist('img')})
                                 if serializer.is_valid():
-                                        article = serializer.save(reviewer=request.user)
+                                        article = serializer.save(reviewee=reviewee, reviewer=reviewer)
                                 else:
                                         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
                         except Exception as e:

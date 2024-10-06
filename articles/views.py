@@ -29,7 +29,6 @@ class ArticleListAPIView(ListAPIView):
                                 'title' : req_data.get('title'),
                                 'content' : req_data.get('content'),
                                 'article_score' : int(req_data.get('article_score')),
-                                'reviewee' : int(req_data.get('reviewee')),
                         }
 
                         try:

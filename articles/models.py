@@ -28,24 +28,24 @@ class Articles(models.Model):
 
 # receiver:특정 이벤트 발생 시 실행되는 함수(post_save: db 저장 후 실행 / post_delete: db 제거 후 실행, 
 #                                          sender: 어떤 모델에서 신호를 받을지)
-@receiver(post_save, sender=Articles)
-@receiver(post_delete, sender=Articles)
-def update_like_count(sender, instance, **kwargs):
-    #평가 대상 유저
-    user = instance.user
+# @receiver(post_save, sender=Articles)
+# @receiver(post_delete, sender=Articles)
+# def update_like_count(sender, instance, **kwargs):
+#     #평가 대상 유저
+#     user = instance.user
     
-    # 해당 유저에 대한 모든 평가 가져오기
-    reviews = user.reviewees.all()
+#     # 해당 유저에 대한 모든 평가 가져오기
+#     reviews = user.reviewees.all()
     
-    # 유저에 대한 평가가 있을 경우 평균 점수 계산, 없으면 0으로 설정
-    if reviews.exist():
-        # articvle_score 필드의 평균값
-        user.score = reviews.aggregate(models.Avg('article_score'))['score__avg']
-        # reviews.aggregate(models.Avg('article_score'))가 딕셔너리 형태로 저장된다고 해서 테스트용 print
-        print(user.score)
-    else:
-        user.score = 0
-    user.save()
+#     # 유저에 대한 평가가 있을 경우 평균 점수 계산, 없으면 0으로 설정
+#     if reviews.exist():
+#         # articvle_score 필드의 평균값
+#         user.score = reviews.aggregate(models.Avg('article_score'))['score__avg']
+#         # reviews.aggregate(models.Avg('article_score'))가 딕셔너리 형태로 저장된다고 해서 테스트용 print
+#         print(user.score)
+#     else:
+#         user.score = 0
+#     user.save()
     
     
 class ArticleImages(models.Model):

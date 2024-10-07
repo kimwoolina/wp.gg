@@ -10,6 +10,10 @@ User = get_user_model()
 
 
 class ArticleListAPIView(ListAPIView):
+	def get(self, request): # 글 리스트
+		articles = Articles.objects.all()
+		serializer = ArticleSerializer(articles, many=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 	def post(self, request): # 글 생성
 		if request.user.is_authenticated:
 			req_data = request.data

@@ -43,10 +43,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         img_files = self.context['request'].FILES
         if img_files:
             for img_file in img_files.getlist('img'):
-                try:
                     ArticleImages.objects.create(article=article, img=img_file)
-                except Exception as e:
-                    return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         req_data = self.context['request'].data
         target_evaluation_data = {
             'kindness': int(req_data.get('kindness', 0)),
@@ -64,22 +61,10 @@ class ArticleSerializer(serializers.ModelSerializer):
             'cheating': int(req_data.get('cheating', 0)),
             'verbal_abuse': int(req_data.get('verbal_abuse', 0)),
             }
-        try:
-            if Evaluations.objects.filter(user_id=article.reviewee).exists():
-                target_evaluation = Evaluations.objects.get(user_id=article.reviewee)
-                serializer = EvaluationSerializer(target_evaluation, data=target_evaluation_data, partial=True)
-                if serializer.is_valid():
-                        serializer.save()
-                else:
-                    return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-            else:
-                serializer = EvaluationSerializer(data=target_evaluation_data)
-                if serializer.is_valid():
-                    serializer.save(user=article.reviewee)
-                else:
-                    return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as e:
-                return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        if Evaluations.objects.filter(user_id=article.reviewee).exists():
+            Evaluations.objects.update(**target_evaluation_data)
+        else:
+            Evaluations.objects.create(user=article.reviewee, **target_evaluation_data)
         return article
     
     # def update(self, instance, validated_data):

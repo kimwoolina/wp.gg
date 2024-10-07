@@ -43,7 +43,10 @@ class ArticleSerializer(serializers.ModelSerializer):
         img_files = self.context['request'].FILES
         if img_files:
             for img_file in img_files.getlist('img'):
-                ArticleImages.objects.create(article=article, img=img_file)
+                try:
+                    ArticleImages.objects.create(article=article, img=img_file)
+                except Exception as e:
+                    return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         req_data = self.context['request'].data
         target_evaluation_data = {
             'kindness': int(req_data.get('kindness', 0)),

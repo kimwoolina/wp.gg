@@ -1,1 +1,15 @@
-# wp.gg
+![header](https://capsule-render.vercel.app/api?type=wave&height=300&color=gradient&text=wp.gg)
+
+[![Python Version](https://img.shields.io/badge/Python-3.10-3776AB)](https://www.python.org/)
+[![Django Version](https://img.shields.io/badge/Django-4.2-092E20)](https://www.djangoproject.com/)
+[![DRF Version](https://img.shields.io/badge/Django_Rest_Framework-3.15.2-ff1709)](https://www.django-rest-framework.org/)
+[![Channels](https://img.shields.io/badge/Channels-4.1.0-2C8EBB)](https://channels.readthedocs.io/)
+[![channels-redis](https://img.shields.io/badge/channels--redis-4.2.0-DC382D)](https://channels.readthedocs.io/en/stable/)
+[![django-allauth](https://img.shields.io/badge/django--allauth-65.0.2-306998)](https://django-allauth.readthedocs.io/)
+[![dj-rest-auth](https://img.shields.io/badge/dj--rest--auth-6.0.0-0F4C81)](https://dj-rest-auth.readthedocs.io/)
+[![djangorestframework-simplejwt](https://img.shields.io/badge/djangorestframework--simplejwt-5.3.1-092E20)](https://django-rest-framework-simplejwt.readthedocs.io/)
+[![Redis](https://img.shields.io/badge/Redis-5.1.0-dc382d)](https://redis.io/)
+[![OpenAI API](https://img.shields.io/badge/OpenAI_API-412991)](https://beta.openai.com/)
+[![RIOT API](https://img.shields.io/badge/RIOT_API-red)](https://developer.riotgames.com/)
+[![Discord API](https://img.shields.io/badge/Discord_API-7289da)](https://discord.com/developers/docs/intro)
+[![WebSocket](https://img.shields.io/badge/WebSocket-000000)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)

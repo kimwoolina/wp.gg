@@ -15,10 +15,10 @@ class ArticleListAPIView(ListAPIView):
                         req_data = request.data
                         req_files = request.FILES
 
-                        reviewer = request.user
                         reviewer_id = request.user.pk
-                        reviewee = User.objects.get(id=reviewee_id)
+                        reviewer = request.user
                         reviewee_id = int(req_data.get('reviewee'))
+                        reviewee = User.objects.get(id=reviewee_id)
 
                         if reviewee_id == reviewer_id:
                                 return Response({"message":"자기 자신에게 평가는 불가능합니다."}, status=status.HTTP_400_BAD_REQUEST)

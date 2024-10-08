@@ -56,12 +56,12 @@ class ChatRoomListView(APIView):
     
     def get(self, request, *args, **kwargs):
         user = request.user  # 현재 로그인된 사용자
-        
+
         # 프라이빗 채팅방 필터링 (user1 또는 user2인 경우)
         private_rooms = PrivateChatRoom.objects.filter(
             Q(user1=user) | Q(user2=user)
         )
-        
+
         # 그룹 채팅방 필터링 (현재 사용자가 방장 또는 멤버인 경우)
         group_rooms_as_owner = GroupChatRoom.objects.filter(owner=user)
         group_rooms_as_member = RoomUsers.objects.filter(user=user).values_list('group_chat', flat=True)
@@ -74,7 +74,14 @@ class ChatRoomListView(APIView):
         # 모든 채팅방을 리스트로 합치기
         chat_rooms = private_serializer.data + group_serializer.data
 
-        # 생성일 기준으로 정렬
-        chat_rooms.sort(key=lambda x: x['created_at'], reverse=True)
+        # 최신 메시지의 생성일을 latest_created_at에 저장
+        for room in chat_rooms:
+            if room['latest_message']:
+                room['latest_created_at'] = room['latest_message']['created_at']
+            else:
+                room['latest_created_at'] = room['created_at']  # 메시지가 없으면 방 생성일 사용
+
+        # 최신 생성일 기준으로 정렬 (내림차순)
+        chat_rooms.sort(key=lambda x: x['latest_created_at'], reverse=True)
 
         return Response({'chat_rooms': chat_rooms})

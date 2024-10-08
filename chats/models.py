@@ -97,6 +97,8 @@ class Reports(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # 본인 신고 못하게, 중복 신고 금지 필요
+    
     def __str__(self):
         return f'{self.reporter}님이 {self.reported}님을 신고함. 사유: {self.content}'
 

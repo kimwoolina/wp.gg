@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_q',
     #thid_party
     'django_extensions',
     'rest_framework',
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_seed',
     # Allauth 관련 앱
+    'corsheaders',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',  # 소셜 로그인
@@ -107,6 +107,7 @@ ACCOUNT_UNIQUE_EMAIL = True  # 이메일 중복 방지
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 테스트용으로 콘솔에 출력
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -215,3 +216,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 #     'PAGE_SIZE': 10,  # 페이지당 항목 수
 # }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # 허용할 프론트엔드 URL
+]

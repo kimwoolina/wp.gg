@@ -12,4 +12,8 @@ urlpatterns = [
     path('profile/', views.UserProfileView.as_view(), name='user_profile'),
     path('users/rankings/', views.MannerRankingView().as_view(), name='user-rankings'), # 매너 랭킹
     path('users/<str:username>/', views.UserDetailView().as_view(), name='user_detail'), # 특정 유저 검색 기능
+    
+    # Riot 로그인 관련 URL
+    # path('riot/', views.login_with_riot, name='login_with_riot'),  # auth/riot/
+    # path('riot/callback/', views.riot_callback, name='riot_callback'),  # auth/riot/callback/
 ]

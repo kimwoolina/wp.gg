@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO, send
 import jwt
 from datetime import datetime, timedelta
+from chats.models import ChatMessage
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'django-insecure-uw(g7z_f!7siyl7#on=!r=+#*izdigx8c&rj&iv)@zg(%al-gp'  # JWT 생성에 사용할 시크릿 키
@@ -38,6 +39,7 @@ def handle_message(data):
     sender_token = data.get('sender')
 
     # JWT 토큰이 존재하는지 먼저 확인
+    print(message)
     if not sender_token:
         return {'error': '토큰이 제공되지 않았습니다.'}
 
@@ -48,6 +50,7 @@ def handle_message(data):
 
         decoded = jwt.decode(sender_token, app.config['SECRET_KEY'], algorithms=['HS256'])
         sender = decoded['username']
+        ChatMessage.objects.create()
     except jwt.ExpiredSignatureError:
         return {'error': '토큰이 만료되었습니다.'}
     except jwt.DecodeError:

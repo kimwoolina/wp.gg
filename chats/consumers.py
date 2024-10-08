@@ -81,7 +81,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             room = await self.get_or_create_room(user1_username, user2_username)
             self.room_id = str(room.id)
 
-            # 메시지 저장
+            # 메시지 저장 (DB에 메시지 저장)
             await self.save_message(room, sender_username, message)
 
             # 그룹에 메시지 전송

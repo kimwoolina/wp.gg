@@ -5,6 +5,15 @@ from .models import Notification, Reports
 # from .serializers import NotificationSerializer, ReportsSerializer
 from rest_framework.permissions import IsAuthenticated
 import textwrap
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db.models import Q
+from itertools import chain
+from operator import attrgetter
+from .models import PrivateChatRoom, GroupChatRoom, RoomUsers
+from .serializers import PrivateChatRoomSerializer, GroupChatRoomSerializer
+from rest_framework import permissions
+
 
 # class NotificationListView(ListAPIView):
 #     serializer_class = NotificationSerializer
@@ -42,3 +51,30 @@ import textwrap
 def index(request):
     return render(request, "chat/index.html")
 
+class ChatRoomListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        user = request.user  # 현재 로그인된 사용자
+        
+        # 프라이빗 채팅방 필터링 (user1 또는 user2인 경우)
+        private_rooms = PrivateChatRoom.objects.filter(
+            Q(user1=user) | Q(user2=user)
+        )
+        
+        # 그룹 채팅방 필터링 (현재 사용자가 방장 또는 멤버인 경우)
+        group_rooms_as_owner = GroupChatRoom.objects.filter(owner=user)
+        group_rooms_as_member = RoomUsers.objects.filter(user=user).values_list('group_chat', flat=True)
+        group_rooms = GroupChatRoom.objects.filter(id__in=group_rooms_as_member) | group_rooms_as_owner
+
+        # 시리얼라이저로 직렬화
+        private_serializer = PrivateChatRoomSerializer(private_rooms, many=True)
+        group_serializer = GroupChatRoomSerializer(group_rooms, many=True)
+
+        # 모든 채팅방을 리스트로 합치기
+        chat_rooms = private_serializer.data + group_serializer.data
+
+        # 생성일 기준으로 정렬
+        chat_rooms.sort(key=lambda x: x['created_at'], reverse=True)
+
+        return Response({'chat_rooms': chat_rooms})

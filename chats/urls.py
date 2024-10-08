@@ -9,4 +9,5 @@ urlpatterns = [
     # path('notifications/', views.NotificationListView.as_view(), name='notification_list'),
     # path('', include(router.urls)),
     path('', views.index, name="index"),
+    path('chatrooms/', views.ChatRoomListView.as_view(), name='chat-room-list'),
 ]

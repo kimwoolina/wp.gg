@@ -1,4 +1,5 @@
-# from rest_framework import serializers
+from rest_framework import serializers
+from .models import PrivateChatRoom, GroupChatRoom, ChatMessage, GroupChatMessage
 # from .models import Notification, Chats, Reports
 
 # class NotificationSerializer(serializers.ModelSerializer):
@@ -44,3 +45,43 @@
 #     class Meta:
 #         model = Reports
 #         fields = ['chat', 'reporter', 'reported', 'content']
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = ['sender', 'content', 'created_at']
+
+
+class PrivateChatRoomSerializer(serializers.ModelSerializer):
+    latest_message = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PrivateChatRoom
+        fields = ['id', 'room_name', 'room_image', 'created_at', 'latest_message']
+
+    def get_latest_message(self, obj):
+        latest_message = obj.get_latest_message()
+        if latest_message:
+            return ChatMessageSerializer(latest_message).data  # 직렬화된 데이터 반환
+        return None  # 메시지가 없는 경우 None 반환
+
+class GroupChatRoomSerializer(serializers.ModelSerializer):
+    latest_message = serializers.SerializerMethodField()
+
+    class Meta:
+        model = GroupChatRoom
+        fields = ['id', 'room_name', 'room_image', 'created_at', 'latest_message']
+
+    def get_latest_message(self, obj):
+        latest_message = obj.get_latest_message()
+        if latest_message:
+            return ChatMessageSerializer(latest_message).data  # 직렬화된 데이터 반환
+        return None  # 메시지가 없는 경우 None 반환
+
+# class ChatRoomSerializer(serializers.Serializer):
+#     room_id = serializers.UUIDField()
+#     room_type = serializers.ChoiceField(choices=['private', 'group'])
+#     room_name = serializers.CharField()
+#     latest_message = serializers.CharField(allow_blank=True)
+#     latest_sender = serializers.CharField(allow_blank=True)
+#     created_at = serializers.DateTimeField()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Notification, Chats, Reports, Message, PrivateChatRoom, GroupChat, GroupChatMessage
+from .models import Notification, Reports, ChatMessage, PrivateChatRoom, GroupChatRoom, GroupChatMessage, RoomUsers
 
-
+# 알림 시리얼라이저
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
@@ -18,10 +18,10 @@ class NotificationSerializer(serializers.ModelSerializer):
         return data
 
 
-class ChatsSerializer(serializers.ModelSerializer):
-
+# 1:1 채팅 메시지 시리얼라이저 (Chats -> ChatMessage)
+class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Chats
+        model = ChatMessage
         fields = ['sender', 'content', 'is_read', 'created_at']
 
     def filter_profanity(self, content):
@@ -42,21 +42,15 @@ class ChatsSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+# 신고 시리얼라이저
 class ReportsSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Reports
-        fields = ['chat', 'reporter', 'reported', 'content']
+        fields = ['chat_private', 'chat_group', 'reporter', 'reported', 'content']
 
 
-class MessageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Message
-        fields = ('sender', 'content', 'timestamp')
-
-
-class ChatRoomSerializer(serializers.ModelSerializer):
+# 1:1 개인 채팅방 시리얼라이저
+class PrivateChatRoomSerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField()
     opponent_username = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
@@ -66,8 +60,8 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         fields = ['room_name', 'user1', 'user2', 'latest_message', 'opponent_username', 'messages']
 
     def get_latest_message(self, obj):
-        latest_msg = Message.objects.filter(room=obj).order_by('-timestamp').first()
-        return latest_msg.text if latest_msg else None
+        latest_msg = ChatMessage.objects.filter(room=obj).order_by('-created_at').first()
+        return latest_msg.content if latest_msg else None
 
     def get_opponent_username(self, obj):
         request_user = self.context['request'].user
@@ -76,17 +70,19 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         return obj.user1.username
 
     def get_messages(self, obj):
-        messages = Message.objects.filter(room=obj).order_by('timestamp')
-        return MessageSerializer(messages, many=True).data
+        messages = ChatMessage.objects.filter(room=obj).order_by('created_at')
+        return ChatMessageSerializer(messages, many=True).data
     
 
-class GroupChatSerializer(serializers.ModelSerializer):
+# 단체 채팅방 시리얼라이저
+class GroupChatRoomSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroupChat
-        fields = ['username', 'roomname', 'members']
+        model = GroupChatRoom
+        fields = ['room_name', 'owner', 'room_image', 'created_at', 'updated_at']
 
 
+# 그룹 채팅 메시지 시리얼라이저
 class GroupChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupChatMessage
-        fields = ['username', 'group_chat', 'sender', 'content', 'timestamp']
+        fields = ['group_chat', 'sender', 'content', 'is_read', 'created_at']

@@ -42,7 +42,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             # 방 존재 여부 확인
             if not await self.check_room_exists(self.room_id):
                 raise ValueError('채팅방이 존재하지 않습니다.')
-
+  
             group_name = self.get_group_name(self.room_id)  # 그룹 이름 생성
 
             # 그룹에 추가 후 WebSocket 연결 수락

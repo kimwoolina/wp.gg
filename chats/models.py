@@ -9,9 +9,10 @@ User = get_user_model()
 class PrivateChatRoom(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user2')
-    timestamp = models.DateTimeField(auto_now_add=True)
     room_name = models.CharField(max_length=15, blank=True, null=True)
     room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         # 장고 3.2 이상부터는 unique_together보다 UniqueConstraint이 권장된다고 함
@@ -27,14 +28,13 @@ class PrivateChatRoom(models.Model):
 
     def __str__(self):
         return f'1:1 채팅방: {self.user1.username}님과 {self.user2.username}님'
-
-
+    
 
 # 단체 채팅방
 class GroupChatRoom(models.Model):
+    owner = models.ForeignKey(User, related_name='owned_group_chats', on_delete=models.CASCADE)  # 방장
     room_name = models.CharField(max_length=15)
     room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
-    owner = models.ForeignKey(User, related_name='owned_group_chats', on_delete=models.CASCADE)  # 방장
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -43,33 +43,45 @@ class GroupChatRoom(models.Model):
 
 
 # 1:1 개인 채팅 저장
-class Message(models.Model):
+class ChatMessage(models.Model):
     room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")  # 발신자
-    text = models.CharField(max_length=500)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    content = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def mark_as_read(self):
+        self.is_read = True
+        self.save()
 
     def __str__(self):
         return f'{self.sender.username}: {self.text[:10]}'  # 첫 10자만 표시
-    
+
 
 # 그룹 채팅 저장
-class GroupChat(models.Model):
+class RoomUsers(models.Model):
     name = models.CharField(max_length=15)  # 그룹 이름
     members = models.ManyToManyField(User)  # 그룹에 속한 유저
 
     def __str__(self):
         return self.name
 
+
 class GroupChatMessage(models.Model):
-    group_chat = models.ForeignKey(GroupChat, on_delete=models.CASCADE, related_name='messages')
+    group_chat = models.ForeignKey(RoomUsers, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE)  # 메시지를 보낸 유저
     content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def mark_as_read(self):
+        self.is_read = True
+        self.save()
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:20]}"
-    
 
 # 채팅
 class Chats(models.Model):
@@ -81,16 +93,6 @@ class Chats(models.Model):
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def mark_as_read(self):
-        self.is_read = True
-        self.save()
-
-    def __str__(self):
-        if self.private_room:
-            return f'{self.private_room.user2.username}님! {self.sender.username}님이 1:1 메시지를 보냈어요💌'
-        if self.chat_room:
-            return f'{self.sender.username}님이 {self.chat_room.room_name}에서 메시지를 보냈어요💌'
 
 
 # 신고

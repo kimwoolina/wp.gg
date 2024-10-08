@@ -217,7 +217,7 @@ To set up and run the project, follow these steps:
 
 <a name="erd"></a>
 ## 🗂 ERD
-<img width="822" alt="스크린샷 2024-10-08 오전 3 15 50" src="https://github.com/user-attachments/assets/230cff7c-5653-411d-bfb8-ecc1283d5131">
+<img width="822" alt="스크린샷 2024-10-08 오후 12 56 04" src="https://github.com/user-attachments/assets/168bb3a7-d400-4570-813e-f64298595284">
 
 <br><br>
 

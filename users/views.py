@@ -14,6 +14,8 @@ from .models import Evaluations
 from articles.models import Articles
 from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer, UserProfileSerializer
 from .bots import ask_chatgpt
+from django.db import models
+
 
 
 # 회원가입
@@ -269,9 +271,26 @@ class UserRecommendationView(APIView):
             users = users.filter(positions__position_name__in=positions)
 
         # 2. 평가 필드 필터링
+        # if filter_fields:
+        #     order_by_fields = [f'-evaluations__{field}' for field in filter_fields]
+        #     users = users.order_by(*order_by_fields)
         if filter_fields:
-            order_by_fields = [f'-evaluations__{field}' for field in filter_fields]
-            users = users.order_by(*order_by_fields)
+            # 필터링 조건 추가
+            filter_conditions = {}
+            for field in filter_fields:
+                if hasattr(Evaluations, field):
+                    filter_conditions[f'evaluations__{field}__gte'] = 1  # 필드 값이 1 이상인 경우
+
+            # 유저 필터링
+            users = users.filter(**filter_conditions)
+
+            # 평가 항목이 있는 유저만 필터링 후 정렬
+            users = users.filter(evaluations__isnull=False).annotate(
+                evaluations_count=models.Count('evaluations')
+            ).order_by(*[f'-evaluations__{field}' for field in filter_fields]).distinct()
+
+            # 상위 3명만 선택
+            users = users[:3]
 
         # 리뷰 데이터 가져오기
         all_reviews = Articles.objects.all().values('content', 'reviewee')

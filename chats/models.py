@@ -26,9 +26,12 @@ class PrivateChatRoom(models.Model):
             self.room_name = self.user2.username
         super().save(*args, **kwargs)
 
+    def get_latest_message(self):
+        return self.messages.order_by('-created_at').first()
+    
     def __str__(self):
         return f'1:1 채팅방: {self.user1.username}님과 {self.user2.username}님'
-    
+
 
 # 단체 채팅방
 class GroupChatRoom(models.Model):
@@ -38,6 +41,9 @@ class GroupChatRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_latest_message(self):
+        return GroupChatMessage.objects.filter(group_chat=self).order_by('-created_at').first()
+    
     def __str__(self):
         return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
 
@@ -56,20 +62,18 @@ class ChatMessage(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.sender.username}: {self.text[:10]}'  # 첫 10자만 표시
+        return f'{self.sender.username}: {self.content[:10]}'  # 첫 10자만 표시
 
 
 # 그룹 채팅 저장
 class RoomUsers(models.Model):
-    name = models.CharField(max_length=15)  # 그룹 이름
-    members = models.ManyToManyField(User)  # 그룹에 속한 유저
+    group_chat = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='room_users')  # 그룹 채팅 FK
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 그룹에 속한 유저
 
-    def __str__(self):
-        return self.name
 
 
 class GroupChatMessage(models.Model):
-    group_chat = models.ForeignKey(RoomUsers, on_delete=models.CASCADE, related_name='messages')
+    group_chat = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE)  # 메시지를 보낸 유저
     content = models.TextField()
     is_read = models.BooleanField(default=False)
@@ -82,18 +86,7 @@ class GroupChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:20]}"
-
-# 채팅
-# class Chats(models.Model):
-#     # chat_id = models.AutoField(primary_key=True)
-#     sender = models.ForeignKey(User, related_name='sent_chats', on_delete=models.CASCADE)
-#     chat_room = models.ForeignKey(GroupChatRoom, related_name='group_chats', on_delete=models.CASCADE, null=True, blank=True)
-#     private_room = models.ForeignKey(PrivateChatRoom, related_name='private_chats', on_delete=models.CASCADE, null=True, blank=True)
-#     content = models.TextField()
-#     is_read = models.BooleanField(default=False)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
+    
 
 # 신고
 class Reports(models.Model):
@@ -104,6 +97,8 @@ class Reports(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # 본인 신고 못하게, 중복 신고 금지 필요
+    
     def __str__(self):
         return f'{self.reporter}님이 {self.reported}님을 신고함. 사유: {self.content}'
 

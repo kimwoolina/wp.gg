@@ -2,22 +2,16 @@ import eventlet
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
 import jwt
+from chats.models import db, User, ChatMessage, PrivateChatRoom  
 import os
-from dotenv import load_dotenv
-
-# .env 파일로부터 환경 변수를 로드
-load_dotenv()
 
 # Flask 앱 생성 및 설정
 app = Flask(__name__)
 
-# config 파일로부터 SECRET_KEY 가져오기
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 시크릿 키 설정
+# SECRET_KEY 가져오기
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-# SECRET_KEY가 잘 불러와졌는지 확인 (디버깅)
-print(f"SECRET_KEY: {app.config['SECRET_KEY']}")
-
-# SocketIO 객체 생성 - CORS 허용
+# CORS 허용 (다른 웹사이트에서도 접근 가능하도록)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 # 사용자 로그인 엔드포인트
@@ -40,15 +34,37 @@ def handle_connect():
 @socketio.on('message')
 def handle_message(data):
     token = data.get('sender')  # 클라이언트에서 보낸 JWT 토큰 (발신자 정보)
-    message = data.get('message')  # 클라이언트에서 보낸 메시지 내용
-    if token and message:
+    message_content = data.get('message')  # 클라이언트에서 보낸 메시지 내용
+    if token and message_content:
         try:
             # JWT 토큰 검증 및 디코딩
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             # 발신자 정보 추출
-            sender = decoded_token.get('username')  
+            sender_username = decoded_token.get('username')
+            sender = User.query.filter_by(username=sender_username).first()
+
+            if not sender:
+                print('Sender not found in DB')
+                return
+            
+            # 방을 가져오거나 생성 (여기선 임시로 첫 번째 PrivateChatRoom 가져옴)
+            room = PrivateChatRoom.query.first()
+
+            if not room:
+                print('No chat room found')
+                return
+
+            # 메시지 저장
+            chat_message = ChatMessage(
+                room=room,
+                sender=sender,
+                content=message_content
+            )
+            db.session.add(chat_message)
+            db.session.commit()
+
             # 클라이언트에 메시지 전송 (모든 클라이언트에 브로드캐스트)
-            emit('message', {'message': message, 'sender': sender}, broadcast=True)
+            emit('message', {'message': message_content, 'sender': sender.username}, broadcast=True)
         except jwt.InvalidTokenError:
             print('Invalid token')  # 토큰이 유효하지 않을 경우
 

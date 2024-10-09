@@ -15,11 +15,16 @@
       overflow-y: auto;
       font-family: 'Arial', sans-serif;
     }
+
+    /* 입력 박스 및 보내기 버튼을 아래쪽에 정렬 */
     #input-box {
       display: flex;
+      align-items: flex-end;
       justify-content: space-between;
       margin-top: 10px;
     }
+
+    /* 메시지 입력 필드 스타일 */
     #messageInput {
       width: 300px;
       padding: 10px;
@@ -27,6 +32,8 @@
       border-radius: 5px;
       border: 1px solid #ccc;
     }
+
+    /* 보내기 버튼 스타일 */
     button {
       padding: 10px 15px;
       border-radius: 5px;
@@ -34,16 +41,22 @@
       color: white;
       border: none;
       font-weight: bold;
+      margin-right: 1000px;
     }
+
     ul {
       list-style-type: none;
       padding: 0;
     }
+
+    /* 좌측 정렬 메시지 스타일 */
     .message-left {
       color: blue;
       text-align: left;
       margin-bottom: 10px;
     }
+
+    /* 우측 정렬 메시지 스타일 */
     .message-right {
       color: green;
       text-align: right;
@@ -53,23 +66,29 @@
 </head>
 <body>
 
+  <!-- 로그인용 유저 선택 링크 -->
   <a href="#" onclick="loginUser('user1')">User1</a>
   <a href="#" onclick="loginUser('user2')">User2</a>
 
+  <!-- 채팅 메시지 박스 -->
   <div id="chat-box">
     <ul id="messages"></ul>
   </div>
 
+  <!-- 메시지 입력 필드와 보내기 버튼 -->
   <div id="input-box">
     <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
     <button onclick="sendMessage()">보내기</button>
   </div>
 
+  <!-- SocketIO 스크립트 -->
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-  <script>
-    let token = '';
-    let socket = null;
 
+  <script>
+    let token = '';  // JWT 토큰 저장 변수
+    let socket = null;  // WebSocket 연결 변수
+
+    // 사용자가 로그인할 때 서버로 요청을 보내 JWT 토큰을 받음
     function loginUser(username) {
       fetch('/login/', {
         method: 'POST',
@@ -78,58 +97,79 @@
         },
         body: JSON.stringify({
           'username': username,
-          'password': 'password',
+          'password': 'password',  // 실제 비밀번호로 대체해야 함
         })
       })
       .then(response => response.json())
       .then(data => {
-        token = data.token;
+        token = data.token;  // JWT 토큰 저장
         alert(`${username}로 로그인되었습니다.`);
-        connectWebSocket();
+        connectWebSocket();  // 로그인 후 WebSocket 연결 시작
       })
       .catch(error => console.log('로그인 오류:', error));
     }
 
+    // WebSocket을 통해 서버와 실시간 통신 설정
     function connectWebSocket() {
       if (token) {
+        // SocketIO 연결 시작 (한번만 연결하도록)
         if (!socket) {
-          socket = io.connect('http://127.0.0.1:5000', {
-            query: { token: token }
+          socket = io.connect('http://127.0.0.1:5001', {  // 포트를 5001로 수정
+            query: { token: token }  // JWT 토큰을 쿼리에 포함해 서버로 전달
           });
-
+    
+          // WebSocket 연결 성공 시
           socket.on('connect', function() {
             console.log('WebSocket 연결 성공!');
+            alert('WebSocket 연결 성공!');
           });
-
+    
+          // WebSocket 연결 끊어졌을 때
+          socket.on('disconnect', function() {
+            console.log('WebSocket 연결이 끊어졌습니다.');
+            alert('WebSocket 연결이 끊어졌습니다.');
+          });
+    
+          // WebSocket 연결 오류 시
+          socket.on('error', function(error) {
+            console.log('WebSocket 오류:', error);
+            alert('WebSocket 오류가 발생했습니다.');
+          });
+    
+          // 서버로부터 메시지 받을 때마다 호출
           socket.on('message', function(msg) {
             const messages = document.getElementById('messages');
             const newMessage = document.createElement('li');
+    
+            // 메시지 발신자에 따라 메시지의 정렬을 좌우로 설정
             if (msg.sender === 'user1') {
               newMessage.className = 'message-left';
             } else if (msg.sender === 'user2') {
               newMessage.className = 'message-right';
             }
-            newMessage.textContent = msg.message;
+    
+            newMessage.textContent = msg.message;  // 받은 메시지 표시
             messages.appendChild(newMessage);
           });
         }
       } else {
-        alert('먼저 로그인 해주세요😊');
+        alert('먼저 로그인을 해주세요.');
       }
     }
 
+    // 사용자가 메시지를 입력하면 WebSocket을 통해 서버로 메시지 전송
     function sendMessage() {
       const message = document.getElementById('messageInput').value;
       if (!message) {
         alert('메시지를 입력해주세요!');
         return;
       }
-      if (socket && socket.connected) {
+      if (socket && socket.connected) {  // WebSocket이 연결된 상태일 때만 전송
         socket.emit('message', {
-          'message': message,
-          'sender': token
+          'message': message,  // 전송할 메시지
+          'sender': token  // 발신자 JWT 토큰
         });
-        document.getElementById('messageInput').value = '';
+        document.getElementById('messageInput').value = '';  // 입력 필드 비움
       } else {
         alert('WebSocket이 연결되지 않았습니다. 로그인 후 다시 시도해주세요.');
       }

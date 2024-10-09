@@ -15,24 +15,28 @@
       overflow-y: auto;
       font-family: 'Arial', sans-serif;
     }
-
+    
     /* 입력 박스 및 보내기 버튼을 아래쪽에 정렬 */
     #input-box {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
       margin-top: 10px;
+      max-width: 400px;  /* 고정된 너비를 설정 */
+      width: 100%;  /* 박스는 100%를 사용하되 최대 400px까지만 확장 */
     }
-
+    
     /* 메시지 입력 필드 스타일 */
     #messageInput {
-      width: 300px;
+      flex-grow: 1;  /* 가능한 모든 공간을 차지하게 설정 */
       padding: 10px;
       font-size: 14px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      margin-right: 10px;
+      max-width: 300px;  /* 입력 필드의 최대 너비 */
     }
-
+    
     /* 보내기 버튼 스타일 */
     button {
       padding: 10px 15px;
@@ -41,27 +45,31 @@
       color: white;
       border: none;
       font-weight: bold;
-      margin-right: 1000px;
+      cursor: pointer;
+      width: 80px;  /* 버튼의 고정 너비 */
+      flex-shrink: 0;  /* 버튼이 줄어들지 않게 */
     }
-
+    
     ul {
       list-style-type: none;
       padding: 0;
     }
-
+    
     /* 좌측 정렬 메시지 스타일 */
     .message-left {
       color: blue;
       text-align: left;
       margin-bottom: 10px;
     }
-
+    
     /* 우측 정렬 메시지 스타일 */
     .message-right {
       color: green;
       text-align: right;
       margin-bottom: 10px;
     }
+i     
+    
   </style>
 </head>
 <body>

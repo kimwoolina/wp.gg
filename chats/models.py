@@ -71,7 +71,6 @@ class RoomUsers(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # 그룹에 속한 유저
 
 
-
 class GroupChatMessage(models.Model):
     group_chat = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE)  # 메시지를 보낸 유저

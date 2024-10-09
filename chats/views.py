@@ -52,6 +52,16 @@ def index(request):
     return render(request, "chat/index.html")
 
 class ChatRoomListView(APIView):
+    """
+    채팅방 목록 기능
+    - 채팅방 최근 메시지 기준으로 정렬
+    - 최근 메시지가 없을 경우 방 생성일로 정렬
+    - 개인채팅방과 그룹채팅방을 함께 정렬
+    
+    작성자: 김우린
+    작성 날짜: 2024.10.01
+    """
+    
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, *args, **kwargs):

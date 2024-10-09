@@ -299,15 +299,17 @@ class UserRecommendationView(APIView):
             # 응답 포맷 확인 및 처리
             try:
                 if "Review ID:" in user_preference_analysis:
-                    matching_reviewee_id = int(user_preference_analysis.split(":")[1].strip())
+                    # "Review ID: 1, 2" 형식 처리
+                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(":")[1].split(",")]
                 else:
-                    matching_reviewee_id = int(user_preference_analysis.strip())
+                    # "1, 2" 형식 처리
+                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(",")]
             except (ValueError, IndexError) as e:
                 raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
 
-        # 유저 필터링
-        if matching_reviewee_id is not None:
-            users = users.filter(id=matching_reviewee_id)
+            # 유저 필터링
+            if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
+                users = users.filter(id__in=matching_reviewee_ids)
 
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)

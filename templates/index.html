@@ -1,113 +1,140 @@
-<a href="#" onclick="loginUser('user1')">User1</a>
-<a href="#" onclick="loginUser('user2')">User2</a>
-<input type="text" id="messageInput" placeholder="메시지를 입력하세요">
-<button onclick="sendMessage()">보내기</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chat</title>
+  <style>
+    /* 채팅박스 UI 스타일 */
+    #chat-box {
+      width: 400px;
+      height: 300px;
+      border: 2px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      overflow-y: auto;
+      font-family: 'Arial', sans-serif;
+    }
+    #input-box {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    #messageInput {
+      width: 300px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 15px;
+      border-radius: 5px;
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .message-left {
+      color: blue;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+    .message-right {
+      color: green;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
 
-<ul id="messages"></ul>
+  <a href="#" onclick="loginUser('user1')">User1</a>
+  <a href="#" onclick="loginUser('user2')">User2</a>
 
-<style>
-  .message-left {
-    text-align: left;
-    color: blue;
-  }
-  .message-right {
-    text-align: center;
-    color: green;
-  }
-</style>
+  <div id="chat-box">
+    <ul id="messages"></ul>
+  </div>
 
-<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <div id="input-box">
+    <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+    <button onclick="sendMessage()">보내기</button>
+  </div>
 
-<script>
-  let token = '';
-  let socket = null;
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script>
+    let token = '';
+    let socket = null;
 
-  function loginUser(username) {
-    fetch('/login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        'username': username,
-        'password': 'password',  // 실제 비밀번호로 대체해야 함
+    function loginUser(username) {
+      fetch('/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'username': username,
+          'password': 'password',
+        })
       })
-    })
-    .then(response => response.json())
-    .then(data => {
-      token = data.token;  // JWT 토큰 저장
-      alert(`토큰: ${token}`);  // 여기에서 토큰을 확인하세요.
-      alert(`${username}로 로그인되었습니다.`);
+      .then(response => response.json())
+      .then(data => {
+        token = data.token;
+        alert(`${username}로 로그인되었습니다.`);
+        connectWebSocket();
+      })
+      .catch(error => console.log('로그인 오류:', error));
+    }
 
-      // 로그인 후 WebSocket 연결 시작
-      connectWebSocket();
-    })
-    .catch(error => console.log('로그인 오류:', error));
-}
+    function connectWebSocket() {
+      if (token) {
+        if (!socket) {
+          socket = io.connect('http://127.0.0.1:5000', {
+            query: { token: token }
+          });
 
+          socket.on('connect', function() {
+            console.log('WebSocket 연결 성공!');
+          });
 
-function connectWebSocket() {
-  if (token) {
-    // SocketIO 연결 시작 (한 번만 연결하도록 보장)
-    if (!socket) {
-      socket = io.connect('http://127.0.0.1:5000', {
-        query: { token: token }
-      });
-
-      socket.on('connect', function() {
-        console.log('WebSocket 연결 성공!');
-        alert('WebSocket 연결 성공!');
-      });
-
-      socket.on('disconnect', function() {
-        console.log('WebSocket 연결이 끊어졌습니다.');
-        alert('WebSocket 연결이 끊어졌습니다.');
-      });
-
-      socket.on('error', function(error) {
-        console.log('WebSocket 오류:', error);
-        alert('WebSocket 오류가 발생했습니다.');
-      });
-
-      // 서버로부터 메시지를 받을 때마다 호출되는 함수
-      socket.on('message', function(msg) {
-        const messages = document.getElementById('messages');
-        const newMessage = document.createElement('li');
-
-        // 사용자 이름에 따라 메시지의 정렬 위치를 변경
-        if (msg.sender === 'user1') {
-          newMessage.className = 'message-left';
-        } else if (msg.sender === 'user2') {
-          newMessage.className = 'message-right';
+          socket.on('message', function(msg) {
+            const messages = document.getElementById('messages');
+            const newMessage = document.createElement('li');
+            if (msg.sender === 'user1') {
+              newMessage.className = 'message-left';
+            } else if (msg.sender === 'user2') {
+              newMessage.className = 'message-right';
+            }
+            newMessage.textContent = msg.message;
+            messages.appendChild(newMessage);
+          });
         }
-
-        newMessage.textContent = msg.message;
-        messages.appendChild(newMessage);
-      });
-    }
-  } else {
-    alert('먼저 로그인을 해주세요.');
-  }
-}
-
-
-  function sendMessage() {
-    const message = document.getElementById('messageInput').value;
-    if (!message) {
-      alert('메시지를 입력해주세요!');
-      return;
+      } else {
+        alert('먼저 로그인 해주세요😊');
+      }
     }
 
-    if (socket && socket.connected) {
-      // 서버로 메시지 전송
-      socket.emit('message', {
-        'message': message,
-        'sender': token  // 현재 로그인한 유저의 토큰 정보 포함
-      });
-
-      document.getElementById('messageInput').value = '';  // 입력 필드 비움
-    } else {
-      alert('WebSocket이 연결되지 않았습니다. 로그인 후 다시 시도해주세요.');
+    function sendMessage() {
+      const message = document.getElementById('messageInput').value;
+      if (!message) {
+        alert('메시지를 입력해주세요!');
+        return;
+      }
+      if (socket && socket.connected) {
+        socket.emit('message', {
+          'message': message,
+          'sender': token
+        });
+        document.getElementById('messageInput').value = '';
+      } else {
+        alert('WebSocket이 연결되지 않았습니다. 로그인 후 다시 시도해주세요.');
+      }
     }
-  }
-</script>
+  </script>
+
+</body>
+</html>

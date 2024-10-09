@@ -26,6 +26,8 @@ SECRET_KEY = config.SECRET_KEY
 
 RIOT_API_KEY = config.RIOT_API_KEY
 
+OPEN_API_KEY = config.OPEN_API_KEY
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -13,6 +13,7 @@ from django.db.models import F, Q
 from .models import Evaluations
 from articles.models import Articles
 from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer, UserProfileSerializer
+from .bots import ask_chatgpt
 
 
 # 회원가입
@@ -239,3 +240,75 @@ class MannerRankingView(ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
+class UserRecommendationView(APIView):
+    """
+    티어, 포지션, 평가항목 선택하고 원하는 유저 상을 입력하여 유저 매칭해줌
+    작성자: 김우린
+    작성 날짜: 2024.10.09
+    """
+
+    def get(self, request, *args, **kwargs):
+        # 초기화
+        matching_reviewee_id = None
+
+        # 요청에서 필터링 값 가져오기
+        riot_tiers = request.GET.getlist('riot_tier', [])
+        positions = request.GET.getlist('positions', [])
+        filter_fields = request.GET.getlist('filter_fields', [])
+        user_preference = request.GET.get('user_preference', '')
+
+        # 기본 유저 리스트 가져오기
+        users = User.objects.all()
+
+        # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
+        if riot_tiers:
+            users = users.filter(riot_tier__in=riot_tiers)
+
+        if positions:
+            users = users.filter(positions__position_name__in=positions)
+
+        # 2. 평가 필드 필터링
+        if filter_fields:
+            order_by_fields = [f'-evaluations__{field}' for field in filter_fields]
+            users = users.order_by(*order_by_fields)
+
+        # 리뷰 데이터 가져오기
+        all_reviews = Articles.objects.all().values('content', 'reviewee')
+        reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
+
+        # 3. 사용자 입력 텍스트 처리
+        if user_preference:
+            # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
+            system_instructions = """
+            You are tasked with finding the most relevant review for a user based on their preferences.
+            Based on the user's preference, identify the review that best matches the following description: {user_preference}.
+            Here are all the reviews:
+            {reviews_text}.
+            Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
+            """
+
+            prompt = system_instructions.format(
+                user_preference=user_preference,
+                reviews_text=reviews_text
+            )
+
+            user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
+            print('user_preference_analysis:', user_preference_analysis)
+
+            # 응답 포맷 확인 및 처리
+            try:
+                if "Review ID:" in user_preference_analysis:
+                    matching_reviewee_id = int(user_preference_analysis.split(":")[1].strip())
+                else:
+                    matching_reviewee_id = int(user_preference_analysis.strip())
+            except (ValueError, IndexError) as e:
+                raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
+
+        # 유저 필터링
+        if matching_reviewee_id is not None:
+            users = users.filter(id=matching_reviewee_id)
+
+        # 직렬화하여 응답
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

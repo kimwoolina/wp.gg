@@ -2,12 +2,17 @@ import eventlet
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
 import jwt
-from chats.models import db, User  # DB와 모델 임포트 필요시
-import config
+import os
+from dotenv import load_dotenv
+
+# .env 파일로부터 환경 변수를 로드합니다.
+load_dotenv()
 
 # Flask 앱 생성 및 설정
 app = Flask(__name__)
-app.config.SECRET_KEY  # JWT 토큰 생성을 위한 시크릿 키
+
+# config 파일로부터 SECRET_KEY 가져오기
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 시크릿 키 설정
 
 # SocketIO 객체 생성 - CORS 허용 (다른 도메인에서 접근할 수 있도록 설정)
 socketio = SocketIO(app, cors_allowed_origins='*')

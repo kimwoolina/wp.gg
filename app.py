@@ -5,7 +5,7 @@ import jwt
 import os
 from dotenv import load_dotenv
 
-# .env 파일로부터 환경 변수를 로드합니다.
+# .env 파일로부터 환경 변수를 로드
 load_dotenv()
 
 # Flask 앱 생성 및 설정
@@ -14,7 +14,10 @@ app = Flask(__name__)
 # config 파일로부터 SECRET_KEY 가져오기
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 시크릿 키 설정
 
-# SocketIO 객체 생성 - CORS 허용 (다른 도메인에서 접근할 수 있도록 설정)
+# SECRET_KEY가 잘 불러와졌는지 확인 (디버깅)
+print(f"SECRET_KEY: {app.config['SECRET_KEY']}")
+
+# SocketIO 객체 생성 - CORS 허용
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 # 사용자 로그인 엔드포인트

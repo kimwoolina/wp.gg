@@ -1,16 +1,16 @@
 from rest_framework import generics, serializers, status
 from rest_framework.response import Response
-from .models import PrivateChatRoom, Message, User, GroupChat, GroupChatMessage
-from .serializers import ChatRoomSerializer, MessageSerializer, GroupChatSerializer, GroupChatMessageSerializer
+from .models import PrivateChatRoom, ChatMessage, User, GroupChatRoom, GroupChatMessage
+from .serializers import PrivateChatRoomSerializer, ChatMessageSerializer, GroupChatRoomSerializer, GroupChatMessageSerializer
 from rest_framework.exceptions import ValidationError
 from django.http import Http404
 from django.views.generic import TemplateView 
 from rest_framework.permissions import IsAuthenticated
 
 
-# 채팅방 목록 조회 및 생성
+# 1:1 채팅방 목록 조회 및 생성
 class ChatRoomListCreateView(generics.ListCreateAPIView):
-    serializer_class = ChatRoomSerializer
+    serializer_class = PrivateChatRoomSerializer
 
     def get_queryset(self):
         user_username = self.request.query_params.get('username', None)
@@ -46,15 +46,15 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
         chat_room, created = PrivateChatRoom.objects.get_or_create(user1=user1, user2=user2)
         if not created:
             # 이미 존재하는 채팅방을 반환
-            return Response(ChatRoomSerializer(chat_room).data, status=status.HTTP_200_OK)
+            return Response(PrivateChatRoomSerializer(chat_room).data, status=status.HTTP_200_OK)
 
         # 새로운 채팅방 생성
         serializer.save(user1=user1, user2=user2)
 
 
-# 메시지 목록 조회
+# 1:1 메시지 목록 조회
 class MessageListView(generics.ListAPIView):
-    serializer_class = MessageSerializer
+    serializer_class = ChatMessageSerializer
 
     def get_queryset(self):
         room_id = self.kwargs.get('room_id')
@@ -62,7 +62,7 @@ class MessageListView(generics.ListAPIView):
         if not room_id:
             raise ValidationError({'detail': 'room_id 파라미터가 필요합니다.'})
 
-        queryset = Message.objects.filter(room_id=room_id)
+        queryset = ChatMessage.objects.filter(room_id=room_id)
 
         if not queryset.exists():
             raise Http404('해당 room_id로 메시지를 찾을 수 없습니다.')
@@ -70,11 +70,13 @@ class MessageListView(generics.ListAPIView):
         return queryset
 
 
+# 단체 채팅방 조회 및 생성
 class GroupChatListCreateView(generics.ListCreateAPIView):
-    queryset = GroupChat.objects.all()
-    serializer_class = GroupChatSerializer
+    queryset = GroupChatRoom.objects.all()
+    serializer_class = GroupChatRoomSerializer
 
 
+# 단체 채팅 메시지 조회 및 생성
 class GroupChatMessageListView(generics.ListCreateAPIView):
     queryset = GroupChatMessage.objects.all()
     serializer_class = GroupChatMessageSerializer
@@ -84,12 +86,14 @@ class GroupChatMessageListView(generics.ListCreateAPIView):
         return self.queryset.filter(group_chat__id=group_chat_id)
 
 
+# 채팅 페이지 템플릿 뷰
 class ChatTemplateView(TemplateView):  
     template_name = 'chat.html' 
 
 
+# 메시지 전송 뷰
 class SendMessageView(generics.CreateAPIView):
-    serializer_class = MessageSerializer
+    serializer_class = ChatMessageSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -104,4 +108,3 @@ class SendMessageView(generics.CreateAPIView):
 
         # 메시지 저장
         serializer.save(room=chat_room, sender=self.request.user)
-

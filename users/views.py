@@ -10,6 +10,20 @@ from .serializers import UserProfileSerializer
 from django.contrib.auth import update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'home.html')  # home.html 렌더링
+
+# 회원가입 페이지 렌더링
+def register_page(request):
+    return render(request, 'register.html')
+
+
+# 로그인 페이지 렌더링
+def login_page(request):
+    return render(request, 'login.html')
 
 
 # 회원가입
@@ -102,3 +116,5 @@ class ChangePasswordView(APIView):
             update_session_auth_hash(request, user) 
             return Response({"message": "비밀번호가 변경되었습니다."}, status=status.HTTP_200_OK)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+

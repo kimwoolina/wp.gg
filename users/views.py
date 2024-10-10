@@ -16,6 +16,15 @@ from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer
 from .bots import ask_chatgpt
 from django.db import models
 
+from .models import DiscordUser
+from wpgg.settings import DiscordOAuth2
+from django.http import HttpResponse, HttpRequest
+from django.shortcuts import redirect
+import requests
+from django.views import generic
+from django.contrib.auth import authenticate, login
+
+
 
 
 # 회원가입
@@ -333,3 +342,53 @@ class UserRecommendationView(APIView):
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class indexView(generic.TemplateView):
+    template_name = 'users/index.html'
+
+
+class discordLoginView(generic.View):
+    def get(self, request):
+        # if the user is logged in, they will be redirected.
+        if self.request.user.is_authenticated:
+            return redirect("index")
+        # If the 'QUERY_STRING' is > 0, that means the code is in the url ==> oauth2/login?code=********
+        elif len(self.request.META['QUERY_STRING']) > 0:
+            code = self.request.GET.get('code')
+            getUser = self.exchangeCode(code)
+            user = authenticate(request, user=getUser)
+            user = list(user).pop()
+            login(request, user)
+            return redirect("index")
+        # redirects to discord api
+        else:
+            return redirect(DiscordOAuth2["DISCORD_OAUTH2_URL"])
+        
+    # retrives user data from discord api
+    def exchangeCode(self, code: str):
+        data = {
+            "client_id": DiscordOAuth2["CLIENT_ID"],
+            "client_secret": DiscordOAuth2["CLIENT_SECRET"],
+            'grant_type': 'authorization_code',
+            "code": code,
+            "redirect_uri": DiscordOAuth2["REDIRECT_URI"],
+            "scope": "identify"
+        }
+        response = requests.post(f"{DiscordOAuth2['API_ENDPOINT']}/oauth2/token", data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+        print(response.status_code, response.text)
+        # 디버깅을 위해 응답 내용 확인
+        print(response.status_code)
+        print(response.json())
+        
+        response.raise_for_status()  # 응답에 문제가 있으면 예외를 발생시킴
+
+        # 여기서부터 추가합니다.
+        token_response = response.json()
+        access_token = token_response.get('access_token')
+
+        if access_token is None:
+            raise ValueError("Access token not found in the response")
+        
+        response = requests.get(f"{DiscordOAuth2['API_ENDPOINT']}/users/@me", headers={"Authorization": f"Bearer {response.json()['access_token']}"})
+        return response.json()

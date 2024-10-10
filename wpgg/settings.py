@@ -219,10 +219,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'PAGE_SIZE': 10,  # 페이지당 항목 수
 # }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # 허용할 프론트엔드 URL
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # 허용할 프론트엔드 URL
+# ]
 
+CORS_ALLOW_ALL_ORIGINS = True  # 모든 도메인 허용 (개발용)
 
 # All found @https://discord.com/developers/applications/ under your apps "OAuth2" section, make sure to set "scopes" as "identify" only.
 DiscordOAuth2 = {

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>추천된 유저 목록</title>
+</head>
+<body>
+    <h1>추천된 유저 목록</h1>
+    
+    {% if users %}
+        <ul>
+            {% for user in users %}
+                <li>{{ user.username }} (티어: {{ user.riot_tier }}, 포지션: {{ user.positions|join:", " }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>추천된 유저가 없습니다.</p>
+    {% endif %}
+    
+    <a href="{% url 'user_matching' %}">다시 찾기</a>
+</body>
+</html>

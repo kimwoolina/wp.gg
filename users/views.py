@@ -349,6 +349,12 @@ class indexView(generic.TemplateView):
 
 
 class discordLoginView(generic.View):
+    """
+    디스코드 oauth2 인증 로그인
+    작성자: 김우린
+    작성 날짜: 2024.10.10
+    """
+    
     def get(self, request):
         # if the user is logged in, they will be redirected.
         if self.request.user.is_authenticated:

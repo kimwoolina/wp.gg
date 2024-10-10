@@ -194,6 +194,11 @@ class UserDetailView(generics.GenericAPIView):
         return Response({"message": "해당 소환사에 대한 평판 정보가 없습니다."})
 
 
+class SearchPageView(TemplateView):
+    template_name = 'users/user_search.html'
+
+
+
 class MannerRankingView(ListAPIView):
     """
     유저 매너 랭킹 - 총점, 평가항목 순으로 정렬 기능, 포지션과 티어 필터 기능

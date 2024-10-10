@@ -65,4 +65,3 @@ class UserRankingSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'riot_username', 'riot_tag', 'riot_tier', 'positions', 'score', 'evaluations',]
-

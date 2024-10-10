@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>Discord Login Test</title>
+
+    <!--Oxygen Font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen&display=swap" rel="stylesheet">
+
+    <!--Custom CSS-->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+<body>
+    {% if not user.is_anonymous %}
+        <a href="#" class="login-button">
+            {{ user.discord_username }} 님 안녕하세요!
+            <span class="tag" >{{ user.discord_tag }}</span>
+            <img class="avatar" src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png">
+        </a>
+
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a class="login-button" href="{% url 'discord-login' %}">
+            <span>Login</span>
+            <img class="discord-logo" src="{% static 'svgs/Discord-Logo-Black.svg' %}">
+        </a>
+    {% endif %}
+
+
+</body>
+</html>

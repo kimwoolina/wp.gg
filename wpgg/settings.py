@@ -94,6 +94,7 @@ ASGI_APPLICATION = 'wpgg.asgi.application'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
+    'users.auth.DiscordAuthenticationBackend', #discord 백엔드
     'django.contrib.auth.backends.ModelBackend',  # 기본 백엔드
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth 백엔드
 )
@@ -221,3 +222,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # 허용할 프론트엔드 URL
 ]
+
+
+# All found @https://discord.com/developers/applications/ under your apps "OAuth2" section, make sure to set "scopes" as "identify" only.
+DiscordOAuth2 = {
+    "CLIENT_ID": config.DISCORD_CLIENT_ID,
+    "CLIENT_SECRET": config.DISCORD_SECRET_ID,
+    "API_ENDPOINT": "https://discord.com/api/v10",
+    "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
+    "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
+}

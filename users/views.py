@@ -70,7 +70,7 @@ class CustomLoginView(LoginView):
 # 로그아웃
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
-
+        logout(request) 
         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)
 
 
@@ -378,7 +378,7 @@ class discordLoginView(generic.View):
             user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
             
             login(request, user)
-            return redirect("index")
+            return redirect("user_index")
 
         # redirects to discord api
         else:

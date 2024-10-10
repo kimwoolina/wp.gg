@@ -67,10 +67,12 @@ To set up and run the project, follow these steps:
     # config.py
 
     DJANGO_SECRET_KEY = "your_django_secret_key_here"
-
     RIOT_API_KEY = "your_riot_api_key_here"
-    
     OPENAI_API_KEY = "your_openai_api_key_here"
+    DISCORD_CLIENT_ID = 'your_discord_client_id_here'
+    DISCORD_SECRET_ID = 'your_discord_secret_id_here'
+    DISCORD_OAUTH2_URL = 'your_discord_oauth2_url_here'
+
     ```
 
 5. **Apply database migrations:**
@@ -104,7 +106,9 @@ To set up and run the project, follow these steps:
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img width="720" alt="스크린샷 2024-10-08 오전 3 30 16" src="https://github.com/user-attachments/assets/833bbeef-ed4a-44df-9a31-d82adaf7707a">
+<img width="900" alt="스크린샷 2024-10-08 오전 3 30 16" src="https://github.com/user-attachments/assets/833bbeef-ed4a-44df-9a31-d82adaf7707a">
+
+<img width="900" alt="스크린샷 2024-10-11 오전 12 32 13" src="https://github.com/user-attachments/assets/08cd662a-e004-4d50-9798-e35f5805eed3">
 
 
  <br>

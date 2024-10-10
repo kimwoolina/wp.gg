@@ -67,10 +67,12 @@ To set up and run the project, follow these steps:
     # config.py
 
     DJANGO_SECRET_KEY = "your_django_secret_key_here"
-
     RIOT_API_KEY = "your_riot_api_key_here"
-    
     OPENAI_API_KEY = "your_openai_api_key_here"
+    DISCORD_CLIENT_ID = 'your_discord_client_id_here'
+    DISCORD_SECRET_ID = 'your_discord_secret_id_here'
+    DISCORD_OAUTH2_URL = 'your_discord_oauth2_url_here'
+
     ```
 
 5. **Apply database migrations:**

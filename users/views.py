@@ -253,9 +253,6 @@ class MannerRankingView(ListAPIView):
         # return Response(serializer.data, status=status.HTTP_200_OK)
         return render(request, 'users/rankings.html', {'users': serializer.data})
 
-class RankingView(TemplateView):
-    template_name = 'users/rankings.html' 
-    
     
 class UserRecommendationView(APIView):
     """

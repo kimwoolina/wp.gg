@@ -348,6 +348,7 @@ class indexView(generic.TemplateView):
     template_name = 'users/index.html'
 
 
+
 class discordLoginView(generic.View):
     def get(self, request):
         # if the user is logged in, they will be redirected.
@@ -357,11 +358,17 @@ class discordLoginView(generic.View):
         elif len(self.request.META['QUERY_STRING']) > 0:
             code = self.request.GET.get('code')
             getUser = self.exchangeCode(code)
-            user = authenticate(request, user=getUser)
-            user = list(user).pop()
-            login(request, user)
-            return redirect("index")
-        # redirects to discord api
+
+            # Find the user in your custom User model (instead of DiscordUser)
+            user = User.objects.filter(discord_username=getUser['username'], discord_tag=getUser['discriminator']).first()
+
+            # Authenticate the user and log them in
+            if user:
+                login(request, user)
+                return redirect("index")
+            else:
+                # Handle the case where the user is not found
+                return redirect("login")
         else:
             return redirect(DiscordOAuth2["DISCORD_OAUTH2_URL"])
         

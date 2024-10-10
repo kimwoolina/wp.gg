@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from articles.serializers import ArticleSerializer
 from articles.models import Articles
-from rest_framework.generics import ListAPIView
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
 
@@ -9,7 +9,7 @@ from rest_framework import status
 User = get_user_model()
 
 
-class ArticleListAPIView(ListAPIView):
+class ArticleAPIView(APIView):
 	def get(self, request): # 글 리스트
 		articles = Articles.objects.all()
 		serializer = ArticleSerializer(articles, many=True)

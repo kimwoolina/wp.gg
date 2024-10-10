@@ -15,4 +15,6 @@ urlpatterns = [
     path('register-page/', views.register_page, name='register_page'),  # 회원가입
     path('login-page/', views.login_page, name='login_page'), # 로그인
     path('home/', views.home, name='home'), 
+    path('users/rankings/', views.MannerRankingView().as_view(), name='user-rankings'), # 매너 랭킹
+    path('users/<str:username>/', views.UserDetailView().as_view(), name='user_detail'), # 특정 유저 검색 기능
 ]

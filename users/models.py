@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 
 class Positions(models.Model):
     position_name = models.CharField(max_length=7)
@@ -54,7 +55,8 @@ class UserPlatform(models.Model):
 
 class Evaluations(models.Model):
     #evaluation_id = models.CharField(max_length=20) #메모리 관리를 위한 고유 ID (ex: EV0001) # 뷰에서 로직구현 필요
-    user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
+    #user = models.ForeignKey(User, on_delete=models.CASCADE) #FK
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # 1:1 관계
     kindness = models.IntegerField(default=0) # 상냥함
     teamwork = models.IntegerField(default=0) # 팀워크
     communication = models.IntegerField(default=0) # 소통
@@ -69,4 +71,7 @@ class Evaluations(models.Model):
     afk = models.IntegerField(default=0) #탈주/자리비움
     cheating = models.IntegerField(default=0) #핵사용
     verbal_abuse= models.IntegerField(default=0) #언어폭력
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     

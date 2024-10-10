@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from datetime import timedelta
+import os
 from pathlib import Path
 from . import config
 
@@ -24,6 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.SECRET_KEY
 
+# OpenAI API 키 추가
+OPENAI_API_KEY = config.OPENAI_API_KEY
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -32,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    #thid_party
+    # third_party
+    'channels',
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
@@ -53,7 +59,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # 필요한 소셜 제공자 추가 (구글 로그인)
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    #local_apps
+    # local_apps
     'users',
     'articles',
     'chats',
@@ -61,6 +67,17 @@ INSTALLED_APPS = [
     'llm',
     'credits',
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.environ.get('REDIS_HOST', 'localhost'), 6379)],
+        },
+    },
+}
+
+ASGI_APPLICATION = 'wpgg.asgi.application'
 
 SITE_ID = 1
 
@@ -167,16 +184,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
 
-#Media files
+# Media files
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

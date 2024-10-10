@@ -24,7 +24,8 @@ from django.views import generic
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_backends
 
-
+from django.views.generic import TemplateView
+from django.shortcuts import render
 
 
 # 회원가입
@@ -249,7 +250,11 @@ class MannerRankingView(ListAPIView):
 
         # 정상적인 결과가 있을 경우
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'users/rankings.html', {'users': serializer.data})
+
+class RankingView(TemplateView):
+    template_name = 'users/rankings.html' 
     
     
 class UserRecommendationView(APIView):
@@ -426,3 +431,5 @@ class discordLoginView(generic.View):
             headers={"Authorization": f"Bearer {access_token}"}
         )
         return user_response.json()
+    
+

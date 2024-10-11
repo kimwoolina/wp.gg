@@ -111,6 +111,35 @@ def get_user_preferred_position(api_key, puuid):
 
     return "포지션 정보 없음"
 
+def get_top_champions(api_key, puuid):
+    """유저의 상위 5개 챔피언 ID를 조회합니다."""
+    url_top_champions = f"https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top?count=5&api_key={api_key}"
+
+    try:
+        response = requests.get(url_top_champions, timeout=10)
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching top champions: {e}")
+        return []
+
+def get_champion_name(champion_id):
+    """주어진 챔피언 ID로 챔피언 이름을 조회합니다."""
+    url_champion_data = "https://ddragon.leagueoflegends.com/cdn/14.20.1/data/ko_KR/champion.json"
+    try:
+        response = requests.get(url_champion_data, timeout=10)
+        response.raise_for_status()
+        champions = response.json()["data"]
+        
+        for champion in champions.values():
+            if champion["key"] == str(champion_id):
+                return champion["id"], champion["name"]  # (챔피언 ID, 챔피언 이름)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching champion data: {e}")
+    return None, None
+
 def get_user_info(api_key, riot_id, tag_line):
     """유저의 정보를 종합적으로 조회합니다."""
     puuid = get_user_puuid(api_key, riot_id, tag_line)
@@ -125,8 +154,24 @@ def get_user_info(api_key, riot_id, tag_line):
     league_data = get_user_league(api_key, summoner_id)
     preferred_position = get_user_preferred_position(api_key, puuid)
 
-    # profileIconId를 기반으로 프로필 아이콘 URL 생성
+    # 프로필 아이콘 URL 생성
     profile_icon_link = f"https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon{profile_data['profileIconId']}.png"
+
+    # 상위 5개 챔피언 ID 조회
+    top_champions = get_top_champions(api_key, puuid)
+    champion_info = []
+
+    for champion in top_champions:
+        champion_id = champion['championId']
+        champion_name, _ = get_champion_name(champion_id)
+        
+        if champion_name:  # 챔피언 이름이 유효한 경우
+            champion_image_link = f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png"
+            champion_info.append({
+                "championId": champion_id,
+                "championName": champion_name,
+                "championImage": champion_image_link
+            })
 
     # 리턴할 정보 구성
     user_info = {
@@ -135,7 +180,8 @@ def get_user_info(api_key, riot_id, tag_line):
         "summonerLevel": profile_data['summonerLevel'],
         "revisionDate": profile_data['revisionDate'],
         "league": [],
-        "preferredPosition": preferred_position  # 유저의 선호 포지션 추가
+        "preferredPosition": preferred_position,  # 유저의 선호 포지션 추가
+        "topChampions": champion_info  # 유저의 상위 챔피언 정보 추가
     }
 
     # 리그 정보에서 'RANKED_SOLO_5x5' 큐 타입만 필터링하여 추가
@@ -163,3 +209,4 @@ tag_line = 'KR1'      # 태그라인
 
 user_info = get_user_info(api_key, riot_id, tag_line)
 print(user_info)
+

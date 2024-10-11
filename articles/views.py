@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
 from articles.serializers import (
     ArticleSerializer, 
@@ -7,14 +7,23 @@ from articles.serializers import (
 )
 from articles.models import Articles, Comments
 from rest_framework.views import APIView
-from rest_framework import mixins
-from rest_framework.generics import RetrieveAPIView, GenericAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
 
 
 User = get_user_model()
+
+
+def article_detail_page(request):
+	return render(request, 'articles/article_detail.html')
+
+def article_list_page(request):
+	return render(request, 'articles/article_list.html')
+
+def article_create_page(request):
+	return render(request, "articles/article_create.html")
 
 
 class ArticleDetailView(RetrieveAPIView):
@@ -63,7 +72,7 @@ class ArticleAPIView(APIView):
 			article_serializer = ArticleSerializer(article)
 			return Response(article_serializer.data, status=status.HTTP_201_CREATED)
 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
-	
+
 
 class CommentAPIView(APIView):
 	def get_object(self, pk):

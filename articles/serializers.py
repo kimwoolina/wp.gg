@@ -22,17 +22,11 @@ class ArticleImageSerializer(serializers.ModelSerializer):
         fields='__all__'
         read_only_fields = ['article',]
 
-    def create(self, validated_data):
-        return Articles.objects.create(**validated_data)
-    
-    # def update(self, instance, validated_data):
-    #     pass
-
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta :
         model=Comments
-        fields='__all__'
+        fields=['content']
         read_only_fields = ['article', 'user',]
 
 
@@ -73,13 +67,11 @@ class ArticleSerializer(serializers.ModelSerializer):
         else:
             Evaluations.objects.create(user=article.reviewee, **target_evaluation_data)
         return article
-    
-    # def update(self, instance, validated_data):
-    #     pass
 
 
 class ArticleReadSerializer(serializers.ModelSerializer):
     # profile = 
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta :
         model=Articles
-        fields= '__all__'
+        fields= ['title', 'content', 'article_score', 'created_at', 'reviewer', 'reviewee', 'comments']

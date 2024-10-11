@@ -54,13 +54,45 @@ def get_user_info(api_key, riot_id, tag_line):
 
         data_league = response_league.json()
 
+        # 매치 ID 목록 조회
+        match_ids_url = f"https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?api_key={api_key}"
+        response_match_ids = requests.get(match_ids_url, timeout=10)
+
+        if response_match_ids.status_code != 200:
+            return {"error": f"Error: Status Code {response_match_ids.status_code}"}
+
+        match_ids = response_match_ids.json()  # 매치 ID 리스트
+
+        # 마지막 매치의 포지션 정보를 얻기 위해 요청
+        if not match_ids:  # 매치가 없을 경우
+            return {"error": "해당 유저의 매치 기록이 없습니다."}
+
+        last_match_id = match_ids[0]  # 가장 최근 매치 ID
+        match_info_url = f"https://asia.api.riotgames.com/lol/match/v5/matches/{last_match_id}?api_key={api_key}"
+        response_match_info = requests.get(match_info_url, timeout=10)
+
+        if response_match_info.status_code != 200:
+            return {"error": f"Error: Status Code {response_match_info.status_code}"}
+
+        match_info = response_match_info.json()
+
+        # 플레이어의 포지션 확인
+        participants = match_info['info']['participants']
+        player_position = None
+        
+        for player in participants:
+            if player['puuid'] == puuid:  # 현재 유저와 매치에서 플레이어를 비교
+                player_position = player.get('teamPosition', '포지션 정보 없음')  # 포지션 정보
+                break
+
         # 리턴할 정보 구성
         user_info = {
             "profileIconId": data_profile['profileIconId'],
             "profileIconLink": profile_icon_link,  # 프로필 아이콘 URL 추가
             "summonerLevel": data_profile['summonerLevel'],
             "revisionDate": data_profile['revisionDate'],
-            "league": []
+            "league": [],
+            "preferredPosition": player_position  # 유저의 선호 포지션 추가
         }
 
         # 리그 정보에서 'RANKED_SOLO_5x5' 큐 타입만 필터링하여 추가

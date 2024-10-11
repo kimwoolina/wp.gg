@@ -387,8 +387,8 @@ class UserRecommendationView(APIView):
                 evaluations_count=models.Count('evaluations')
             ).order_by(*[f'-evaluations__{field}' for field in filter_fields]).distinct()
 
-            # 상위 3명만 선택
-            users = users[:3]
+        # 상위 3명만 선택
+        users = users[:3]
 
         # 리뷰 데이터 가져오기
         all_reviews = Articles.objects.all().values('content', 'reviewee')
@@ -428,6 +428,9 @@ class UserRecommendationView(APIView):
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
 
+        # 상위 3명만 선택
+        users = users[:3]
+        
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)
         return render(request, 'users/matching_result.html', {'users': serializer.data})

@@ -24,6 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.SECRET_KEY
 
+RIOT_API_KEY = config.RIOT_API_KEY
+
+OPEN_API_KEY = config.OPEN_API_KEY
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_seed',
     # Allauth 관련 앱
+    'corsheaders',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',  # 소셜 로그인
@@ -58,6 +63,7 @@ INSTALLED_APPS = [
     'articles',
     'chats',
     'parties',
+    'profiles',
     'llm',
     'credits',
 ]
@@ -89,6 +95,7 @@ ASGI_APPLICATION = 'wpgg.asgi.application'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
+    'users.auth.DiscordAuthenticationBackend', #discord 백엔드
     'django.contrib.auth.backends.ModelBackend',  # 기본 백엔드
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth 백엔드
 )
@@ -103,6 +110,7 @@ ACCOUNT_UNIQUE_EMAIL = True  # 이메일 중복 방지
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 테스트용으로 콘솔에 출력
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -205,3 +213,24 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REST_FRAMEWORK = {
+#     # 페이지네이션
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 10,  # 페이지당 항목 수
+# }
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # 허용할 프론트엔드 URL
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # 모든 도메인 허용 (개발용)
+
+# All found @https://discord.com/developers/applications/ under your apps "OAuth2" section, make sure to set "scopes" as "identify" only.
+DiscordOAuth2 = {
+    "CLIENT_ID": config.DISCORD_CLIENT_ID,
+    "CLIENT_SECRET": config.DISCORD_SECRET_ID,
+    "API_ENDPOINT": "https://discord.com/api/v10",
+    "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
+    "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
+}

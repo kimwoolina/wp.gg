@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Rankings</title>
+</head>
+<body>
+
+    <h1>User Manner Rankings</h1>
+
+    <!-- 필터 폼 -->
+    <form id="filter-form" onsubmit="event.preventDefault(); applyFilters();">
+        <label for="positions">Select Positions:</label>
+        <select id="positions" name="positions" multiple>
+            <option value="top">Top</option>
+            <option value="jungle">Jungle</option>
+            <option value="mid">Mid</option>
+            <option value="adc">ADC</option>
+            <option value="support">Support</option>
+        </select>
+
+        <label for="sort_by">Sort By:</label>
+        <select id="sort_by" name="sort_by" multiple>
+            <option value="score">Score</option>
+            <option value="kindness">Kindness</option>
+            <option value="teamwork">Teamwork</option>
+            <option value="communication">Communication</option>
+            <option value="mental_strength">Mental Strength</option>
+            <option value="punctualiity">Punctuality</option>
+            <option value="positivity">Positivity</option>
+            <option value="mvp">MVP</option>
+            <option value="mechanical_skill">Mechanical Skill</option>
+            <option value="operation">Operation</option>
+            <option value="negativity">Negativity</option>
+            <option value="profanity">Profanity</option>
+            <option value="afk">AFK</option>
+            <option value="cheating">Cheating</option>
+            <option value="verbal_abuse">Verbal Abuse</option>
+        </select>
+
+        <button type="submit">Apply Filters</button>
+    </form>
+
+    <!-- 유저 랭킹 테이블 -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Riot Username</th>
+                <th>Riot Tag</th>
+                <th>Score</th>
+                <th>Kindness</th>
+                <th>Teamwork</th>
+                <th>Communication</th>
+                <th>Mental Strength</th>
+                <th>Punctuality</th>
+                <th>Positivity</th>
+                <th>MVP</th>
+                <th>Mechanical Skill</th>
+                <th>Operation</th>
+                <th>Negativity</th>
+                <th>Profanity</th>
+                <th>AFK</th>
+                <th>Cheating</th>
+                <th>Verbal Abuse</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.riot_username }}</td>
+                <td>{{ user.riot_tag }}</td>
+                <td>{{ user.score }}</td>
+                <td>{{ user.evaluations.kindness }}</td>
+                <td>{{ user.evaluations.teamwork }}</td>
+                <td>{{ user.evaluations.communication }}</td>
+                <td>{{ user.evaluations.mental_strength }}</td>
+                <td>{{ user.evaluations.punctualiity }}</td>
+                <td>{{ user.evaluations.positivity }}</td>
+                <td>{{ user.evaluations.mvp }}</td>
+                <td>{{ user.evaluations.mechanical_skill }}</td>
+                <td>{{ user.evaluations.operation }}</td>
+                <td>{{ user.evaluations.negativity }}</td>
+                <td>{{ user.evaluations.profanity }}</td>
+                <td>{{ user.evaluations.afk }}</td>
+                <td>{{ user.evaluations.cheating }}</td>
+                <td>{{ user.evaluations.verbal_abuse }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 자바스크립트 코드 -->
+    <script>
+        function getSelectedValues(selectElement) {
+            const selectedOptions = Array.from(selectElement.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+            return selectedOptions.join(',');
+        }
+
+        function applyFilters() {
+            // 선택된 포지션 값과 정렬 기준 가져오기
+            const positions = getSelectedValues(document.getElementById('positions'));
+            const sortBy = getSelectedValues(document.getElementById('sort_by'));
+
+            // URL 파라미터에 필터 및 정렬 조건을 추가하여 페이지 새로고침
+            let url = '?';
+            if (positions) {
+                url += `positions=${positions}&`;
+            }
+            if (sortBy) {
+                url += `sort_by=${sortBy}`;
+            }
+
+            window.location.href = url;
+        }
+    </script>
+
+</body>
+</html>

@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'articles',
     'chats',
     'parties',
+    'profiles',
     'llm',
     'credits',
 ]

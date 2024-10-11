@@ -49,7 +49,7 @@
                 }
     
                 $.ajax({
-                    url: `/auth/users/${username}/`,  // UserDetailView URL
+                    url: `/api/profile/${username}/`,  // UserDetailView URL
                     method: 'GET',
                     data: { riot_tag: riotTag },
                     success: function(response) {

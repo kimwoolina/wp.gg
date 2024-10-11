@@ -8,98 +8,83 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 from wpgg.settings import RIOT_API_KEY
 
-# API 키와 소환사 정보 설정
+# API 키 설정
 api_key = RIOT_API_KEY
-riot_id = '캣티천사'
-tag_line = 'KR1'
 
-# 북미서버 테스트
-# riot_id = 'exsmiley'
-# tag_line = 'smile'
-
-# 유저네임, 유저태그로 puuid 얻기
-def get_puuid(api_key, riot_id, tag_line):
+# 유저네임과 태그로 유저 존재 여부 확인 후 프로필과 리그 정보를 얻는 함수
+def get_user_info(api_key, riot_id, tag_line):
     encoded_riot_id = quote(riot_id)
     encoded_tag_line = quote(tag_line)
-    #아시아 서버
+
+    # 아시아 서버 URL 설정 (유저 존재 여부 확인)
     url_puuid = f"https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{encoded_riot_id}/{encoded_tag_line}?api_key={api_key}"
 
-    # 북미서버
-    #url_puuid = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{encoded_riot_id}/{encoded_tag_line}?api_key={api_key}"
-
-
     try:
-        response_puuid = requests.get(url_puuid, timeout=10)  # 타임아웃 추가
-        print(f"Response Status Code: {response_puuid.status_code}")  # 응답 코드 확인
+        # 유저 PUUID 조회
+        response_puuid = requests.get(url_puuid, timeout=10)
+        if response_puuid.status_code == 404:
+            return {"error": "해당 유저는 존재하지 않습니다."}
 
-        if response_puuid.status_code == 200:
-            data_puuid = response_puuid.json()
-            puuid = data_puuid['puuid']
-            print(f"PUUID: {puuid}")
-            return puuid
-        else:
-            print(f"Error: Status Code {response_puuid.status_code}")
-    except requests.exceptions.Timeout:
-        print("Request timed out")
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
+        if response_puuid.status_code != 200:
+            return {"error": f"Error: Status Code {response_puuid.status_code}"}
 
+        # 유저가 존재하는 경우 PUUID를 얻음
+        data_puuid = response_puuid.json()
+        puuid = data_puuid['puuid']
 
-def get_profile_by_puuid(api_key, puuid):
-    
-    #한국 서버
-    url_profile = f"https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}?api_key={api_key}"
-    
-    # 북미서버
-    #url_puuid = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{encoded_riot_id}/{encoded_tag_line}?api_key={api_key}"
-
-    try:
-        response_profile = requests.get(url_profile, timeout=10)  # 타임아웃 추가
-        print(f"Response Status Code: {response_profile.status_code}")  # 응답 코드 확인
-
-        if response_profile.status_code == 200:
-            data_profile = response_profile.json()
-            print(f"profile: {data_profile}")
-            return data_profile
-        else:
-            print(f"Error: Status Code {response_profile.status_code}")
-    except requests.exceptions.Timeout:
-        print("Request timed out")
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
+        # 한국 서버 프로필 정보 조회
+        url_profile = f"https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}?api_key={api_key}"
+        response_profile = requests.get(url_profile, timeout=10)
         
+        if response_profile.status_code != 200:
+            return {"error": f"Error: Status Code {response_profile.status_code}"}
 
-def get_league_by_uid(api_key, uid):
-    
-    #한국 서버
-    url_league = f"https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/{uid}?api_key={api_key}"
-    
-    try:
-        response_league = requests.get(url_league, timeout=10)  # 타임아웃 추가
-        print(f"Response Status Code: {response_league.status_code}")  # 응답 코드 확인
+        data_profile = response_profile.json()
+        summoner_id = data_profile['id']  # 리그 정보 조회를 위한 소환사 ID
 
-        if response_league.status_code == 200:
-            data_league = response_league.json()
-            print(f"league: {data_league}")
-            return data_league
-        else:
-            print(f"Error: Status Code {response_league.status_code}")
+        # profileIconId를 기반으로 프로필 아이콘 URL 생성
+        profile_icon_link = f"https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon{data_profile['profileIconId']}.png"
+
+        # 한국 서버 리그 정보 조회
+        url_league = f"https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}?api_key={api_key}"
+        response_league = requests.get(url_league, timeout=10)
+        
+        if response_league.status_code != 200:
+            return {"error": f"Error: Status Code {response_league.status_code}"}
+
+        data_league = response_league.json()
+
+        # 리턴할 정보 구성
+        user_info = {
+            "profileIconId": data_profile['profileIconId'],
+            "profileIconLink": profile_icon_link,  # 프로필 아이콘 URL 추가
+            "summonerLevel": data_profile['summonerLevel'],
+            "revisionDate": data_profile['revisionDate'],
+            "league": []
+        }
+
+        # 리그 정보가 존재할 경우 추가
+        for entry in data_league:
+            league_info = {
+                "tier": entry['tier'],
+                "rank": entry['rank'],
+                "leaguePoints": entry['leaguePoints'],
+                "wins": entry['wins'],
+                "losses": entry['losses']
+            }
+            user_info["league"].append(league_info)
+
+        return user_info
+
     except requests.exceptions.Timeout:
-        print("Request timed out")
+        return {"error": "Request timed out"}
     except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")  
+        return {"error": f"Request failed: {e}"}
 
 
+# 함수 호출 예시
+riot_id = '미밀면'  # 유저 이름
+tag_line = 'KR1'      # 태그라인
 
-
-
-# 함수 호출
-get_puuid(api_key, riot_id, tag_line)
-
-
-puuid = 'eLG4Ar5xPfzO_lo7Ganx2dG5YZDxPpi48xuwmHb2YBFH3Ia1RsKJmVGqppIf84fOGFH4zTtMlkP43w'
-get_profile_by_puuid(api_key, puuid)
-
-uid = 'dFrpUMMl6KFwwQr9EUWcBk53vReJRE7LspCmW7IEqensew'
-get_league_by_uid(api_key, uid)
-
+user_info = get_user_info(api_key, riot_id, tag_line)
+print(user_info)

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <!-- static 태그 로드 -->
+    {% load static %}
+    <style>
+        /* 전체 배경 색상 */
+        body {
+            background-color: #1E1E1E;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 네비게이션바 로고 및 계정전환 */
+        .nav-bar {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 100px;
+        }
+
+        /* 회원가입 폼 박스 */
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .register-box {
+            background-color: #2E2E2E;
+            padding: 40px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            color: white;
+        }
+
+        .register-box h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .register-box label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            color: #AAA;
+        }
+
+        .register-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #7C4DFF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .register-box button:hover {
+            background-color: #6C43D6;
+        }
+
+        .back-link {
+            color: #7C4DFF;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 페이지 하단 화살표 */
+        .back-arrow {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+        }
+
+        .back-arrow img {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 로고 및 계정 전환 -->
+    <div class="nav-bar">
+        <img src="{% static 'wpgg_logo_v2.png' %}" alt="logo" class="logo">
+        <div class="account-switch">
+            <span>계정전환</span>
+        </div>
+    </div>
+
+    <div class="register-container">
+        <div class="register-box">
+            <h2>로그인</h2>
+            <form id="login-form" method="POST">
+                {% csrf_token %}
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <br><br>
+                <button type="button" onclick="loginUser()">Send</button>
+                <br><br>
+
+            </form>            
+            <a href="{% url 'home' %}" class="back-link">돌아가기</a>
+        </div>
+    </div>
+
+    <!-- 페이지 하단 화살표 버튼 -->
+    <div class="back-arrow">
+        <a href="#"><img src="{% static 'back-arrow.png' %}" alt="뒤로가기"></a>
+    </div>
+
+    <script>
+        function loginUser() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+        
+            fetch('/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // CSRF 토큰 추가
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();  // JSON 응답을 파싱
+                } else {
+                    return response.json().then(data => {
+                        alert('로그인 실패: ' + data.error);
+                        console.error('Error data:', data);
+                    });
+                }
+            })
+            .then(data => {
+                if (data.access && data.refresh) {
+                    // JWT 토큰을 localStorage에 저장
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+
+                    alert('로그인 성공! 나와 맞는 유저를 찾아보세요🥰');
+                    window.location.href = '/home_logout/';  // 로그인 성공 후 이동할 페이지
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

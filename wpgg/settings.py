@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'chats',
     'parties',
     'profiles',
-    'llm',
     'credits',
 ]
 

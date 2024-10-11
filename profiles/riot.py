@@ -63,16 +63,21 @@ def get_user_info(api_key, riot_id, tag_line):
             "league": []
         }
 
-        # 리그 정보가 존재할 경우 추가
+        # 리그 정보에서 'RANKED_SOLO_5x5' 큐 타입만 필터링하여 추가
         for entry in data_league:
-            league_info = {
-                "tier": entry['tier'],
-                "rank": entry['rank'],
-                "leaguePoints": entry['leaguePoints'],
-                "wins": entry['wins'],
-                "losses": entry['losses']
-            }
-            user_info["league"].append(league_info)
+            if entry['queueType'] == 'RANKED_SOLO_5x5':
+                league_info = {
+                    "tier": entry['tier'],
+                    "rank": entry['rank'],
+                    "leaguePoints": entry['leaguePoints'],
+                    "wins": entry['wins'],
+                    "losses": entry['losses'],
+                    "veteran": entry['veteran'],
+                    "inactive": entry['inactive'],
+                    "freshBlood": entry['freshBlood'],
+                    "hotStreak": entry['hotStreak']
+                }
+                user_info["league"].append(league_info)
 
         return user_info
 

@@ -1,12 +1,25 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from articles.serializers import ArticleSerializer
-from articles.models import Articles
+from articles.serializers import (
+    ArticleSerializer, 
+    ArticleReadSerializer, 
+    CommentSerializer,
+)
+from articles.models import Articles, Comments
 from rest_framework.views import APIView
+from rest_framework import mixins
+from rest_framework.generics import RetrieveAPIView, GenericAPIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
 User = get_user_model()
+
+
+class ArticleDetailView(RetrieveAPIView):
+	queryset = Articles.objects.all()
+	serializer_class = ArticleReadSerializer
 
 
 class ArticleAPIView(APIView):
@@ -50,3 +63,38 @@ class ArticleAPIView(APIView):
 			article_serializer = ArticleSerializer(article)
 			return Response(article_serializer.data, status=status.HTTP_201_CREATED)
 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+	
+
+class CommentAPIView(APIView):
+	def get_object(self, pk):
+		return get_object_or_404(Comments, pk=pk)
+	
+	def post(self, request, pk):		# 댓글 생성
+		if request.user.is_authenticated:
+			article = get_object_or_404(Articles, pk=pk)
+			serializer = CommentSerializer(data=request.data)
+			if serializer.is_valid(raise_exception=True):
+				serializer.save(article=article, user=request.user)
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+	
+	def delete(self, request, pk):		# 댓글 삭제
+		if request.user.is_authenticated:
+			comment = self.get_object(pk)
+			comment.delete()
+			data = {"pk": f"{pk} 삭제됨"}
+			return Response(data, status=status.HTTP_200_OK)
+		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+	
+# class CommentDetailAPIView(APIView):
+# 	def post(self, request, parent_pk, child_pk):
+# 		if request.user.is_authenticated:
+# 			article = get_object_or_404(Articles, pk=parent_pk)
+# 			comment = get_object_or_404(Comments, pk=child_pk)
+
+# 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+	
+# 	def delete(self, request, pk):
+# 		if request.user.is_authenticated:
+# 			pass
+# 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)

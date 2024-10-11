@@ -5,9 +5,13 @@ from rest_framework import serializers
 from articles.models import (
     Articles, 
     ArticleImages, 
+    Comments,
 )
 from users.models import Evaluations
-from users.serializers import EvaluationSerializer
+from users.serializers import (
+    EvaluationSerializer, 
+    UserProfileSerializer
+)
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -26,7 +30,10 @@ class ArticleImageSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    pass
+    class Meta :
+        model=Comments
+        fields='__all__'
+        read_only_fields = ['article', 'user',]
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -71,5 +78,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     #     pass
 
 
-class ArticleDetailSerializer(ArticleSerializer):                    
-    pass
+class ArticleReadSerializer(serializers.ModelSerializer):
+    # profile = 
+    class Meta :
+        model=Articles
+        fields= '__all__'

@@ -85,16 +85,3 @@ class CommentAPIView(APIView):
 			data = {"pk": f"{pk} 삭제됨"}
 			return Response(data, status=status.HTTP_200_OK)
 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
-	
-# class CommentDetailAPIView(APIView):
-# 	def post(self, request, parent_pk, child_pk):
-# 		if request.user.is_authenticated:
-# 			article = get_object_or_404(Articles, pk=parent_pk)
-# 			comment = get_object_or_404(Comments, pk=child_pk)
-
-# 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
-	
-# 	def delete(self, request, pk):
-# 		if request.user.is_authenticated:
-# 			pass
-# 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)

@@ -94,6 +94,8 @@ def get_match_info(api_key, match_id):
 
 def get_user_preferred_position(api_key, puuid):
     """PUUID로부터 유저의 선호 포지션을 조회합니다."""
+    positions = []
+    
     match_ids = get_match_ids(api_key, puuid)
     if not match_ids:
         return "해당 유저의 매치 기록이 없습니다."
@@ -107,8 +109,13 @@ def get_user_preferred_position(api_key, puuid):
     participants = match_info['info']['participants']
     for player in participants:
         if player['puuid'] == puuid:
-            return player.get('teamPosition', '포지션 정보 없음')
+            positions.append(player['individualPosition'])
+            
 
+    # 가장 많이 등장한 포지션 반환 (선호 포지션)
+    if positions:
+        return max(set(positions), key=positions.count)
+    
     return "포지션 정보 없음"
 
 def get_top_champions(api_key, puuid):

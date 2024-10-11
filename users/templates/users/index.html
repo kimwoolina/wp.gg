@@ -13,6 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Oxygen&display=swap" rel="stylesheet">
 </head>
 <body>
+    <img src="https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon1.png" alt="Summoner Icon" width="200" height="200">
+
+
     {% if not user.is_anonymous %}
         <a href="#" class="login-button">
             {{ user.discord_username }}<span class="tag" >#{{ user.discord_tag }}</span> 님 안녕하세요!

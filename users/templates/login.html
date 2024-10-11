@@ -29,8 +29,11 @@
             padding: 20px;
         }
 
+        /* 로고 이미지 */
         .logo {
-            width: 100px;
+            width: 150px; /* 로고 크기 조정 */
+            cursor: pointer;
+            margin-left: 25px; /* 왼쪽 여백 추가 */
         }
 
         /* 회원가입 폼 박스 */
@@ -129,7 +132,6 @@
                 {% csrf_token %}
                 <label for="email">Email</label>
                 <input type="email" id="email" required>
-            
                 <label for="password">Password</label>
                 <input type="password" id="password" required>
                 <br><br>
@@ -179,7 +181,7 @@
                     localStorage.setItem('refresh_token', data.refresh);
 
                     alert('로그인 성공! 나와 맞는 유저를 찾아보세요🥰');
-                    window.location.href = '/home_logout/';  // 로그인 성공 후 이동할 페이지
+                    window.location.href = '/home/';  // 로그인 성공 후 이동할 페이지
                 }
             })
             .catch(error => console.error('Error:', error));

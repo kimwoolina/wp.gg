@@ -29,8 +29,11 @@
             padding: 20px;
         }
 
+        /* 로고 이미지 */
         .logo {
-            width: 100px;
+            width: 150px; /* 로고 크기 조정 */
+            cursor: pointer;
+            margin-left: 25px; /* 왼쪽 여백 추가 */
         }
 
         /* 회원가입 폼 박스 */
@@ -131,8 +134,10 @@
                 <label for="username">Username</label>
                 <input type="text" id="username" required>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <label for="password1">Password1</label>
+                <input type="password" id="password1" required>
+                <label for="password2">Password2</label>
+                <input type="password" id="password2" required>
                 <br><br><br>
                 <button type="button" onclick="registerUser()">Send</button>
                 <br><br>
@@ -149,7 +154,8 @@
         function registerUser() {
             const email = document.getElementById('email').value;
             const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const password1 = document.getElementById('password1').value;
+            const password2 = document.getElementById('password2').value;
 
             fetch('/auth/register/', {
                 method: 'POST',
@@ -160,7 +166,8 @@
                 body: JSON.stringify({
                     email: email,
                     username: username,
-                    password: password
+                    password1: password1,
+                    password2: password2
                 })
             })
             .then(response => {

@@ -1,3 +1,13 @@
+"""
+description:
+라이엇 API 활용해
+라이엇 유저네임, 유저태그 입력하면
+해당 유저가 존재한다면
+프로필 아이콘, 레벨, 최근 수정일, 티어, 랭크, 승패 수, 선호 포지션 등을 반환.
+
+작성자: 김우린
+작성일: 2024-10-12
+"""
 import sys
 import os
 import requests
@@ -11,92 +21,126 @@ from wpgg.settings import RIOT_API_KEY
 # API 키 설정
 api_key = RIOT_API_KEY
 
-# 유저네임과 태그로 유저 존재 여부 확인 후 프로필과 리그 정보를 얻는 함수
-def get_user_info(api_key, riot_id, tag_line):
+def get_user_puuid(api_key, riot_id, tag_line):
+    """주어진 리그 ID와 태그라인으로 유저의 PUUID를 조회합니다."""
     encoded_riot_id = quote(riot_id)
     encoded_tag_line = quote(tag_line)
 
-    # 아시아 서버 URL 설정 (유저 존재 여부 확인)
     url_puuid = f"https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{encoded_riot_id}/{encoded_tag_line}?api_key={api_key}"
 
     try:
-        # 유저 PUUID 조회
-        response_puuid = requests.get(url_puuid, timeout=10)
-        if response_puuid.status_code == 404:
-            return {"error": "해당 유저는 존재하지 않습니다."}
+        response = requests.get(url_puuid, timeout=10)
+        if response.status_code == 404:
+            return None  # 유저가 존재하지 않음
 
-        if response_puuid.status_code != 200:
-            return {"error": f"Error: Status Code {response_puuid.status_code}"}
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()['puuid']
 
-        # 유저가 존재하는 경우 PUUID를 얻음
-        data_puuid = response_puuid.json()
-        puuid = data_puuid['puuid']
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching PUUID: {e}")
+        return None
 
-        # 한국 서버 프로필 정보 조회
-        url_profile = f"https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}?api_key={api_key}"
-        response_profile = requests.get(url_profile, timeout=10)
-        
-        if response_profile.status_code != 200:
-            return {"error": f"Error: Status Code {response_profile.status_code}"}
+def get_user_profile(api_key, puuid):
+    """PUUID로부터 유저의 프로필 정보를 조회합니다."""
+    url_profile = f"https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}?api_key={api_key}"
 
-        data_profile = response_profile.json()
-        summoner_id = data_profile['id']  # 리그 정보 조회를 위한 소환사 ID
+    try:
+        response = requests.get(url_profile, timeout=10)
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()
 
-        # profileIconId를 기반으로 프로필 아이콘 URL 생성
-        profile_icon_link = f"https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon{data_profile['profileIconId']}.png"
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching profile: {e}")
+        return None
 
-        # 한국 서버 리그 정보 조회
-        url_league = f"https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}?api_key={api_key}"
-        response_league = requests.get(url_league, timeout=10)
-        
-        if response_league.status_code != 200:
-            return {"error": f"Error: Status Code {response_league.status_code}"}
+def get_user_league(api_key, summoner_id):
+    """소환사 ID로부터 유저의 리그 정보를 조회합니다."""
+    url_league = f"https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}?api_key={api_key}"
 
-        data_league = response_league.json()
+    try:
+        response = requests.get(url_league, timeout=10)
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()
 
-        # 매치 ID 목록 조회
-        match_ids_url = f"https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?api_key={api_key}"
-        response_match_ids = requests.get(match_ids_url, timeout=10)
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching league info: {e}")
+        return None
 
-        if response_match_ids.status_code != 200:
-            return {"error": f"Error: Status Code {response_match_ids.status_code}"}
+def get_match_ids(api_key, puuid):
+    """PUUID로부터 유저의 매치 ID 목록을 조회합니다."""
+    url_match_ids = f"https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?api_key={api_key}"
 
-        match_ids = response_match_ids.json()  # 매치 ID 리스트
+    try:
+        response = requests.get(url_match_ids, timeout=10)
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()
 
-        # 마지막 매치의 포지션 정보를 얻기 위해 요청
-        if not match_ids:  # 매치가 없을 경우
-            return {"error": "해당 유저의 매치 기록이 없습니다."}
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching match IDs: {e}")
+        return None
 
-        last_match_id = match_ids[0]  # 가장 최근 매치 ID
-        match_info_url = f"https://asia.api.riotgames.com/lol/match/v5/matches/{last_match_id}?api_key={api_key}"
-        response_match_info = requests.get(match_info_url, timeout=10)
+def get_match_info(api_key, match_id):
+    """매치 ID로부터 매치 정보를 조회합니다."""
+    url_match_info = f"https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}"
 
-        if response_match_info.status_code != 200:
-            return {"error": f"Error: Status Code {response_match_info.status_code}"}
+    try:
+        response = requests.get(url_match_info, timeout=10)
+        response.raise_for_status()  # HTTPError가 발생하면 예외 발생
+        return response.json()
 
-        match_info = response_match_info.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching match info: {e}")
+        return None
 
-        # 플레이어의 포지션 확인
-        participants = match_info['info']['participants']
-        player_position = None
-        
-        for player in participants:
-            if player['puuid'] == puuid:  # 현재 유저와 매치에서 플레이어를 비교
-                player_position = player.get('teamPosition', '포지션 정보 없음')  # 포지션 정보
-                break
+def get_user_preferred_position(api_key, puuid):
+    """PUUID로부터 유저의 선호 포지션을 조회합니다."""
+    match_ids = get_match_ids(api_key, puuid)
+    if not match_ids:
+        return "해당 유저의 매치 기록이 없습니다."
 
-        # 리턴할 정보 구성
-        user_info = {
-            "profileIconId": data_profile['profileIconId'],
-            "profileIconLink": profile_icon_link,  # 프로필 아이콘 URL 추가
-            "summonerLevel": data_profile['summonerLevel'],
-            "revisionDate": data_profile['revisionDate'],
-            "league": [],
-            "preferredPosition": player_position  # 유저의 선호 포지션 추가
-        }
+    last_match_id = match_ids[0]  # 가장 최근 매치 ID
+    match_info = get_match_info(api_key, last_match_id)
 
-        # 리그 정보에서 'RANKED_SOLO_5x5' 큐 타입만 필터링하여 추가
-        for entry in data_league:
+    if not match_info:
+        return "매치 정보 조회 실패."
+
+    participants = match_info['info']['participants']
+    for player in participants:
+        if player['puuid'] == puuid:
+            return player.get('teamPosition', '포지션 정보 없음')
+
+    return "포지션 정보 없음"
+
+def get_user_info(api_key, riot_id, tag_line):
+    """유저의 정보를 종합적으로 조회합니다."""
+    puuid = get_user_puuid(api_key, riot_id, tag_line)
+    if not puuid:
+        return {"error": "해당 유저는 존재하지 않습니다."}
+
+    profile_data = get_user_profile(api_key, puuid)
+    if not profile_data:
+        return {"error": "프로필 정보를 가져오는 데 실패했습니다."}
+
+    summoner_id = profile_data['id']
+    league_data = get_user_league(api_key, summoner_id)
+    preferred_position = get_user_preferred_position(api_key, puuid)
+
+    # profileIconId를 기반으로 프로필 아이콘 URL 생성
+    profile_icon_link = f"https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon{profile_data['profileIconId']}.png"
+
+    # 리턴할 정보 구성
+    user_info = {
+        "profileIconId": profile_data['profileIconId'],
+        "profileIconLink": profile_icon_link,
+        "summonerLevel": profile_data['summonerLevel'],
+        "revisionDate": profile_data['revisionDate'],
+        "league": [],
+        "preferredPosition": preferred_position  # 유저의 선호 포지션 추가
+    }
+
+    # 리그 정보에서 'RANKED_SOLO_5x5' 큐 타입만 필터링하여 추가
+    if league_data:
+        for entry in league_data:
             if entry['queueType'] == 'RANKED_SOLO_5x5':
                 league_info = {
                     "tier": entry['tier'],
@@ -111,13 +155,7 @@ def get_user_info(api_key, riot_id, tag_line):
                 }
                 user_info["league"].append(league_info)
 
-        return user_info
-
-    except requests.exceptions.Timeout:
-        return {"error": "Request timed out"}
-    except requests.exceptions.RequestException as e:
-        return {"error": f"Request failed: {e}"}
-
+    return user_info
 
 # 함수 호출 예시
 riot_id = '미밀면'  # 유저 이름

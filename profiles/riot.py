@@ -12,7 +12,6 @@ from wpgg.settings import RIOT_API_KEY
 api_key = RIOT_API_KEY
 riot_id = '캣티천사'
 tag_line = 'KR1'
-summoner_id = 'lynpeep'
 
 # 북미서버 테스트
 # riot_id = 'exsmiley'

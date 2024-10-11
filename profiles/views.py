@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework import generics
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
@@ -8,10 +8,14 @@ from rest_framework.generics import ListAPIView
 from django.db.models import F, Q
 from users.models import User, Evaluations
 from articles.models import Articles
-from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer
+from .serializers import ( UserSerializer, EvaluationSerializer, 
+                        ArticleSerializer,  UserRankingSerializer )
 from .bots import ask_chatgpt
+from .riot import get_user_info
 from django.db import models
 from django.views import generic
+from rest_framework.permissions import AllowAny
+from wpgg.settings import RIOT_API_KEY
 
 
 class UserDetailView(generics.GenericAPIView):
@@ -330,3 +334,21 @@ class MatchingPageView(TemplateView):
 
 class indexView(generic.TemplateView):
     template_name = 'users/index.html'
+    
+class RiotPageView(generic.TemplateView):
+    template_name = 'profiles/riot.html'
+
+class GetRiotInfoView(APIView):
+    def get(self, request):
+        riot_username = request.query_params.get('riot_id')
+        tag_line = request.query_params.get('tag_line')
+
+        if not riot_username or not tag_line:
+            return Response({"message": "유효하지 않은 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_info = get_user_info(RIOT_API_KEY, riot_username, tag_line)
+
+        if 'error' in user_info:
+            return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(user_info, status=status.HTTP_200_OK)

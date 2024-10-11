@@ -11,11 +11,21 @@
 
     <form action="{% url 'articles:articles' %}" method="POST">
         {% csrf_token %}
+        <div>
+            <select id="reviewee-select">
+                <option value="">--평가 할 사람을 고르세요--</option>
+                <option value=""></option>
+              </select>
+        </div>
+
         <label for="title">title</label>
         <input type="text" id="title" required><br>
 
         <label for="content">content</label>
         <input type="text" id="content" required><br>
+        
+        <label for="img">image</label>
+        <input type="file" id="img" multiple><br>
 
         <label for="article_score">score</label>
         <input type="range" id="article_score" min="0" max="10" required><br>

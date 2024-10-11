@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홈</title>
+    <!-- static 태그 로드 -->
+    {% load static %}
+    <!-- 정적 파일 로드 -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="{% static 'app.js' %}"></script>
+    <style>
+        /* 네비게이션 바 */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 상단 가운데 텍스트 */
+        .nav-center {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-center a {
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 텍스트 호버 시 연보라색 */
+        .nav-center a:hover {
+            color: #B19CD9; /* 연보라색 */
+        }
+
+        /* Join 버튼과 Login 버튼 */
+        .action-btn {
+            background-color: #B19CD9; /* 연보라색 */
+            color: white;
+            padding: 6px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            margin-left: 10px; /* 버튼 간격 */
+        }
+
+        .action-btn:hover {
+            background-color: #9B8DB6; /* Hover 색상 */
+        }
+
+        /* 검색 바 */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .search-box {
+            width: 600px;
+            padding: 15px;
+            background-color: #B19CD9; /* 연보라색 */
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box input {
+            width: 85%;
+            background: none;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 16px;
+        }
+
+        .search-box input::placeholder {
+            color: #e0e0e0;
+        }
+
+        /* 햄버거 아이콘 */
+        .hamburger {
+            color: #C0C0C0; /* 옅은 회색 */
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* 돋보기 아이콘 */
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            fill: #C0C0C0; /* 옅은 회색 */
+            cursor: pointer;
+        }
+
+        /* 돋보기 호버 시 짙은 보라색 */
+        .search-icon:hover {
+            fill: #7C4DFF;
+        }
+
+        /* 페이지 하단 화살표 버튼 */
+        .back-arrow {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-arrow img {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <div class="nav-bar">
+        <!-- 로고 -->
+        <img src="{% static 'wpgg_logo_v2.png' %}" alt="logo" class="logo">
+
+        <!-- 상단 가운데 텍스트 -->
+        <div class="nav-center">
+            <a href="/user-review/">유저리뷰</a>
+            <a href="/manner-ranking/">매너랭킹</a>
+            <a href="/team-matching/">팀매칭</a>
+            <a href="/chat/">채팅</a>
+        </div>
+
+        <!-- 상단 오른쪽 Login과 Join 버튼 -->
+        <div>
+            <a href="{% url 'login_page' %}" class="action-btn">Login</a>
+            <a href="{% url 'register_page' %}" class="action-btn">Join</a>
+        </div>
+    </div>
+
+    <!-- 검색 바 -->
+    <div class="search-bar">
+        <div class="search-box">
+            <span class="hamburger">☰</span> <!-- 햄버거 아이콘 -->
+            <input type="text" placeholder="유저를 검색하세요...">
+            <!-- SVG 돋보기 아이콘 -->
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
+            </svg>
+        </div>
+    </div>
+
+</body>
+</html>

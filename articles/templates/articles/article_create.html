@@ -1,0 +1,69 @@
+{% load rest_framework %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form action="{% url 'articles:articles' %}" method="POST">
+        {% csrf_token %}
+        <label for="title">title</label>
+        <input type="text" id="title" required><br>
+
+        <label for="content">content</label>
+        <input type="text" id="content" required><br>
+
+        <label for="article_score">score</label>
+        <input type="range" id="article_score" min="0" max="10" required><br>
+        <div>
+            <input type="radio" id="kindness" value="kindness">
+            <label for="kindness">kindness</label>
+
+            <input type="radio" id="teamwork" value="teamwork">
+            <label for="teamwork">teamwork</label>
+
+            <input type="radio" id="communication" value="communication">
+            <label for="communication">communication</label>
+
+            <input type="radio" id="mental_strength" value="mental_strength">
+            <label for="mental_strength">mental_strength</label>
+
+            <input type="radio" id="punctuality" value="punctuality">
+            <label for="punctuality">punctuality</label>
+
+            <input type="radio" id="positivity" value="positivity">
+            <label for="positivity">positivity</label>
+
+            <input type="radio" id="mvp" value="mvp">
+            <label for="mvp">mvp</label>
+
+            <input type="radio" id="mechanical_skill" value="mechanical_skill">
+            <label for="mechanical_skill">mechanical_skill</label>
+
+            <input type="radio" id="operation" value="operation">
+            <label for="operation">operation</label>
+
+            <input type="radio" id="negativity" value="negativity">
+            <label for="negativity">negativity</label>
+
+            <input type="radio" id="profanity" value="profanity">
+            <label for="profanity">profanity</label>
+
+            <input type="radio" id="afk" value="afk">
+            <label for="afk">afk</label>
+
+            <input type="radio" id="cheating" value="cheating">
+            <label for="cheating">cheating</label>
+
+            <input type="radio" id="verbal_abuse" value="verbal_abuse">
+            <label for="verbal_abuse">verbal_abuse</label>
+        </div>
+
+        <input type="submit" value="Save" />
+    </form> 
+</body>
+</html>

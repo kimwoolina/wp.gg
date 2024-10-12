@@ -125,10 +125,6 @@ class CustomDeleteUserView(APIView):
 
         return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)
     
-    
-# 마이페이지 조회 및 수정
-class UserProfileView(APIView):
-    permission_classes = [permissions.IsAuthenticated]  
 
 # 마이페이지 조회 및 수정
 class UserProfileView(APIView):

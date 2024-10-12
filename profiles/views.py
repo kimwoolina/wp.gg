@@ -330,10 +330,7 @@ class UserRecommendationView(APIView):
 
 class MatchingPageView(TemplateView):
     template_name = 'users/matching.html'
-
-
-class indexView(generic.TemplateView):
-    template_name = 'users/index.html'
+    
     
 class RiotPageView(generic.TemplateView):
     template_name = 'profiles/riot.html'

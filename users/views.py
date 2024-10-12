@@ -111,6 +111,8 @@ class ChangePasswordView(APIView):
             return Response({"message": "비밀번호가 변경되었습니다."}, status=status.HTTP_200_OK)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class indexView(generic.TemplateView):
+    template_name = 'users/index.html'
 
 class discordLoginView(generic.View):
     """

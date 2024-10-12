@@ -7,9 +7,13 @@
     <!-- static 태그 로드 -->
     {% load static %}
     <!-- 정적 파일 로드 -->
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script src="{% static 'app.js' %}"></script>
     <style>
+        /* 전체 배경 색상 */
+        body {
+            background-color: #1E1E1E;
+        }
+
         /* 네비게이션 바 */
         .nav-bar {
             display: flex;
@@ -72,6 +76,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: 200px;
             margin-bottom: 150px;
         }
 

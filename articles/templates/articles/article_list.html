@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    list
-</body>
-</html>
+{% extends "base.html" %}
+{% load rest_framework %}
+
+{% block content %}
+    <h1>list</h1>
+    <div id="articles">
+        {% for article in articles %}
+            <il>
+                제목: {{ article.title }}
+                작성자: {{ article.reviewer.username }}
+                리뷰대상: {{ article.reviewee.username }}
+            </il>
+        {% endfor %}
+    </div>
+{% endblock %}

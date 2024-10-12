@@ -9,5 +9,4 @@ urlpatterns = [
     path('riotPage/', views.RiotPageView.as_view(), name='user-index'),
     path('riot/', views.GetRiotInfoView.as_view(), name='user-profile'),
     path('<str:username>/', views.UserDetailView.as_view(), name='user-detail'), # 특정 유저 검색 기능
-    path('', views.indexView.as_view(), name='user_index'),
 ]

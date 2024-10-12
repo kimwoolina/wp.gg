@@ -9,9 +9,9 @@ from articles.models import (
 )
 from users.models import Evaluations
 from users.serializers import (
-    EvaluationSerializer, 
     UserProfileSerializer
 )
+from profiles.serializers import EvaluationSerializer
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

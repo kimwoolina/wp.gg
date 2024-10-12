@@ -1,15 +1,41 @@
+from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
-from articles.serializers import ArticleSerializer
-from articles.models import Articles
-from rest_framework.generics import ListAPIView
+from articles.serializers import (
+    ArticleSerializer, 
+    ArticleReadSerializer, 
+    CommentSerializer,
+)
+from articles.models import Articles, Comments
+from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.renderers import TemplateHTMLRenderer
 
 
 User = get_user_model()
 
 
-class ArticleListAPIView(ListAPIView):
+def article_detail_page(request):
+	return render(request, 'articles/article_detail.html')
+
+def article_list_page(request):
+	return render(request, 'articles/article_list.html')
+
+def article_create_page(request):
+	return render(request, "articles/article_create.html")
+
+
+class ArticleDetailView(RetrieveAPIView):
+	queryset = Articles.objects.all()
+	serializer_class = ArticleReadSerializer
+
+
+class ArticleAPIView(APIView):
+	def get(self, request): # 글 리스트
+		articles = Articles.objects.all()
+		serializer = ArticleSerializer(articles, many=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 	def post(self, request): # 글 생성
 		if request.user.is_authenticated:
 			req_data = request.data
@@ -45,4 +71,26 @@ class ArticleListAPIView(ListAPIView):
 			# 최종적으로 생성된 아티클 데이터 반환
 			article_serializer = ArticleSerializer(article)
 			return Response(article_serializer.data, status=status.HTTP_201_CREATED)
+		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentAPIView(APIView):
+	def get_object(self, pk):
+		return get_object_or_404(Comments, pk=pk)
+	
+	def post(self, request, pk):		# 댓글 생성
+		if request.user.is_authenticated:
+			article = get_object_or_404(Articles, pk=pk)
+			serializer = CommentSerializer(data=request.data)
+			if serializer.is_valid(raise_exception=True):
+				serializer.save(article=article, user=request.user)
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+	
+	def delete(self, request, pk):		# 댓글 삭제
+		if request.user.is_authenticated:
+			comment = self.get_object(pk)
+			comment.delete()
+			data = {"pk": f"{pk} 삭제됨"}
+			return Response(data, status=status.HTTP_200_OK)
 		return Response({"message":"로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)

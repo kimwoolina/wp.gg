@@ -23,20 +23,34 @@
 
         /* 로고 이미지 */
         .logo {
-            width: 50px;
+            width: 150px;
             cursor: pointer;
-            margin-left: 2px;
+            margin-left: 5px;
+            margin-top: 2px;
+        }
+
+        .right-logout {
+            position: fixed; /* 화면에 고정 */
+            top: 35px; /* 화면 하단에서 20px 위에 위치 */
+            right: 25px; /* 화면 오른쪽에서 20px 왼쪽에 위치 */
         }
 
         .right-logout .logout-button {
-            width: 45px; /* 크기 조정 */
-            height: 45px; /* 크기 조정 */
+            width: 41pxpx; /* 크기 조정 */
+            height: 44px; /* 크기 조정 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            padding-right: 20px;
+            margin-right: -15px;
         }
 
         /* 왼쪽 오른쪽 */
         .container {
             display: flex;
-            width: 100%;
+            width: 95%;
         }
 
         .main-content {
@@ -45,15 +59,11 @@
 
         /* 왼쪽 */
         .logo {
-            margin-bottom: 40px;
-        }
-
-        .logo img {
-            width: 200px;
+            margin-bottom: 10px;
         }
 
         .sidebar {
-            width: 220px;
+            width: 230px;
             background-color: transparent;
             padding: 20px;
             display: flex;
@@ -68,127 +78,101 @@
         }
 
         .profile-icon {
-            width: 40px;
+            width: 45px;
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
         }
 
         .username {
-            font-size: 18px;
+            font-size: 16px;
             color: #fff;
             margin-right: 5px;
         }
 
-        .verified-badge {
+        .verified-badge {6
             width: 16px;
             height: 16px;
         }
 
         .menu {
             list-style: none;
-            padding: 0;
+            padding: 20px;
+            margin-top: 1px;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            margin: 15px 0;
-            font-size: 16px;
-            color: #fff;
+            margin: 28px 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: #ECE7F9;
             cursor: pointer;
+            padding-left: 12px;
         }
 
         .menu-item:hover {
-            color: #f0a500;
+            color: #ACA7D8;
+            font-style: bold;
         }
 
         .menu-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+            width: 30px;
+            height: 26px;
+            margin-right: 14px;
         }
-
-        /* 오른쪽 */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: transparent;
-            color: transparent;
-        }
-
-        .left-arrow {
-            display: flex;
-            align-items: center;
-            padding-left: 20px;
-        }
-
-        .center-search {
+        /* 검색 바 */
+        .search-bar {
             display: flex;
             justify-content: center;
-            flex: 1;
-            margin: 0 20px;
-        }
-
-        .right-logout {
-            display: flex;
             align-items: center;
-            color: #fff;
-            cursor: pointer;
-            padding-right: 20px;
+            margin-top: 150px;
+            margin-bottom: 150px;
         }
-
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #8a70a6;
-            padding: 10px 20px;
+        .search-box {
+            width: 240px;
+            padding: 6px;
+            background-color: #6f69a5;
             border-radius: 20px;
-            width: 70%;
-            margin: 20px auto;
-            color: #fff;
-        }
-
-        .menu-icon {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .menu-icon span {
-            width: 20px;
-            height: 2px;
-            background-color: #5b4b65;
-            display: block;
-        }
-
-        .search-section {
             display: flex;
             align-items: center;
-            flex: 1;
-            margin-left: 15px;
+            justify-content: space-between;
+
         }
 
-        .search-section input {
+        .search-box input {
+            width: 80%;
+            background: none;
             border: none;
-            background-color: transparent;
-            color: white;
-            font-size: 16px;
             outline: none;
-            width: 100%;
-            padding: 0 10px;
+            color: #ECE7F9;
+            font-size: 15px;
         }
 
-        .search-section .search-icon {
-            background-color: transparent;
-            border: none;
-            color: #5b4b65;
+        .search-box input::placeholder {
+            color: #e0e0e0;
+        }
+
+        /* 햄버거 아이콘 */
+        .hamburger {
+            color: #C0C0C0;
+            font-size: 20px;
             cursor: pointer;
-            font-size: 18px;
+            margin-left: 14px;
+        }
+
+        /* 돋보기 아이콘 */
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            fill: #C0C0C0;
+            cursor: pointer;
+            margin-lef: 10px;
+        }
+
+        .search-icon:hover {
+            fill: #372F56;
         }
 
         .profile-section {
@@ -227,38 +211,57 @@
             width: 30%;
         }
 
+        .profile-title h2 {
+            color: #DBCDF2; 
+        }
+        
+
         .profile-container {
-            width: 100%;
+            width: 120%;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            margin-left: 140px;
+            margin-right: 80px;
         }
 
         .profile-picture img {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            border: 3px solid #ddd;
+            border: 0px solid #ddd;
         }
 
         .profile-info label {
             font-weight: bold;
             display: block;
-            margin: 10px 0 5px;
+            margin: 10px 5px;
         }
 
         .profile-info input,
         .profile-info textarea {
-            width: 90%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            width: 80%;
+            padding: 13px;
+            border: 0.2px solid #5a555f;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            background-color: transparent;
+            color: #e7d8ff;
+            font-style: bold;
+            font-size: 16px;
         }
 
         .sns-container {
-            background-color: #fff;
+            background-color: #1E1E1E;
             font-family: 'Arial', sans-serif;
-            width: 88%;
+            border: 0.2px solid #5a555f;
+            width: 78%;
             padding: 20px;
             border-radius: 10px;
+            color: #e3d6ff;
+            font-style: bold;
+            font-size: 14px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
         }
 
         .sns-category {
@@ -267,33 +270,27 @@
             color: #fff;
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .message {
-            background-color: #f2f2f2;
-            border-radius: 8px;
-            padding: 10px;
-            color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .action-button {
-            background-color: #7c4dff;
+            background-color: #574893;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 20px;
+            border-radius: 11px;
             text-align: center;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             cursor: pointer;
+            width: 90%;
         }
 
         .account-info {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            color: #e3d6ff;
         }
 
         .profile-img {
@@ -304,8 +301,9 @@
         }
 
         .username {
-            color: #333;
+            color: #e3d6ff;
             font-size: 14px;
+            align-items: center;
         }
 
         .warning {
@@ -336,7 +334,7 @@
         }
 
         .rating-icon {
-            width: 50px;
+            width: 100px;
             height: auto;
         }
 
@@ -350,6 +348,7 @@
 
         .rating-value {
             font-size: 24px;
+            margin-top: 15px;
             margin-bottom: 5px;
         }
 
@@ -378,16 +377,12 @@
             font-size: 20px;
         }
 
-        .pw-change {
-            margin-top: 20px;
-        }
-
         .custom-button {
-            width: 50%;
+            width: 100%;
             background-color: #6f69a5;
             border: none;
             color: white;
-            padding: 8px 10px;
+            padding: 10px 12px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
@@ -403,10 +398,10 @@
         }
 
         .back-arrow img {
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             cursor: pointer;
-            margin-left: 5px;
+            margin-left: 10px;
             margin-bottom: 5px;
         }
     </style>
@@ -420,21 +415,22 @@
         <div class="logo">
             <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo logo-home">
         </div>
-
-        <div class="user-profile mypage-button">
-            {% if request.user.profile_image %}
-                <img src="{{ request.user.profile_image.url }}" class="profile-icon" alt="User Profile Picture">
-            {% else %}
-                <img src="{% static 'img/userprofile_05.jpeg' %}" class="profile-icon" alt="User Profile Picture">
-            {% endif %}
-            <span class="username">{{ request.user.username }}</span>
-            <img src="{% static 'img/check-mark.png' %}" class="verified-badge" alt="Verified Badge">
+        <div class="search-box">
+            <span class="hamburger">☰</span>
+                <div class="search-box">
+                    <input type="text" placeholder="캣티천사">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
+                    </svg>
+                <div class="profile-section">
+                </div>
+            </div>
         </div>
 
         <ul class="menu">
             <li class="menu-item">
                 <img src="{% static 'img/thumbs-up_v2.png' %}" class="menu-icon" alt="User Review Icon">
-                유저리뷰
+                유저 리뷰
             </li>
             <li class="menu-item">
                 <img src="{% static 'img/rank_v2.png' %}" class="menu-icon" alt="Manner Ranking Icon">
@@ -457,25 +453,6 @@
     
     <div class="main-content">
         <header>
-            <div class="left-arrow">
-                <span class="arrow">&#8592;</span>
-            </div>
-            <div class="center-search">
-                <div class="top-bar">
-                    <div class="menu-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <div class="search-section">
-                        <input type="text" placeholder="착한 유저를 찾아보세요 :D">
-                        <button class="search-icon">&#128269;</button>
-                    </div>
-                    <div class="profile-section">
-                        <div class="profile-icon">A</div>
-                    </div>
-                </div>
-            </div>
             <div class="right-logout">
                 <img src="{% static 'img/logout.png' %}" class="logout-button" alt="로그아웃 버튼">
             </div>
@@ -485,7 +462,7 @@
             <div class="left-body">
                 <div class="profile-container">
                     <div class="profile-title">
-                        <h2>내 정보</h2>
+                        <h2>My Page</h2><br>
                     </div>
 
                     <div class="profile-header">
@@ -497,6 +474,7 @@
                             {% endif %}
                         </div>
                     </div>
+                    <br>
 
                     <div class="profile-info">
                         <label for="username">username</label>
@@ -514,6 +492,19 @@
                         <label for="introduce">introduce</label>
                         <textarea id="introduce" readonly>{{ request.user.introduction }}</textarea>
                     </div>
+                    
+                    <div class="sns-category">라이엇 계정</div>
+                    <div class="sns-container">
+                        <div class="account-info">
+                            {% if request.user.profile_image %}
+                                <img src="{{ request.user.profile_image.url }}" alt="profile" class="profile-img">
+                            {% else %}
+                                <img src="{% static 'img/userprofile_02.png' %}" alt="profile" class="profile-img">
+                            {% endif %}
+                            <div class="username">{{ request.user.riot_username }}</div>
+                        </div>
+                        <div class="action-button">라이엇 계정 연결하기</div>
+                    </div>
 
                     <div class="sns-category">디스코드 계정</div>
                     <div class="sns-container">
@@ -521,9 +512,9 @@
                             {% if request.user.profile_image %}
                                 <img src="{{ request.user.profile_image.url }}" alt="profile" class="profile-img">
                             {% else %}
-                                <img src="{% static 'img/userprofile_04.png' %}" alt="profile" class="profile-img">
+                                <img src="{% static 'img/userprofile_03.png' %}" alt="profile" class="profile-img">
                             {% endif %}
-                            <div class="username">{{ request.user.discord_username }} (디스코드 계정 정보)</div>
+                            <div class="username">{{ request.user.discord_username }}</div>
                         </div>
                         <div class="action-button">디스코드 계정 연결하기</div>
                     </div>
@@ -538,18 +529,15 @@
                     <div class="rating-panel">
                         <div class="rating-value">{{ request.user.score }}</div>
                         <div class="rating-scale">
-                            <span class="thumb-up">&#128077;</span>
+                            <span class="thumb-down">&#128078;</span>
                             <div class="rating-bar">
                                 <div class="rating-fill" style="width: {{ request.user.score }}%;"></div>
                             </div>
-                            <span class="thumb-down">&#128078;</span>
+                            <span class="thumb-up">&#128077;</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="pw-change">
-                    <button class="custom-button">비밀번호 변경</button>
-                </div>
             </div>
         </main>
     </div>
@@ -600,7 +588,5 @@
         .catch(error => console.error('Error:', error));
     });
 </script>
-
 </body>
-
 </html>

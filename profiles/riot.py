@@ -211,9 +211,11 @@ def get_user_info(api_key, riot_id, tag_line):
     return user_info
 
 # 함수 호출 예시
-riot_id = '미밀면'  # 유저 이름
-tag_line = 'KR1'      # 태그라인
+# riot_id = '미밀면'  # 유저 이름
+# tag_line = 'KR1'      # 태그라인
 
-user_info = get_user_info(api_key, riot_id, tag_line)
-print(user_info)
+# user_info = get_user_info(api_key, riot_id, tag_line)
+# print(user_info)
 
+# 리턴예시
+# {'profileIconId': 6631, 'profileIconLink': 'https://raw.communitydragon.org/latest/game/assets/ux/summonericons/profileicon6631.png', 'summonerLevel': 125, 'revisionDate': 1728712811941, 'league': [{'tier': 'GOLD', 'rank': 'III', 'leaguePoints': 3, 'wins': 12, 'losses': 8, 'veteran': False, 'inactive': False, 'freshBlood': False, 'hotStreak': False}], 'preferredPosition': 'JUNGLE', 'topChampions': [{'championId': 233, 'championName': 'Briar', 'championImage': 'https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/Briar.png'}, {'championId': 78, 'championName': 'Poppy', 'championImage': 'https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/Poppy.png'}, {'championId': 32, 'championName': 'Amumu', 'championImage': 'https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/Amumu.png'}, {'championId': 163, 'championName': 'Taliyah', 'championImage': 'https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/Taliyah.png'}, {'championId': 14, 'championName': 'Sion', 'championImage': 'https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/Sion.png'}]}

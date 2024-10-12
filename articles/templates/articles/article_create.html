@@ -1,66 +1,65 @@
+{% extends "base.html" %}
 {% load rest_framework %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-
+{% block content %}
     <form action="{% url 'articles:articles' %}" method="POST">
         {% csrf_token %}
         <div>
-            <select id="reviewee-select">
+            <select id="reviewee" name="reviewee">
                 <option value="">--평가 할 사람을 고르세요--</option>
-                <option value=""></option>
-              </select>
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }} | {{ user.riot_username }}{{ user.riot_tag }}</option>
+                {% endfor %}
+                </select>
         </div>
 
+        
         <label for="title">title</label>
-        <input type="text" id="title" required><br>
-
+        <input type="text" name="title" id="title" required><br>
+        
         <label for="content">content</label>
-        <input type="text" id="content" required><br>
+        <input type="text" name="content" id="content" required><br>
+
+        <!-- <label for="reviewee">reviewee</label>
+        <input type="text" id="reviewee" min="1" required><br> -->
         
         <label for="img">image</label>
-        <input type="file" id="img" multiple><br>
+        <input type="file" name="img" id="img" multiple><br>
 
         <label for="article_score">score</label>
-        <input type="range" id="article_score" min="0" max="10" required><br>
+        <input type="range" name="article_score" id="article_score" min="0" max="10" required><br>
         <div>
-            <input type="radio" id="kindness" value="kindness">
+            <input type="radio" id="kindness" value="kindness" name="kindness">
             <label for="kindness">kindness</label>
 
-            <input type="radio" id="teamwork" value="teamwork">
+            <input type="radio" id="teamwork" value="teamwork" name="teamwork">
             <label for="teamwork">teamwork</label>
 
-            <input type="radio" id="communication" value="communication">
+            <input type="radio" id="communication" value="communication" name="communication">
             <label for="communication">communication</label>
 
-            <input type="radio" id="mental_strength" value="mental_strength">
+            <input type="radio" id="mental_strength" value="mental_strength" name="mental_strength">
             <label for="mental_strength">mental_strength</label>
 
-            <input type="radio" id="punctuality" value="punctuality">
+            <input type="radio" id="punctuality" value="punctuality" name="punctuality">
             <label for="punctuality">punctuality</label>
 
-            <input type="radio" id="positivity" value="positivity">
+            <input type="radio" id="positivity" value="positivity" name="positivity">
             <label for="positivity">positivity</label>
 
-            <input type="radio" id="mvp" value="mvp">
+            <input type="radio" id="mvp" value="mvp" name="mvp">
             <label for="mvp">mvp</label>
 
-            <input type="radio" id="mechanical_skill" value="mechanical_skill">
+            <input type="radio" id="mechanical_skill" value="mechanical_skill" name="mechanical_skill">
             <label for="mechanical_skill">mechanical_skill</label>
 
-            <input type="radio" id="operation" value="operation">
+            <input type="radio" id="operation" value="operation" name="operation">
             <label for="operation">operation</label>
 
             <input type="radio" id="negativity" value="negativity">
-            <label for="negativity">negativity</label>
+            <label for="negativity" name="negativity">negativity</label>
 
-            <input type="radio" id="profanity" value="profanity">
+            <input type="radio" id="profanity" value="profanity" name="profanity">
             <label for="profanity">profanity</label>
 
             <input type="radio" id="afk" value="afk">
@@ -75,5 +74,4 @@
 
         <input type="submit" value="Save" />
     </form> 
-</body>
-</html>
+{% endblock %}

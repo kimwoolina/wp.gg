@@ -21,9 +21,6 @@ class Articles(models.Model):
     like_users = models.ManyToManyField(
         User, symmetrical=False, related_name="like_article", through="Likes"
         )
-    comment = models.ManyToManyField(
-        User, symmetrical=False, related_name="article_comments", through="Comments"
-        )
 
 
 # receiver:특정 이벤트 발생 시 실행되는 함수(post_save: db 저장 후 실행 / post_delete: db 제거 후 실행, 
@@ -64,8 +61,8 @@ class Likes(models.Model):
     
 class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    article = models.ForeignKey(Articles, on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE)
+    article = models.ForeignKey(Articles, on_delete=models.CASCADE, related_name='comments')
+    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

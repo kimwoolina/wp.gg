@@ -157,7 +157,7 @@
     <script>
         // 각 버튼 클릭 시 리다이렉트
         document.getElementById('discord-btn').addEventListener('click', function() {
-            window.location.href = '/login-page/';
+            window.location.href = "{% url 'discord-login' %}";
         });
 
         document.getElementById('riot-btn').addEventListener('click', function() {

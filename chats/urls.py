@@ -2,6 +2,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
 
+app_name = 'chats'
+
 urlpatterns = [
     # path('notifications/', views.NotificationListView.as_view(), name='notification_list'),
     # path('', include(router.urls)),

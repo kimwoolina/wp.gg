@@ -1,101 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Rankings</title>
+    <title>랭킹 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        select {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>User Manner Rankings</h1>
+    <h1>유저 랭킹</h1>
 
-    <!-- 필터 폼 -->
-    <form id="filter-form" onsubmit="event.preventDefault(); applyFilters();">
-        <label for="positions">Select Positions:</label>
-        <select id="positions" name="positions" multiple>
-            <option value="top">Top</option>
-            <option value="jungle">Jungle</option>
-            <option value="mid">Mid</option>
-            <option value="adc">ADC</option>
-            <option value="support">Support</option>
+    <div class="filter-container">
+        <label for="positions">포지션 선택:</label>
+        <select id="positions" multiple>
+            <option value="top">탑</option>
+            <option value="jungle">정글</option>
+            <option value="mid">미드</option>
+            <option value="adc">원딜</option>
+            <option value="support">서포터</option>
         </select>
 
-        <label for="sort_by">Sort By:</label>
-        <select id="sort_by" name="sort_by" multiple>
-            <option value="score">Score</option>
-            <option value="kindness">Kindness</option>
-            <option value="teamwork">Teamwork</option>
-            <option value="communication">Communication</option>
-            <option value="mental_strength">Mental Strength</option>
-            <option value="punctualiity">Punctuality</option>
-            <option value="positivity">Positivity</option>
+        <label for="sort_by">정렬 기준:</label>
+        <select id="sort_by">
+            <option value="score">점수</option>
+            <option value="kindness">친절함</option>
+            <option value="teamwork">팀워크</option>
+            <option value="communication">소통</option>
+            <option value="mental_strength">정신력</option>
+            <option value="punctuality">성실함</option>
+            <option value="positivity">긍정적</option>
             <option value="mvp">MVP</option>
-            <option value="mechanical_skill">Mechanical Skill</option>
-            <option value="operation">Operation</option>
-            <option value="negativity">Negativity</option>
-            <option value="profanity">Profanity</option>
-            <option value="afk">AFK</option>
-            <option value="cheating">Cheating</option>
-            <option value="verbal_abuse">Verbal Abuse</option>
+            <option value="mechanical_skill">피지컬</option>
+            <option value="operation">운영</option>
         </select>
 
-        <button type="submit">Apply Filters</button>
-    </form>
+        <button onclick="applyFilters()">필터 적용</button>
+    </div>
 
-    <!-- 유저 랭킹 테이블 -->
-    <table border="1">
+    <table id="ranking-table">
         <thead>
             <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Riot Username</th>
-                <th>Riot Tag</th>
-                <th>Score</th>
-                <th>Kindness</th>
-                <th>Teamwork</th>
-                <th>Communication</th>
-                <th>Mental Strength</th>
-                <th>Punctuality</th>
-                <th>Positivity</th>
+                <th>순위</th>
+                <th>사용자 이름</th>
+                <th>라이엇 사용자 이름</th>
+                <th>라이엇 태그</th>
+                <th>총점</th>
+                <th>친절함</th>
+                <th>팀워크</th>
+                <th>소통</th>
+                <th>정신력</th>
+                <th>성실함</th>
+                <th>긍정적</th>
                 <th>MVP</th>
-                <th>Mechanical Skill</th>
-                <th>Operation</th>
-                <th>Negativity</th>
-                <th>Profanity</th>
-                <th>AFK</th>
-                <th>Cheating</th>
-                <th>Verbal Abuse</th>
+                <th>피지컬</th>
+                <th>운영</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.riot_username }}</td>
-                <td>{{ user.riot_tag }}</td>
-                <td>{{ user.score }}</td>
-                <td>{{ user.evaluations.kindness }}</td>
-                <td>{{ user.evaluations.teamwork }}</td>
-                <td>{{ user.evaluations.communication }}</td>
-                <td>{{ user.evaluations.mental_strength }}</td>
-                <td>{{ user.evaluations.punctualiity }}</td>
-                <td>{{ user.evaluations.positivity }}</td>
-                <td>{{ user.evaluations.mvp }}</td>
-                <td>{{ user.evaluations.mechanical_skill }}</td>
-                <td>{{ user.evaluations.operation }}</td>
-                <td>{{ user.evaluations.negativity }}</td>
-                <td>{{ user.evaluations.profanity }}</td>
-                <td>{{ user.evaluations.afk }}</td>
-                <td>{{ user.evaluations.cheating }}</td>
-                <td>{{ user.evaluations.verbal_abuse }}</td>
-            </tr>
-            {% endfor %}
+            <!-- 데이터가 여기에 추가됩니다. -->
         </tbody>
     </table>
 
-    <!-- 자바스크립트 코드 -->
     <script>
+        // 초기 데이터 로드
+        function loadInitialData() {
+            fetch('/api/profile/rankings/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Initial data:', data); // API 호출 결과 출력
+                    renderTable(data); // 사용자 배열을 바로 전달
+                })
+                .catch(error => console.error('Error loading data:', error));
+        }
+
+        // 테이블 렌더링 함수
+        function renderTable(users) {
+            const tableBody = document.querySelector('#ranking-table tbody');
+            tableBody.innerHTML = ''; // 기존 내용 초기화
+
+            if (!users || users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="18">해당 조건에 맞는 유저 정보가 없습니다.</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.username}</td>
+                    <td>${user.riot_username || 'N/A'}</td>
+                    <td>${user.riot_tag || 'N/A'}</td>
+                    <td>${user.score}</td>
+                    <td>${user.evaluations.kindness}</td>
+                    <td>${user.evaluations.teamwork}</td>
+                    <td>${user.evaluations.communication}</td>
+                    <td>${user.evaluations.mental_strength}</td>
+                    <td>${user.evaluations.punctuality}</td>
+                    <td>${user.evaluations.positivity}</td>
+                    <td>${user.evaluations.mvp}</td>
+                    <td>${user.evaluations.mechanical_skill}</td>
+                    <td>${user.evaluations.operation}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
         function getSelectedValues(selectElement) {
             const selectedOptions = Array.from(selectElement.options)
                 .filter(option => option.selected)
@@ -104,12 +143,10 @@
         }
 
         function applyFilters() {
-            // 선택된 포지션 값과 정렬 기준 가져오기
             const positions = getSelectedValues(document.getElementById('positions'));
-            const sortBy = getSelectedValues(document.getElementById('sort_by'));
+            const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
 
-            // URL 파라미터에 필터 및 정렬 조건을 추가하여 페이지 새로고침
-            let url = '?';
+            let url = '/api/profile/rankings/?';
             if (positions) {
                 url += `positions=${positions}&`;
             }
@@ -117,8 +154,22 @@
                 url += `sort_by=${sortBy}`;
             }
 
-            window.location.href = url;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Filtered data:', data); // 필터링된 결과 출력
+                    renderTable(data); // 사용자 배열을 바로 전달
+                })
+                .catch(error => console.error('Error applying filters:', error));
         }
+
+        // 페이지 로드 시 데이터 가져오기
+        window.onload = loadInitialData;
     </script>
 
 </body>

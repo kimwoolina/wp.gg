@@ -133,7 +133,7 @@ class CustomLoginView(LoginView):
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-# 로그아웃
+#로그아웃
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
         logout(request) 
@@ -243,7 +243,7 @@ class discordLoginView(generic.View):
                 'refresh': refresh_token
             }
 
-            # return JsonResponse(response_data)  # JSON 응답 반환(DRF)
+            #return JsonResponse(response_data)  # JSON 응답 반환(DRF)
             
             # return redirect("user_index") 
             # JWT 토큰을 세션에 저장 (필요에 따라)
@@ -252,7 +252,7 @@ class discordLoginView(generic.View):
             
             # 로그인 성공 후 user_index로 리다이렉트
             # return redirect("user_index") 
-            return redirect(f"/auth/?access={access_token}&refresh={refresh_token}")
+            return redirect(f"/auth/home/?access={access_token}&refresh={refresh_token}")
 
 
 

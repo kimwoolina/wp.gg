@@ -17,6 +17,11 @@ from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer
 from .validators import validate_email, validate_username_length
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.views.decorators.cache import never_cache
+
+@never_cache
+def home_view(request):
+    return render(request, 'home.html')
 
 # 홈 화면 페이지 렌더링
 def home(request):

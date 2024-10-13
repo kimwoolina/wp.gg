@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'parties',
     'profiles',
     'credits',
+    'web',
 ]
 
 CHANNEL_LAYERS = {

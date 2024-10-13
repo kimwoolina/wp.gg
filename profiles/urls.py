@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [ 
+    # 랜더링
+    path('ranking/', views.ranking, name='ranking'), # 유저랭킹화면
+    
     path('matching/', views.MatchingPageView.as_view(), name='user_matching'),
     path('usrecommendations/', views.UserRecommendationView.as_view(), name='user_recommendations'), # 유저 추천 기능
     path('rankings/', views.MannerRankingView.as_view(), name='user-rankings'), # 매너 랭킹

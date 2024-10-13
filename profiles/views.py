@@ -93,7 +93,8 @@ class UserDetailView(generics.GenericAPIView):
 class SearchPageView(TemplateView):
     template_name = 'users/user_search.html'
 
-
+def ranking(request):
+    return render(request, 'users/rankings.html')
 
 class MannerRankingView(ListAPIView):
     """
@@ -151,8 +152,8 @@ class MannerRankingView(ListAPIView):
 
         # 정상적인 결과가 있을 경우
         serializer = self.get_serializer(queryset, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
-        return render(request, 'users/rankings.html', {'users': serializer.data})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return render(request, 'users/rankings.html', {'users': serializer.data})
 
     
 class UserRecommendationView(APIView):

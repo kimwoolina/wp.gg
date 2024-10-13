@@ -138,7 +138,7 @@
     <div class="nav-bar">
         <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo">
         <div class="nav-center">
-            <a href="{% url 'user-rankings' %}">유저리뷰</a>
+            <a href="{% url 'article-list' %}">유저리뷰</a>
             <a href="{% url 'ranking' %}">매너랭킹</a>
             <a href="{% url 'user_matching' %}">유저추천</a>
             <a href="/team-matching/">팀매칭</a>
@@ -258,15 +258,15 @@
         });
 
         // 홈 화면 캐시된 페이지 강제 새로고침
-        window.onload = function() {
+        {% comment %} window.onload = function() {
             const accessToken = localStorage.getItem('access_token');
             if (!accessToken) {
                 window.location.reload(true);  
             }
-        };
+        }; {% endcomment %}
         
 </script>
 
-    
+
 </body>
 </html>

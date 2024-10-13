@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from articles.serializers import (
     ArticleSerializer, 
@@ -7,10 +7,9 @@ from articles.serializers import (
 )
 from articles.models import Articles, Comments
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.generics import RetrieveAPIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.renderers import TemplateHTMLRenderer
 
 User = get_user_model()
 

@@ -11,7 +11,6 @@ from users.models import Evaluations
 from users.serializers import (
     UserProfileSerializer
 )
-from profiles.serializers import EvaluationSerializer
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -31,13 +30,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    article_images = ArticleImageSerializer(many=True, read_only=True)
-    evaluations = EvaluationSerializer(read_only=True)
+    article_images = ArticleImageSerializer(many=True)
 
     class Meta :
         model=Articles
-        fields= ['title', 'content', 'article_score', 'article_images', 'evaluations']
-        read_only_fields = ['reviewer', 'reviewee']
+        fields= ['title', 'content', 'article_score', 'article_images', 'reviewer', 'reviewee']
     
     def create(self, validated_data):
         article = Articles.objects.create(**validated_data)

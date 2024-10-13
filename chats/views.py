@@ -69,12 +69,6 @@ class PrivateChatMessageList(APIView):
         serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
 
-
-    
-# 개인 메시지 전송
-class PrivateChatMessageCreate(APIView):
-    # permission_classes = [IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
         data = request.data
         room_id = data.get('room_id')

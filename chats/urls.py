@@ -8,7 +8,6 @@ urlpatterns = [
     # path('notifications/', views.NotificationListView.as_view(), name='notification_list'),
     # path('', include(router.urls)),
     # path('', views.index, name="index"),
-    path('', views.ChatRoomTemplateView.as_view(), name='chat-room-template'),  # 채팅방 템플릿 추가
     path('chatrooms/', views.PrivateChatRoomListView.as_view(), name='chat-room-list'),
     path('private-chat/', views.PrivateChatRoomCreateView.as_view(), name='create-private-chat-room'),
     path('private-chats/<int:room_id>/messages/', views.PrivateChatMessageList.as_view(), name='private-chat-message-list'),  # GET: 1:1 채팅방의 메시지 리스트

@@ -2,7 +2,6 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.db.models import F, Q
@@ -13,25 +12,8 @@ from .serializers import ( UserSerializer, EvaluationSerializer,
 from .bots import ask_chatgpt
 from .riot import get_user_info
 from django.db import models
-from django.views import generic
 from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
-
-# 랜더링
-class RiotPageView(generic.TemplateView):
-    template_name = 'profiles/riot.html'
-    
-class MatchingPageView(TemplateView):
-    template_name = 'users/matching.html'
-    
-class SearchPageView(TemplateView):
-    template_name = 'users/user_search.html'
-
-def ranking(request):
-    return render(request, 'users/rankings.html')
-
-def matching_result(request):
-    return render(request, 'users/matching.html')
 
 
 class UserDetailView(generics.GenericAPIView):

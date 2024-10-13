@@ -91,14 +91,7 @@ class PrivateChatMessageList(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     
-# 채팅방 템플릿 뷰
-class ChatRoomTemplateView(generic.TemplateView):
-    template_name = 'chats/chat.html'
-    
-# class ChatRoomTemplateView(APIView):
-#     def get(self, request):
-#         return render(request, 'chats/chat.html', {'user': request.user})
-    
+
     
 
 # 그룹 채팅방 생성

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 25%;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-right: 1px solid #ccc;
+        }
+
+        .chat-area {
+            width: 75%;
+            padding: 10px;
+        }
+
+        #chat-messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 5px;
+            margin-right: 5px;
+        }
+        
+        button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Chat Rooms</h2>
+            <ul id="chat-room-list"></ul>
+            <input type="text" id="user2-id" placeholder="Enter user ID to create chat room">
+            <button id="create-chat-room">Create Chat Room</button>
+        </div>
+        <div class="chat-area">
+            <h2>Chat Messages</h2>
+            <div id="chat-messages"></div>
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-message">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            loadChatRooms(); // 페이지 로드 시 채팅방 목록 로드
+
+            // 채팅방 선택 시 메시지 로드
+            $(document).on('click', '.select-chat-room', function() {
+                const roomId = $(this).data('room-id'); // 클릭한 채팅방 ID 가져오기
+                loadMessages(roomId);
+            });
+
+            // 메시지 전송
+            $('#send-message').click(function() {
+                const roomId = $('.select-chat-room.selected').data('room-id'); // 선택된 채팅방 ID
+                const messageContent = $('#message-input').val();
+
+                if (messageContent && roomId) {
+                    sendMessage(roomId, messageContent);
+                    $('#message-input').val(''); // 입력창 초기화
+                } else {
+                    alert("Please select a chat room and enter a message.");
+                }
+            });
+
+            // 채팅방 생성
+            $('#create-chat-room').click(function() {
+                const user2Id = $('#user2-id').val();
+                if (user2Id) {
+                    createChatRoom(user2Id);
+                } else {
+                    alert("Please enter user ID.");
+                }
+            });
+        });
+
+        // 사용자 인증 토큰을 로컬 저장소에서 가져옵니다.
+        function getAccessToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        // 메시지 및 채팅방 로드 함수
+        function loadChatRooms() {
+            $.ajax({
+                url: '/api/chat/chatrooms/',
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                success: function(data) {
+                    $('#chat-room-list').empty();
+                    data.forEach(function(room) {
+                        $('#chat-room-list').append('<li>' + room.room_name + ' <button class="select-chat-room" data-room-id="' + room.id + '">Select</button></li>');
+                    });
+                },
+                error: function(xhr) {
+                    alert("Failed to load chat rooms. Error: " + xhr.responseText);
+                }
+            });
+        }
+
+        // 선택한 채팅방의 메시지를 로드하는 함수
+        function loadMessages(roomId) {
+            $.ajax({
+                url: '/api/chat/private-chats/' + roomId + '/messages/',
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                success: function(messages) {
+                    $('#chat-messages').empty();
+                    messages.forEach(function(message) {
+                        $('#chat-messages').append('<p><strong>' + message.sender.username + ':</strong> ' + message.content + '</p>');
+                    });
+                },
+                error: function(xhr) {
+                    alert("Failed to load messages. Error: " + xhr.responseText);
+                }
+            });
+        }
+
+        // 메시지 전송 함수
+        function sendMessage(roomId, content) {
+            $.ajax({
+                url: '/api/chat/private-chats/' + roomId + '/messages/create/',
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                contentType: 'application/json',
+                data: JSON.stringify({ room_id: roomId, content: content }), // room_id 사용
+                success: function(message) {
+                    loadMessages(roomId); // 메시지 전송 후 메시지 로드
+                },
+                error: function(xhr) {
+                    alert("Failed to send message. Error: " + xhr.responseText);
+                }
+            });
+        }
+
+        // 채팅방 생성 함수
+        function createChatRoom(user2Id) {
+            $.ajax({
+                url: '/api/chat/private-chat/',
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                contentType: 'application/json',
+                data: JSON.stringify({ user2: user2Id }),
+                success: function(room) {
+                    loadChatRooms(); // 새로운 채팅방 생성 후 목록 재로드
+                },
+                error: function(xhr) {
+                    alert("Failed to create chat room. Error: " + xhr.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

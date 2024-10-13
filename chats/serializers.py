@@ -41,4 +41,3 @@ class GroupChatRoomSerializer(serializers.ModelSerializer):
         if latest_message:
             return ChatMessageSerializer(latest_message).data  # 직렬화된 데이터 반환
         return None  # 메시지가 없는 경우 None 반환
-

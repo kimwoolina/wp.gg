@@ -17,5 +17,6 @@ urlpatterns = [
     path('chat/', views.ChatRoomTemplateView.as_view(), name='chat-room-template'),  # 채팅방 템플릿 추가
     path('article_list/', views.article_list_page, name='article-list'), #리스트
     path('article_create/', views.article_create_page, name='article-create'), #생성
-    path('', views.indexView.as_view(), name='user_index'),
+    path('', views.home, name='home'), # 기본 홈 화면
+    # path('', views.indexView.as_view(), name='user_index'),
 ]

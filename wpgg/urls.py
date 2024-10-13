@@ -20,10 +20,11 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    path('', include('web.urls')),
+    # path('', include('users.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # django-allauth URL 설정
     path('auth/', include('users.urls')),  # 사용자 정의 URL 설정
-    path('', include('users.urls')),  # 사용자 정의 URL 설정
     path('api/articles/', include('articles.urls')),  # articles URL 설정
     path('api/chat/', include('chats.urls')),  # chat URL 설정
     path('api/party/', include('parties.urls')), # party URL 설정

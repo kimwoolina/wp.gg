@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import viewsets
 from .models import Notification, Reports
@@ -16,7 +15,6 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth import get_user_model
-from django.views import generic
 
 User = get_user_model()
 
@@ -90,16 +88,7 @@ class PrivateChatMessageList(APIView):
         serializer = ChatMessageSerializer(message)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    
-# 채팅방 템플릿 뷰
-class ChatRoomTemplateView(generic.TemplateView):
-    template_name = 'chats/chat.html'
-    
-# class ChatRoomTemplateView(APIView):
-#     def get(self, request):
-#         return render(request, 'chats/chat.html', {'user': request.user})
-    
-    
+
 
 # 그룹 채팅방 생성
 class GroupChatRoomCreateView(APIView):
@@ -116,7 +105,6 @@ class GroupChatRoomCreateView(APIView):
 
         serializer = GroupChatRoomSerializer(group_chat_room)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
         
         
 # 그룹 메시지 리스트

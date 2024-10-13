@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
@@ -21,7 +22,6 @@ class Articles(models.Model):
     like_users = models.ManyToManyField(
         User, symmetrical=False, related_name="like_article", through="Likes"
         )
-
 
 # receiver:특정 이벤트 발생 시 실행되는 함수(post_save: db 저장 후 실행 / post_delete: db 제거 후 실행, 
 #                                          sender: 어떤 모델에서 신호를 받을지)

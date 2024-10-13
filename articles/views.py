@@ -4,6 +4,7 @@ from articles.serializers import (
     ArticleSerializer, 
     ArticleReadSerializer, 
     CommentSerializer,
+    UserSerializer
 )
 from articles.models import Articles, Comments
 from rest_framework.views import APIView
@@ -18,6 +19,14 @@ class ArticleDetailView(RetrieveAPIView):
 	queryset = Articles.objects.all()
 	serializer_class = ArticleReadSerializer
 
+class RevieweeSearchView(APIView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        if query:
+            users = User.objects.filter(username__icontains=query) | User.objects.filter(riot_username__icontains=query)
+            serializer = UserSerializer(users, many=True)
+            return Response({'users': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'users': []}, status=status.HTTP_200_OK)
 
 class ArticleAPIView(APIView):
 	def get(self, request): # 글 리스트

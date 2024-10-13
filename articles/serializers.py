@@ -45,13 +45,25 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Articles
         fields = ['id', 'title', 'content', 'article_score', 'article_images', 'reviewer', 'reviewee', 'created_at', 'updated_at']
 
-
+    def update_user_score(self, reviewee):
+        # reviewee가 평가받은 모든 article들의 평균 점수를 계산
+        reviews = reviewee.reviewees.all()
+        if reviews.exists():
+            reviewee.score = reviews.aggregate(Avg('article_score'))['article_score__avg']
+        else:
+            reviewee.score = 0.0
+        reviewee.save()
+        
     def create(self, validated_data):
         article = Articles.objects.create(**validated_data)
+        
+        # 이미지 파일 처리
         img_files = self.context['request'].FILES
         if img_files:
             for img_file in img_files.getlist('img'):
-                    ArticleImages.objects.create(article=article, img=img_file)
+                ArticleImages.objects.create(article=article, img=img_file)
+
+        # 평가 데이터 처리
         req_data = self.context['request'].data
         target_evaluation_data = {
             'kindness': int(req_data.get('kindness', 0)),
@@ -68,11 +80,25 @@ class ArticleSerializer(serializers.ModelSerializer):
             'afk': int(req_data.get('afk', 0)),
             'cheating': int(req_data.get('cheating', 0)),
             'verbal_abuse': int(req_data.get('verbal_abuse', 0)),
-            }
+        }
+
+        # 평가가 있으면 업데이트, 없으면 생성
         if Evaluations.objects.filter(user_id=article.reviewee).exists():
-            Evaluations.objects.update(**target_evaluation_data)
+            Evaluations.objects.filter(user=article.reviewee).update(**target_evaluation_data)
         else:
             Evaluations.objects.create(user=article.reviewee, **target_evaluation_data)
+
+        # 리뷰어의 점수 업데이트
+        self.update_user_score(article.reviewee)
+
+        return article
+
+    
+    
+    
+    def update(self, instance, validated_data):
+        article = super().update(instance, validated_data)
+        article.update_user_score()  # 아티클이 업데이트될 때 점수 업데이트
         return article
 
 

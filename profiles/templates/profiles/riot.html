@@ -35,7 +35,7 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('네트워크 응답이 좋지 않습니다.');
+                    throw new Error('존재하지 않는 소환사명입니다.');
                 }
 
                 const data = await response.json();

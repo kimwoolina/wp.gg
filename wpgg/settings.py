@@ -147,7 +147,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.BasicAuthentication',         # 기본 인증 (옵션)
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # 인증된 사용자만 접근
+        # 'rest_framework.permissions.IsAuthenticated',  # 인증된 사용자만 접근
     ),
 }
 

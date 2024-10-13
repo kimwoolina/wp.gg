@@ -16,6 +16,7 @@ urlpatterns = [
     path('register-page/', views.register_page, name='register_page'),  # 회원가입
     path('login-page/', views.login_page, name='login_page'), # 로그인
     path('home/', views.home, name='home'), # 기본 홈 화면
+    path('gamechoice/', views.gamechoice, name='gamechoice'), # 게임 선택 페이지
     path('profile/', login_required(views.profile), name='profile'), # 마이페이지(조회)
     path('users/rankings/', views.MannerRankingView().as_view(), name='user-rankings'), # 매너 랭킹
     path('users/<str:username>/', views.UserDetailView().as_view(), name='user_detail'), # 특정 유저 검색 기능

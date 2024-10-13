@@ -10,47 +10,160 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from itertools import chain
 from operator import attrgetter
-from .models import PrivateChatRoom, GroupChatRoom, RoomUsers
-from .serializers import PrivateChatRoomSerializer, GroupChatRoomSerializer
+from .models import PrivateChatRoom, GroupChatRoom, RoomUsers, ChatMessage, GroupChatMessage
+from .serializers import PrivateChatRoomSerializer, GroupChatRoomSerializer, ChatMessageSerializer, GroupChatMessageSerializer
 from rest_framework import permissions
+from rest_framework import status
+from rest_framework import generics
+from django.contrib.auth import get_user_model
+from django.views import generic
+
+User = get_user_model()
+
+# def index(request):
+#     return render(request, "chats/index.html")
+
+# 개인 채팅방 생성
+class PrivateChatRoomCreateView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user2_id = request.data.get('user2')  # user2 ID를 가져옴
+        if not user2_id:
+            return Response({"error": "user2 ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 개인 채팅방 생성
+        private_chat_room = PrivateChatRoom(user1=request.user, user2_id=user2_id)
+        private_chat_room.save()
+
+        serializer = PrivateChatRoomSerializer(private_chat_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    
+class PrivateChatRoomListView(APIView):
+    # permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
+
+    def get(self, request):
+        user = request.user
+        # 현재 사용자가 참여한 개인 채팅방 필터링 및 생성일 기준으로 내림차순 정렬
+        chat_rooms = PrivateChatRoom.objects.filter(user1=user) | PrivateChatRoom.objects.filter(user2=user)
+        chat_rooms = chat_rooms.order_by('-created_at')  # 생성일 기준 내림차순 정렬
+        serializer = PrivateChatRoomSerializer(chat_rooms, many=True)  # 직렬화
+        return Response(serializer.data)  
 
 
-# class NotificationListView(ListAPIView):
-#     serializer_class = NotificationSerializer
-#     permission_classes = [IsAuthenticated]
+# 개인 메시지 리스트 / 전송
+class PrivateChatMessageList(APIView):
+    # permission_classes = [IsAuthenticated]
 
-#     def get_queryset(self):
-#         return Notification.objects.filter(user=self.request.user, is_read=False).order_by('-pk')
+    def get(self, request, room_id, *args, **kwargs):  # room_id를 URL 경로에서 직접 받기
+        if not room_id:
+            return Response({"error": "room_id parameter is required"}, status=400)
 
+        try:
+            room = PrivateChatRoom.objects.get(id=room_id)
+        except PrivateChatRoom.DoesNotExist:
+            return Response({"error": "Chat room not found"}, status=404)
 
-# class ReportsViewSet(viewsets.ModelViewSet):
-#     queryset = Reports.objects.all()
-#     serializer_class = ReportsSerializer
+        messages = ChatMessage.objects.filter(room=room)
+        serializer = ChatMessageSerializer(messages, many=True)
+        return Response(serializer.data)
 
-#     def send_warning_message(self, reported_user, chat):
-#         warning_message = textwrap.dedent(f"""
-#         {reported_user}님 10번이나 나쁜말을 사용하셨네요🥲 화나는 일이 있으셨나요?
-#         예쁜 말 고운 말을 쓸 수 있게 하루동안 wp.gg가 도와드릴게요! 채팅 속도가 미세하게 느려질 수 있습니다!
-#         """)
-#         Notification.objects.create(
-#             user=reported_user,
-#             chat=chat,
-#             message=warning_message,
-#             is_read=False
-#         )
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        room_id = data.get('room_id')
+        content = data.get('content')
 
-#     def perform_create(self, serializer):
-#         report = serializer.save()
-#         self.send_warning_message(report.reported, report.chat)
-#         self.apply_llm_moderation()
+        if not room_id or not content:
+            return Response({"error": "room_id and content are required"}, status=400)
 
-#     def apply_llm_moderation(self):
-#         """LLM 적용 예정"""
-#         pass
+        try:
+            room = PrivateChatRoom.objects.get(id=room_id)
+        except PrivateChatRoom.DoesNotExist:
+            return Response({"error": "Chat room not found"}, status=404)
 
-def index(request):
-    return render(request, "chat/index.html")
+        message = ChatMessage.objects.create(
+            room=room,
+            sender=request.user,
+            content=content
+        )
+        serializer = ChatMessageSerializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    
+# 채팅방 템플릿 뷰
+class ChatRoomTemplateView(generic.TemplateView):
+    template_name = 'chats/chat.html'
+    
+# class ChatRoomTemplateView(APIView):
+#     def get(self, request):
+#         return render(request, 'chats/chat.html', {'user': request.user})
+    
+    
 
+# 그룹 채팅방 생성
+class GroupChatRoomCreateView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        room_name = request.data.get('room_name')
+        if not room_name:
+            return Response({"error": "room_name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 그룹 채팅방 생성
+        group_chat_room = GroupChatRoom(owner=request.user, room_name=room_name)
+        group_chat_room.save()
+
+        serializer = GroupChatRoomSerializer(group_chat_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        
+        
+# 그룹 메시지 리스트
+class GroupChatMessageList(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        group_chat_id = request.query_params.get('group_chat_id')  # 쿼리 파라미터에서 group_chat_id 받음
+        if not group_chat_id:
+            return Response({"error": "group_chat_id parameter is required"}, status=400)
+
+        try:
+            group_chat = GroupChatRoom.objects.get(id=group_chat_id)
+        except GroupChatRoom.DoesNotExist:
+            return Response({"error": "Group chat room not found"}, status=404)
+
+        messages = GroupChatMessage.objects.filter(group_chat=group_chat)
+        serializer = GroupChatMessageSerializer(messages, many=True)
+        return Response(serializer.data)
+    
+
+class GroupChatMessageCreate(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        group_chat_id = data.get('group_chat_id')
+        content = data.get('content')
+
+        if not group_chat_id or not content:
+            return Response({"error": "group_chat_id and content are required"}, status=400)
+
+        try:
+            group_chat = GroupChatRoom.objects.get(id=group_chat_id)
+        except GroupChatRoom.DoesNotExist:
+            return Response({"error": "Group chat room not found"}, status=404)
+
+        message = GroupChatMessage.objects.create(
+            group_chat=group_chat,
+            sender=request.user,
+            content=content
+        )
+        serializer = ChatMessageSerializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+# 개인+그룹 채팅방 목록 출력
 class ChatRoomListView(APIView):
     """
     채팅방 목록 기능
@@ -62,7 +175,7 @@ class ChatRoomListView(APIView):
     작성 날짜: 2024.10.01
     """
     
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, *args, **kwargs):
         user = request.user  # 현재 로그인된 사용자
@@ -95,3 +208,4 @@ class ChatRoomListView(APIView):
         chat_rooms.sort(key=lambda x: x['latest_created_at'], reverse=True)
 
         return Response({'chat_rooms': chat_rooms})
+    

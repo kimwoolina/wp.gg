@@ -48,7 +48,7 @@ class GroupChatRoom(models.Model):
         return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
 
 
-# 1:1 개인 채팅 저장
+# 1:1 개인 채팅 메시지
 class ChatMessage(models.Model):
     room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")  # 발신자
@@ -65,12 +65,13 @@ class ChatMessage(models.Model):
         return f'{self.sender.username}: {self.content[:10]}'  # 첫 10자만 표시
 
 
-# 그룹 채팅 저장
+# 그룹 채팅 - 유저 중계테이블
 class RoomUsers(models.Model):
     group_chat = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='room_users')  # 그룹 채팅 FK
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # 그룹에 속한 유저
 
 
+# 그룹 채팅 메시지
 class GroupChatMessage(models.Model):
     group_chat = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE)  # 메시지를 보낸 유저

@@ -76,15 +76,15 @@ class Parties(models.Model):
     is_rank = models.BooleanField(default=False)
     
     # Party1
-    top1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_top1")
-    jungle1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_jungle1")
-    mid1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="parrty_mid1")
-    support1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support1")
-    adc1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc1")
+    top1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_top1", null=True)
+    jungle1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_jungle1", null=True)
+    mid1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="parrty_mid1", null=True)
+    support1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support1", null=True)
+    adc1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc1", null=True)
     
     # Party2
-    top2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_top2")
-    jungle2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_jungle2")
-    mid2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_mid2")
-    support2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support2")
-    adc2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc2")
+    top2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_top2", null=True)
+    jungle2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_jungle2", null=True)
+    mid2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_mid2", null=True)
+    support2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support2", null=True)
+    adc2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc2", null=True)

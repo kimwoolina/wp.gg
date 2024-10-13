@@ -7,6 +7,16 @@ from django.contrib.auth import get_user_model, logout, update_session_auth_hash
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
+from rest_framework import generics
+from django.db.models import F, Q
+from .models import Evaluations
+from articles.models import Articles
+from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer, UserProfileSerializer
+from .validators import validate_email, validate_username_length
+from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.views.decorators.cache import never_cache
 from .serializers import UserProfileSerializer
 
 # 디스코드 로그인
@@ -19,19 +29,61 @@ from django.contrib.auth import get_backends
 from django.http import JsonResponse
 
 
+@never_cache
+def home_view(request):
+    return render(request, 'home.html')
+
+# 홈 화면 페이지 렌더링
+def home(request):
+    return render(request, 'home.html')
+
+# 게임 선택 페이지
+def gamechoice(request):
+    return render(request, 'gamechoice.html')
+
+# 계정 선택 페이지
+def login_selection(request):
+    return render(request, 'login_selection.html')
+
+# 회원가입 페이지 렌더링
+def register_page(request):
+    return render(request, 'register.html')
+
+# 로그인 페이지 렌더링
+def login_page(request):
+    return render(request, 'login.html')
+
+# 마이페이지 조회 렌더링
+def profile(request):
+    return render(request, 'profile.html')
+
+
+
+
 # 회원가입
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
+        print(f"Received data: {request.data}")
+        
+        email = request.data.get('email')
+        username = request.data.get('username')
+        password1 = request.data.get('password1')
+        password2 = request.data.get('password2')
+
+        # 필수 필드가 비어있을 경우 에러 처리
+        if not email or not username or not password1:
+            return Response({'error': '이메일, 유저네임, 비밀번호를 모두 입력해주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 기본 회원가입 로직 수행
         response = super().create(request, *args, **kwargs)
 
-        # 회원가입 완료시 메시지
-        if response.status_code == status.HTTP_204_NO_CONTENT:
-            response = Response({"message": "회원가입이 완료되었습니다😊"}, status=status.HTTP_201_CREATED)
-        
-        # if response.status_code == status.HTTP_201_CREATED:
-        #     response.data['message'] = '회원가입이 완료되었습니다😊'
-        
+        # 회원가입 성공 시 로그인 페이지로 리다이렉트
+        if response.status_code == status.HTTP_201_CREATED:
+            return redirect('login_page')
+
         return response
+
+
 
 # 로그인
 class CustomLoginView(LoginView):
@@ -59,12 +111,30 @@ class CustomLoginView(LoginView):
 
         return response
     
-# 로그아웃
-class CustomLogoutView(LogoutView):
-    def post(self, request, *args, **kwargs):
-        logout(request) 
-        return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)
 
+# 로그아웃
+class CustomLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh_token = request.data.get('refresh_token')
+
+        if not refresh_token:
+            return Response({"error": "리프레시 토큰이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 리프레시 토큰을 파싱하고 블랙리스트에 추가
+            token = RefreshToken(refresh_token)
+            token.blacklist()  # 블랙리스트에 추가
+            logout(request)
+            return Response({"message": "로그아웃 성공!"}, status=status.HTTP_205_RESET_CONTENT)
+        
+        except TokenError:
+            # 토큰이 유효하지 않거나 만료된 경우
+            return Response({"error": "유효하지 않거나 만료된 토큰입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 # 회원탈퇴
 User = get_user_model()
@@ -80,7 +150,7 @@ class CustomDeleteUserView(APIView):
 
         return Response({"message": "회원탈퇴 완료! 그동안 이용해주셔서 감사했습니다👋"}, status=status.HTTP_200_OK)
     
-    
+
 # 마이페이지 조회 및 수정
 class UserProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
@@ -111,6 +181,7 @@ class ChangePasswordView(APIView):
             update_session_auth_hash(request, user) 
             return Response({"message": "비밀번호가 변경되었습니다."}, status=status.HTTP_200_OK)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class indexView(generic.TemplateView):
     template_name = 'users/index.html'
@@ -221,7 +292,3 @@ class discordLoginView(generic.View):
             f"{DiscordOAuth2['API_ENDPOINT']}/users/@me", 
             headers={"Authorization": f"Bearer {access_token}"}
         )
-
-        # 사용자 정보 요청 실패 처리
-        user_response.raise_for_status()
-        return user_response.json()

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리그 오브 레전드 로그인 선택</title>
+    {% load static %}
+    <style>
+        /* 전체 배경 색상 */
+        body {
+            background-color: #1E1E1E;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* 리그 오브 레전드 로고를 중앙 위쪽에 고정 */
+        .game-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px; /* 로고와 로그인 버튼 사이 간격 */
+        }
+
+        .game-logo {
+            width: 380px;
+            margin-bottom: 25px;
+        }
+
+        /* 로그인 버튼 */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: -30px; /* 버튼 사이 간격 */
+            margin-bottom: 100px;
+        }
+
+        .login-btn {
+            width: 300px;
+            padding: 17px;
+            background-color: #716490;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            background-color: #B19CD9;
+        }
+
+        /* 상단 로고 */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .logo-container img {
+            width: 140px;
+            cursor: pointer;
+        }
+
+        /* 게임 전환 드롭다운 스타일 */
+        .switch-game {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .switch-game select {
+            background-color: #3B3A4F;
+            color: white;
+            padding: 10px 13px; /* 드롭다운 크기 조정 */
+            font-size: 16px; /* 폰트 크기 증가 */
+            border: 1px solid #716490;
+            border-radius: 26px; /* 더 둥근 테두리 */
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none; /* 사파리에서 기본 드롭다운 화살표 제거 */
+            -moz-appearance: none; /* 파이어폭스에서 기본 드롭다운 화살표 제거 */
+            background-image: url('{% static "img/dropdown-arrow.png" %}');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px; /* 화살표 크기 조정 */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .switch-game select:hover {
+            background-color: #5A5880;
+            border-color: #B19CD9;
+        }
+        
+        .switch-game select:focus {
+            border-color: #B19CD9;
+            outline: none;
+        }
+        
+
+        /* 하단 뒤로가기 버튼 */
+        .back-arrow {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+        }
+
+        .back-arrow img {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 리그 오브 레전드 로고 -->
+    <div class="game-logo-container">
+        <img src="{% static 'img/lol.png' %}" alt="League of Legends" class="game-logo">
+    </div>
+
+    <!-- 로그인 선택 컨테이너 -->
+    <div class="login-container">
+        <button class="login-btn" id="discord-btn">디스코드로 로그인</button>
+        <button class="login-btn" id="riot-btn">라이엇으로 로그인</button>
+        <button class="login-btn" id="google-btn">구글계정으로 로그인</button>
+    </div>
+
+    <!-- 상단 로고 -->
+    <div class="logo-container">
+        <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="Logo" class="logo">
+    </div>
+
+    <!-- 상단 게임 전환 드롭다운 -->
+    <div class="switch-game">
+        <select id="game-switcher" onchange="switchGame()">
+            <option value="lol" selected>👀</option>
+            <option value="valorant">발로란트</option>
+            <option value="rocket">로켓리그</option>
+            <option value="dota">도타2</option>
+        </select>
+    </div>
+
+    <!-- 페이지 하단 화살표 버튼 -->
+    <div class="back-arrow">
+        <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'img/back-arrow.png' %}" alt="뒤로가기"></a>
+    </div>
+
+    <script>
+        // 각 버튼 클릭 시 리다이렉트
+        document.getElementById('discord-btn').addEventListener('click', function() {
+            window.location.href = '/login-page/';
+        });
+
+        document.getElementById('riot-btn').addEventListener('click', function() {
+            window.location.href = '/login-page/';
+        });
+
+        document.getElementById('google-btn').addEventListener('click', function() {
+            window.location.href = '/login-page/';
+        });
+
+        // 게임 전환 드롭다운 처리
+        function switchGame() {
+            var selectedGame = document.getElementById('game-switcher').value;
+            switch (selectedGame) {
+                case 'valorant':
+                    window.location.href = '/login-selection-page-valorant/';
+                    break;
+                case 'rocket':
+                    window.location.href = '/login-selection-page-rocket/';
+                    break;
+                case 'dota2':
+                    window.location.href = '/login-selection-page-dota/';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // 홈으로 리다이렉트 (로고 클릭 시)
+        document.querySelector('.logo').addEventListener('click', function() {
+            window.location.href = '/home/';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <!-- Django의 static 태그 로드 -->
+    {% load static %}
+    <style>
+        /* 전체 배경 색상 */
+        body {
+            background-color: #1E1E1E;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 네비게이션바 로고 및 계정전환 */
+        .nav-bar {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 로고 이미지 */
+        .logo {
+            width: 150px; /* 로고 크기 조정 */
+            cursor: pointer;
+            margin-left: 25px; /* 왼쪽 여백 추가 */
+        }
+
+        /* 회원가입 폼 박스 */
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .register-box {
+            background-color: #2E2E2E;
+            padding: 40px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            color: white;
+        }
+
+        .register-box h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .register-box label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            color: #AAA;
+        }
+
+        .register-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #7C4DFF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .register-box button:hover {
+            background-color: #6C43D6;
+        }
+
+        .back-link {
+            color: #7C4DFF;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 페이지 하단 화살표 */
+        .back-arrow {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+        }
+
+        .back-arrow img {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 로고 -->
+    <div class="nav-bar">
+        <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo">
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <div class="register-container">
+        <div class="register-box">
+            <h2>회원가입</h2>
+            <br>
+            <form id="register-form" method="POST">
+                {% csrf_token %}
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+                <label for="password1">Password1</label>
+                <input type="password" id="password1" required>
+                <label for="password2">Password2</label>
+                <input type="password" id="password2" required>
+                <br><br><br>
+                <button type="button" onclick="registerUser()">Send</button>
+                <br><br>
+            </form>            
+        </div>
+    </div>
+
+    <!-- 페이지 하단 화살표 버튼 -->
+    <div class="back-arrow">
+        <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'back-arrow.png' %}" alt="뒤로가기"></a>
+    </div>
+
+    <script>
+        // 로고이미지 클릭 시 홈으로 리다이렉트
+        document.querySelector('.logo').addEventListener('click', function() {
+            window.location.href = '/home/';
+        });
+
+        function registerUser() {
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password1 = document.getElementById('password1').value;
+            const password2 = document.getElementById('password2').value;
+
+            fetch('/auth/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    username: username,
+                    password1: password1,
+                    password2: password2
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('회원가입 완료👌');
+                    window.location.href = '/auth/login-page/';
+                } else {
+                    return response.json().then(data => {
+                        alert('회원가입 실패: ' + data.error);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

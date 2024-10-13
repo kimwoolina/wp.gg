@@ -114,3 +114,4 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.user}님에게 온 새로운 메시지: {self.chat}'  # chat의 __str__ 메서드 사용 > 메시지 자동 생성
+    

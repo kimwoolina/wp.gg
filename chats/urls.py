@@ -1,6 +1,6 @@
-from django.urls import path, include
+from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
-
 
 urlpatterns = [
     # path('notifications/', views.NotificationListView.as_view(), name='notification_list'),
@@ -15,5 +15,4 @@ urlpatterns = [
     path('group-chat/', views.GroupChatRoomCreateView.as_view(), name='create-group-chat-room'),  # 그룹 채팅방 생성
     path('group-chats/<int:group_chat_id>/messages/', views.GroupChatMessageList.as_view(), name='group-chat-message-list'),  # GET: 그룹 채팅방의 메시지 리스트
     path('group-chats/<int:group_chat_id>/messages/create/', views.GroupChatMessageCreate.as_view(), name='create-group-chat-message'),  # POST: 그룹 채팅 메시지 생성
-
-    ]
+]

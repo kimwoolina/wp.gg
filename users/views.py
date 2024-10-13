@@ -111,28 +111,33 @@ class CustomLoginView(LoginView):
     
 
 # 로그아웃
-class CustomLogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+# class CustomLogoutView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        refresh_token = request.data.get('refresh_token')
+#     def post(self, request):
+#         refresh_token = request.data.get('refresh_token')
 
-        if not refresh_token:
-            return Response({"error": "리프레시 토큰이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+#         if not refresh_token:
+#             return Response({"error": "리프레시 토큰이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            # 리프레시 토큰을 파싱하고 블랙리스트에 추가
-            token = RefreshToken(refresh_token)
-            token.blacklist()  # 블랙리스트에 추가
-            logout(request)
-            return Response({"message": "로그아웃 성공!"}, status=status.HTTP_205_RESET_CONTENT)
+#         try:
+#             # 리프레시 토큰을 파싱하고 블랙리스트에 추가
+#             token = RefreshToken(refresh_token)
+#             token.blacklist()  # 블랙리스트에 추가
+#             logout(request)
+#             return Response({"message": "로그아웃 성공!"}, status=status.HTTP_205_RESET_CONTENT)
         
-        except TokenError:
-            # 토큰이 유효하지 않거나 만료된 경우
-            return Response({"error": "유효하지 않거나 만료된 토큰입니다."}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+#         except TokenError:
+#             # 토큰이 유효하지 않거나 만료된 경우
+#             return Response({"error": "유효하지 않거나 만료된 토큰입니다."}, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+# 로그아웃
+class CustomLogoutView(LogoutView):
+    def post(self, request, *args, **kwargs):
+        logout(request) 
+        return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)  
 
 # 회원탈퇴
 User = get_user_model()
@@ -290,3 +295,7 @@ class discordLoginView(generic.View):
             f"{DiscordOAuth2['API_ENDPOINT']}/users/@me", 
             headers={"Authorization": f"Bearer {access_token}"}
         )
+        
+        # 사용자 정보 요청 실패 처리
+        user_response.raise_for_status()
+        return user_response.json()

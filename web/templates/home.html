@@ -21,11 +21,29 @@
             padding-right: 40px;
         }
 
+        /* 네브바 호버 시 로고 통통 튀는 애니메이션 */
+        .nav-bar:hover .logo {
+            animation: bounce 0.7s ease-in-out infinite /* 반복 애니메이션 */
+        }
+    
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); /* 위로 튀는 높이 설정 */
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+
         /* 로고 이미지 */
         .logo {
             width: 150px;
             cursor: pointer;
-            margin-left: 12px;
+            margin-left: 6px;
         }
 
         /* 상단 가운데 텍스트 */
@@ -36,14 +54,20 @@
         }
 
         .nav-center a {
-            color: white;
             font-size: 18px;
             text-decoration: none;
+            cursor: pointer;
+            color: #f6f1ff;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: FUNFLOW SURVIVOR;
             cursor: pointer;
         }
 
         .nav-center a:hover {
             color: #B19CD9;
+            font-weight: bold;
         }
 
         /* Join 버튼과 Login, Logout, Mypage 버튼 */
@@ -55,10 +79,14 @@
             text-decoration: none;
             cursor: pointer;
             margin-left: 2px;
+            font: FUNFLOW SURVIVOR;
+            font-weight: semi-bold;
         }
 
         .action-btn:hover {
             background-color: #B19CD9;
+            color: #461B66;
+            font-weight: bold;
         }
 
         /* 우상단 버튼 여백 */
@@ -77,6 +105,11 @@
             margin-bottom: 150px;
         }
 
+        /* 검색 바 호버 시 로고에 애니메이션 추가 */
+        .search-bar:hover .logo {
+            animation: bounce 0.7s ease-in-out infinite;
+        }
+
         .search-box {
             width: 600px;
             padding: 15px;
@@ -92,12 +125,12 @@
             background: none;
             border: none;
             outline: none;
-            color: white;
+            color: 	#F6F6FD;
             font-size: 16px;
         }
 
-        .search-box input::placeholder {
-            color: #e0e0e0;
+        .search-box input:placeholder {
+            color: #7A7EBD;
         }
 
         /* 햄버거 아이콘 */
@@ -105,6 +138,11 @@
             color: #C0C0C0;
             font-size: 20px;
             cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .hamburger:hover {
+            color: #7A7EBD
         }
 
         /* 돋보기 아이콘 */
@@ -113,24 +151,13 @@
             height: 20px;
             fill: #C0C0C0;
             cursor: pointer;
+            margin-right: 10px;
         }
 
         .search-icon:hover {
-            fill: #7C4DFF;
+            fill: #7A7EBD
         }
 
-        /* 페이지 하단 화살표 버튼 */
-        .back-arrow {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-        }
-
-        .back-arrow img {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -151,7 +178,6 @@
                 <button id="mypage-btn" class="action-btn">Mypage</button>
                 <button id="logout-btn" class="action-btn">Logout</button>
             {% else %}
-                <a href="{% url 'login_page' %}" class="action-btn">Login</a>
                 <a href="{% url 'gamechoice' %}" class="action-btn">Join</a>
             {% endif %}
         </div>

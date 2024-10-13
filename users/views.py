@@ -9,9 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
 from rest_framework import generics
-from django.db.models import F, Q
-from .models import Evaluations
-from articles.models import Articles
 from .serializers import UserProfileSerializer
 from .validators import validate_email, validate_username_length
 from django.core.exceptions import ValidationError
@@ -32,30 +29,6 @@ from django.http import JsonResponse
 @never_cache
 def home_view(request):
     return render(request, 'home.html')
-
-# 홈 화면 페이지 렌더링
-def home(request):
-    return render(request, 'home.html')
-
-# 게임 선택 페이지
-def gamechoice(request):
-    return render(request, 'gamechoice.html')
-
-# 계정 선택 페이지
-def login_selection(request):
-    return render(request, 'login_selection.html')
-
-# 회원가입 페이지 렌더링
-def register_page(request):
-    return render(request, 'register.html')
-
-# 로그인 페이지 렌더링
-def login_page(request):
-    return render(request, 'login.html')
-
-# 마이페이지 조회 렌더링
-def profile(request):
-    return render(request, 'profile.html')
 
 
 
@@ -133,7 +106,7 @@ class CustomLoginView(LoginView):
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-#로그아웃
+# #로그아웃
 class CustomLogoutView(LogoutView):
     def post(self, request, *args, **kwargs):
         logout(request) 
@@ -186,10 +159,6 @@ class ChangePasswordView(APIView):
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class indexView(generic.TemplateView):
-    template_name = 'users/index.html'
-
-
 class discordLoginView(generic.View):
     """
     디스코드 oauth2 인증 로그인
@@ -231,6 +200,8 @@ class discordLoginView(generic.View):
             # 로그인 처리
             login(request, user)
             
+            user = self.request.user
+
             # JWT 토큰 생성
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -243,7 +214,7 @@ class discordLoginView(generic.View):
                 'refresh': refresh_token
             }
 
-            #return JsonResponse(response_data)  # JSON 응답 반환(DRF)
+            # return JsonResponse(response_data)  # JSON 응답 반환(DRF)
             
             # return redirect("user_index") 
             # JWT 토큰을 세션에 저장 (필요에 따라)
@@ -252,9 +223,7 @@ class discordLoginView(generic.View):
             
             # 로그인 성공 후 user_index로 리다이렉트
             # return redirect("user_index") 
-            return redirect(f"/auth/home/?access={access_token}&refresh={refresh_token}")
-
-
+            return redirect(f"/home/?access={access_token}&refresh={refresh_token}")
 
         # 코드가 없으면 디스코드 API로 리다이렉트
         else:

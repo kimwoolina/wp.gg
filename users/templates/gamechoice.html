@@ -49,17 +49,51 @@
 
         .game-item:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 10px #7C4DFF; /* 호버 시 보라색 반짝임 */
+            box-shadow: 0 0 0px #7C4DFF; /* 호버 시 보라색 반짝임 */
         }
 
         /* 하단 로고 */
         .logo-container {
-            margin-top: -30px;
+            margin-top: -32px;
         }
 
         .logo-container img {
             width: 100px;
+            transition: transform 0.2s ease; /* 호버 애니메이션 적용 */
         }
+
+
+        /* 로고 호버시 통통 튀는 애니메이션 */
+        .logo-container img:hover {
+            animation: bounce 0.3s infinite alternate; /* 통통 애니메이션 */
+            animation-iteration-count: 6; /* 두 번 점프 */
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0px); /* 기본 위치 */
+            }
+            100% {
+                transform: translateY(-13px); /* 위로 튀는 위치 */
+            }
+        }
+
+
+        /* 페이지 하단 화살표 */
+        .back-arrow {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+        }
+
+        .back-arrow img {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-bottom: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -75,11 +109,20 @@
 
         <!-- 하단 로고 -->
         <div class="logo-container">
-            <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="W.PGG Logo">
+            <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="W.PGG Logo" class="logo">
         </div>
+    </div>
+    
+    <!-- 페이지 하단 화살표 버튼 -->
+    <div class="back-arrow">
+        <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'img/back-arrow.png' %}" alt="뒤로가기"></a>
     </div>
 
     <script>
+        // 홈으로 리다이렉트 (로고 클릭 시)
+        document.querySelector('.logo').addEventListener('click', function() {
+            window.location.href = '/home/';
+        });
         document.addEventListener('DOMContentLoaded', function() {
             const lolImage = document.getElementById('lol');
             const valorantImage = document.getElementById('valorant');

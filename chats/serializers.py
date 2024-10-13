@@ -1,11 +1,20 @@
 from rest_framework import serializers
 from .models import PrivateChatRoom, GroupChatRoom, ChatMessage, GroupChatMessage
-# from .models import Notification, Chats, Reports
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class SenderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'profile_image']
 
 class ChatMessageSerializer(serializers.ModelSerializer):
+    sender = SenderSerializer() 
+    
     class Meta:
         model = ChatMessage
-        fields = ['sender', 'content', 'created_at']
+        fields = ['sender', 'content', 'created_at', 'updated_at']
         
         
 class GroupChatMessageSerializer(serializers.ModelSerializer):

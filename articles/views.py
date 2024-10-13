@@ -12,18 +12,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.renderers import TemplateHTMLRenderer
 
-
 User = get_user_model()
-
-
-def article_detail_page(request):
-	return render(request, 'articles/article_detail.html')
-
-def article_list_page(request):
-	return render(request, 'articles/article_list.html')
-
-def article_create_page(request):
-	return render(request, "articles/article_create.html")
 
 
 class ArticleDetailView(RetrieveAPIView):

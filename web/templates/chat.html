@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,42 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Application</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            width: 25%;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border-right: 1px solid #ccc;
-        }
-
-        .chat-area {
-            width: 75%;
-            padding: 10px;
-        }
-
-        #chat-messages {
-            height: 300px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        
-        input[type="text"] {
-            width: 80%;
-            padding: 5px;
-            margin-right: 5px;
-        }
-        
-        button {
-            padding: 5px 10px;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    
 </head>
 <body>
     <div class="container">

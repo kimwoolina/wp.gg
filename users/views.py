@@ -12,7 +12,7 @@ from rest_framework import generics
 from django.db.models import F, Q
 from .models import Evaluations
 from articles.models import Articles
-from .serializers import UserSerializer, EvaluationSerializer, ArticleSerializer,  UserRankingSerializer, UserProfileSerializer
+from .serializers import UserProfileSerializer
 from .validators import validate_email, validate_username_length
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -59,7 +59,6 @@ def profile(request):
 
 
 
-
 # 회원가입
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
@@ -82,7 +81,6 @@ class CustomRegisterView(RegisterView):
             return redirect('login_page')
 
         return response
-
 
 
 # 로그인

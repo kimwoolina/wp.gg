@@ -23,5 +23,6 @@ urlpatterns = [
     path('auth/', include('users.urls')),  # 사용자 정의 URL 설정
     path('api/articles/', include('articles.urls')),  # articles URL 설정
     path('api/chat/', include('chats.urls')),  # chat URL 설정
+    path('api/party/', include('parties.urls')), # party URL 설정
     path('api/profile/', include('profiles.urls')),
 ]

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // 숫자-랭크 매핑 딕셔너리
+        const rankMapping = {
+            "0": "Unrank",
+            "1": "Iron",
+            "2": "Bronze",
+            "3": "Silver",
+            "4": "Gold",
+            "5": "Platinum",
+            "6": "Amarald",
+            "7": "Diamond",
+            "8": "Master",
+            "9": "Grand Master",
+            "10": "Challenger"
+        };
+
+        // 숫자를 입력받아 해당 랭크를 출력하는 함수
+        function getRank(number) {
+            const rankText = rankMapping[number] || "Invalid Rank";
+            // document.getElementById("rankOutput").innerText = rankText;
+            return rankText;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Django에서 받은 data.rank 값을 HTML에 출력
+            const rankValue = document.getElementById("rankInput").innerText;
+            const rankLabel = document.getElementById("rankLabel");
+            rankLabel.innerText = getRank(rankValue);  // 함수 호출 결과를 label에 출력
+        });
+        
+
+        function deletemethod(itemId) {
+            console.log('삭제할 itemId:', itemId);  // itemId를 콘솔에 출력
+
+
+            const url = `http://127.0.0.1:8000/api/party/${itemId}`; // 엔드포인트에 변수를 포함한 URL
+
+            fetch(url, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('삭제 성공');
+                } else {
+                    alert('삭제 실패');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            // fetch('/parties/' + itemId + '/', {
+            //     method: 'DELETE',
+            //     headers: {
+            //         'X-CSRFToken': csrftoken,
+            //     },
+            // })
+            // .then(response => response.json())
+        };
+    </script>
+</head>
+
+<body>
+    {% if request.user %}
+    파티 생성하기<br/>
+    <form action="{% url 'parties:create_party' %}" method="POST">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th scope="col">랭크</td>
+            <th scope="col">서버</td>
+            <th scope="col">성별</td>
+            <th scope="col">나이</td>
+            <th scope="col">언어</td>
+            <th scope="col">랭크</th>
+        </tr>
+            <td>
+                <select name="rank" id="rank">
+                    <option value="0">Unrank</option>
+                    <option value="1">Iron</option>
+                    <option value="2">Bronze</option>
+                    <option value="3">Silver</option>
+                    <option value="4">Gold</option>
+                    <option value="5">Platinum</option>
+                    <option value="6">Amarald</option>
+                    <option value="7">Diamond</option>
+                    <option value="8">Master</option>
+                    <option value="9">Grand Master</option>
+                    <option value="10">Challenger</option>
+                </select>
+            </td>
+            <td>
+                <select name="server" id="server">
+                    <option value="KR">Korean</option>
+                    <option value="EN">Engilsh</option>
+                    <option value="JP">Japanese</option>
+                </select>
+            </td>
+            <td>
+                <select name="gender" id="gender">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                </select>
+            </td>
+            <td>
+                <select name="age" id="age">
+                    <option value="10">청소년</option>
+                    <option value="20">청년</option>
+                    <option value="30">중년</option>
+                    <option value="40">중장년</option>
+                </select>
+            </td>
+            <td>
+                <select name="language" id="language">
+                    <option value="KR">Korean</option>
+                    <option value="EN">Engilsh</option>
+                    <option value="JP">Japanese</option>
+                </select>
+            </td>
+            <td>
+                <select name="position" id="position">
+                    <option value="top">top</option>
+                    <option value="mid">mid</option>
+                    <option value="jun">jungle</option>
+                    <option value="adc">adc</option>
+                    <option value="sup">support</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <div>
+        <input type="checkbox" id="is_rank" name="is_rank" />
+        <label for="is_rank">내전</label>
+    </div>
+    <button type="submit">제출</button>
+    </form>
+    {% else %}
+    로그인이 필요합니다.
+    {% endif %}
+    <table>
+        <tr>
+            <th scope="col">랭크</th>
+            <th scope="col">서버</td>
+            <th scope="col">성별</td>
+            <th scope="col">나이</td>
+            <th scope="col">언어</td>
+            <th scope="col">---</td>
+            <th scope="col">탑1</td>
+            <th scope="col">미드1</td>
+            <th scope="col">정글1</td>
+            <th scope="col">원딜1</td>
+            <th scope="col">서포터1</td>
+            <th scope="col">탑2</td>
+            <th scope="col">미드2</td>
+            <th scope="col">정글2</td>
+            <th scope="col">원딜2</td>
+            <th scope="col">서포터2</td>
+            <th scope="col">삭제</td>
+        </tr>
+        {% for data in party %}
+        <tr>
+            {% if data.rank == "0" %}
+            <td>Unranked</td>
+            {% elif data.rank == "1" %}
+            <td>Iron</td>
+            {% elif data.rank == "2" %}
+            <td>Bronze</td>
+            {% elif data.rank == "3" %}
+            <td>Silver</td>
+            {% elif data.rank == "4" %}
+            <td>Gold</td>
+            {% elif data.rank == "5" %}
+            <td>Platinum</td>
+            {% elif data.rank == "6" %}
+            <td>Amarald</td>
+            {% elif data.rank == "7" %}
+            <td>Diamond</td>
+            {% elif data.rank == "8" %}
+            <td>Master</td>
+            {% elif data.rank == "9" %}
+            <td>Grand Master</td>
+            {% elif data.rank == "10" %}
+            <td>Challenger</td>
+            {% endif %}
+            <td>{{ data.server }}</td>
+            <td>{{ data.gender }}</td>
+            <td>{{ data.age }}</td>
+            <td>{{ data.language }}</td>
+            <td>|</td>
+            <td>{{ data.top1 }}</td>
+            <td>{{ data.mid1 }}</td>
+            <td>{{ data.jungle1 }}</td>
+            <td>{{ data.adc1 }}</td>
+            <td>{{ data.support1 }}</td>
+            <td>{{ data.top2 }}</td>
+            <td>{{ data.mid2 }}</td>
+            <td>{{ data.jungle2 }}</td>
+            <td>{{ data.adc2 }}</td>
+            <td>{{ data.support2 }}</td>
+            <td><button type="submit" id="delbtn" onclick="deletemethod({{data.id}})">방 닫기</button></td>
+            
+        </tr>
+        
+        {% endfor %}
+    </table>
+</body>
+
+</html>

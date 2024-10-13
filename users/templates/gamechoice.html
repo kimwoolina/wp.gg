@@ -34,11 +34,12 @@
         .games {
             display: flex;
             justify-content: center;
+            gap: 20px;
         }
 
         .game-item {
-            width: 250px;  /* 이미지 크기 증가 */
-            height: 280px; /* 이미지 크기 증가 */
+            width: 170px;  /* 이미지 크기 증가 */
+            height: 220px; /* 이미지 크기 증가 */
             cursor: pointer;
             transition: transform 0.3s ease;
             border-radius: 15px;
@@ -54,7 +55,7 @@
 
         /* 하단 로고 */
         .logo-container {
-            margin-top: -32px;
+            margin-top: -20px;
         }
 
         .logo-container img {
@@ -131,7 +132,7 @@
 
             // 리그 오브 레전드 클릭시 리다이렉트
             lolImage.addEventListener('click', function() {
-                window.location.href = '/login-selection-page-lol/';  
+                window.location.href = '/login_selection/';  
             });
 
             // 다른 게임 선택 추가

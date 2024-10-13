@@ -31,6 +31,10 @@ def home(request):
 def gamechoice(request):
     return render(request, 'gamechoice.html')
 
+# 계정 선택 페이지
+def login_selection(request):
+    return render(request, 'login_selection.html')
+
 # 회원가입 페이지 렌더링
 def register_page(request):
     return render(request, 'register.html')

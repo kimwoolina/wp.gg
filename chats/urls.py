@@ -1,12 +1,18 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
 
-
 urlpatterns = [
-    path('rooms/', views.ChatRoomListCreateView.as_view(), name='chat_rooms'),
-    path('<int:room_id>/messages', views.MessageListView.as_view(), name='chat_messages'),
-    path('group-chats/', views.GroupChatListCreateView.as_view(), name='group-chat-list-create'),
-    path('group-chats/<int:group_chat_id>/messages/', views.GroupChatMessageListView.as_view(), name='group-chat-message-list-create'),
-    path('', views.TemplateView.as_view(template_name='chat.html'), name='chat'),
-    path('message/<str:username>', views.SendMessageView.as_view(), name='send_message'),
+    # path('notifications/', views.NotificationListView.as_view(), name='notification_list'),
+    # path('', include(router.urls)),
+    # path('', views.index, name="index"),
+    path('', views.ChatRoomTemplateView.as_view(), name='chat-room-template'),  # 채팅방 템플릿 추가
+    path('chatrooms/', views.PrivateChatRoomListView.as_view(), name='chat-room-list'),
+    path('private-chat/', views.PrivateChatRoomCreateView.as_view(), name='create-private-chat-room'),
+    path('private-chats/<int:room_id>/messages/', views.PrivateChatMessageList.as_view(), name='private-chat-message-list'),  # GET: 1:1 채팅방의 메시지 리스트
+
+    # Group chat (단체 채팅) 관련 URL
+    path('group-chat/', views.GroupChatRoomCreateView.as_view(), name='create-group-chat-room'),  # 그룹 채팅방 생성
+    path('group-chats/<int:group_chat_id>/messages/', views.GroupChatMessageList.as_view(), name='group-chat-message-list'),  # GET: 그룹 채팅방의 메시지 리스트
+    path('group-chats/<int:group_chat_id>/messages/create/', views.GroupChatMessageCreate.as_view(), name='create-group-chat-message'),  # POST: 그룹 채팅 메시지 생성
 ]

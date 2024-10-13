@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유저 추천 시스템</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 기본 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>유저 추천 시스템</h1>
+        <form id="recommendation-form" method="POST" action="{% url 'user_recommendations' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="riot_tier">리그 티어 선택:</label>
+                <select id="riot_tier" name="riot_tier" multiple>
+                    <option value="bronze">브론즈</option>
+                    <option value="silver">실버</option>
+                    <option value="gold">골드</option>
+                    <option value="platinum">플래티넘</option>
+                    <option value="diamond">다이아몬드</option>
+                    <option value="master">마스터</option>
+                    <option value="grandmaster">그랜드마스터</option>
+                    <option value="challenger">챌린저</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="positions">포지션 선택:</label>
+                <select id="positions" name="positions" multiple>
+                    <option value="top">탑</option>
+                    <option value="jungle">정글</option>
+                    <option value="mid">미드</option>
+                    <option value="adc">원거리 딜러</option>
+                    <option value="support">서포터</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filter_fields">평가 항목 선택:</label>
+                <select id="filter_fields" name="filter_fields" multiple>
+                    <option value="kindness">친절도</option>
+                    <option value="teamwork">팀워크</option>
+                    <option value="communication">커뮤니케이션</option>
+                    <option value="mental_strength">멘탈</option>
+                    <option value="skill">기술</option>
+                    <option value="positivity">긍정적</option>
+                    <option value="punctuality">시간약속</option>
+                    <option value="mvp">MVP</option>
+                    <option value="mechanical_skill">피지컬</option>
+                    <option value="operation">운영</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="user_preference">유저의 선호도:</label>
+                <input type="text" id="user_preference" name="user_preference" placeholder="예: 전략적 플레이를 선호합니다.">
+            </div>
+            <button type="submit">추천하기</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        // JavaScript 코드는 여기에 추가할 수 있습니다.
+    </script>
+</body>
+</html>

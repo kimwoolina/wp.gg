@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 
+# User = get_user_model()
+
 class Positions(models.Model):
     position_name = models.CharField(max_length=7)
 
@@ -61,7 +63,7 @@ class Evaluations(models.Model):
     teamwork = models.IntegerField(default=0) # 팀워크
     communication = models.IntegerField(default=0) # 소통
     mental_strength = models.IntegerField(default=0) #멘탈
-    punctualiity= models.IntegerField(default=0) #시간약속
+    punctuality= models.IntegerField(default=0) #시간약속
     positivity = models.IntegerField(default=0) #긍정적
     mvp = models.IntegerField(default=0) 
     mechanical_skill = models.IntegerField(default=0) #피지컬
@@ -73,5 +75,19 @@ class Evaluations(models.Model):
     verbal_abuse= models.IntegerField(default=0) #언어폭력
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+from .managers import DiscordUserOAuth2Manager
+
+class DiscordUser(models.Model):
+    objects = DiscordUserOAuth2Manager()
+    id = models.BigIntegerField(primary_key=True)
+    discordTag = models.CharField(max_length=37)
+    avatar = models.CharField(max_length=100)
+    publicFlags = models.IntegerField()
+    flags = models.IntegerField()
+    locale = models.CharField(max_length=100)
+    mfaEnabled = models.BooleanField()
+    last_login = models.DateTimeField()
     
-    
+    def is_authenticated(self, request):
+        return True

@@ -67,6 +67,13 @@
             // 채팅방 선택 시 메시지 로드
             $(document).on('click', '.select-chat-room', function() {
                 const roomId = $(this).data('room-id'); // 클릭한 채팅방 ID 가져오기
+
+                // 모든 채팅방에서 selected 클래스 제거
+                $('.select-chat-room').removeClass('selected');
+
+                // 클릭한 채팅방에 selected 클래스 추가
+                $(this).addClass('selected');
+
                 loadMessages(roomId);
                 startPolling(roomId); // 폴링 시작
             });
@@ -75,7 +82,7 @@
             $('#send-message').click(function() {
                 const roomId = $('.select-chat-room.selected').data('room-id'); // 선택된 채팅방 ID
                 const messageContent = $('#message-input').val();
-    
+
                 if (messageContent && roomId) {
                     sendMessage(roomId, messageContent);
                     $('#message-input').val(''); // 입력창 초기화
@@ -141,7 +148,7 @@
             // 메시지 전송 함수
             function sendMessage(roomId, content) {
                 $.ajax({
-                    url: '/api/chat/private-chats/' + roomId + '/messages/create/',
+                    url: '/api/chat/private-chats/' + roomId + '/messages/',
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + getAccessToken() },
                     contentType: 'application/json',

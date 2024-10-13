@@ -10,7 +10,6 @@ urlpatterns = [
     path('chatrooms/', views.PrivateChatRoomListView.as_view(), name='chat-room-list'),
     path('private-chat/', views.PrivateChatRoomCreateView.as_view(), name='create-private-chat-room'),
     path('private-chats/<int:room_id>/messages/', views.PrivateChatMessageList.as_view(), name='private-chat-message-list'),  # GET: 1:1 채팅방의 메시지 리스트
-    path('private-chats/<int:room_id>/messages/create/', views.PrivateChatMessageCreate.as_view(), name='create-private-chat-message'),  # POST: 1:1 채팅 메시지 생성
 
     # Group chat (단체 채팅) 관련 URL
     path('group-chat/', views.GroupChatRoomCreateView.as_view(), name='create-group-chat-room'),  # 그룹 채팅방 생성

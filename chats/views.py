@@ -52,7 +52,7 @@ class PrivateChatRoomListView(APIView):
         return Response(serializer.data)  
 
 
-# 개인 메시지 리스트
+# 개인 메시지 리스트 / 전송
 class PrivateChatMessageList(APIView):
     # permission_classes = [IsAuthenticated]
 

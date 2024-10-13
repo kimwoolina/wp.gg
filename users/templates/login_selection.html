@@ -39,7 +39,7 @@
             gap: -30px; /* 버튼 사이 간격 */
             margin-bottom: 100px;
         }
-,
+
         .login-btn {
             width: 300px;
             padding: 17px;
@@ -69,18 +69,43 @@
             cursor: pointer;
         }
 
-        /* 우측 상단 게임 전환 버튼 */
+        /* 게임 전환 드롭다운 스타일 */
         .switch-game {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .switch-game select {
+            background-color: #3B3A4F;
             color: white;
+            padding: 10px 13px; /* 드롭다운 크기 조정 */
+            font-size: 16px; /* 폰트 크기 증가 */
+            border: 1px solid #716490;
+            border-radius: 26px; /* 더 둥근 테두리 */
             cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none; /* 사파리에서 기본 드롭다운 화살표 제거 */
+            -moz-appearance: none; /* 파이어폭스에서 기본 드롭다운 화살표 제거 */
+            background-image: url('{% static "img/dropdown-arrow.png" %}');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px; /* 화살표 크기 조정 */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-
-        .switch-game:hover {
-            color: #B19CD9;
+        
+        .switch-game select:hover {
+            background-color: #5A5880;
+            border-color: #B19CD9;
         }
+        
+        .switch-game select:focus {
+            border-color: #B19CD9;
+            outline: none;
+        }
+        
 
         /* 하단 뒤로가기 버튼 */
         .back-arrow {
@@ -117,7 +142,7 @@
     <!-- 상단 게임 전환 드롭다운 -->
     <div class="switch-game">
         <select id="game-switcher" onchange="switchGame()">
-            <option value="lol" selected>게임전환</option>
+            <option value="lol" selected>👀</option>
             <option value="valorant">발로란트</option>
             <option value="rocket">로켓리그</option>
             <option value="dota">도타2</option>
@@ -132,15 +157,15 @@
     <script>
         // 각 버튼 클릭 시 리다이렉트
         document.getElementById('discord-btn').addEventListener('click', function() {
-            window.location.href = '/login-with-discord/';
+            window.location.href = '/login-page/';
         });
 
         document.getElementById('riot-btn').addEventListener('click', function() {
-            window.location.href = '/login-with-riot/';
+            window.location.href = '/login-page/';
         });
 
         document.getElementById('google-btn').addEventListener('click', function() {
-            window.location.href = '/login-with-google/';
+            window.location.href = '/login-page/';
         });
 
         // 게임 전환 드롭다운 처리

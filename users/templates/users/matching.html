@@ -57,7 +57,7 @@
 <body>
     <div class="container">
         <h1>유저 추천 시스템</h1>
-        <form id="recommendation-form" method="POST" action="{% url 'user_recommendations' %}">
+        <form id="recommendation-form">
             {% csrf_token %}
             <div class="form-group">
                 <label for="riot_tier">리그 티어 선택:</label>
@@ -108,7 +108,42 @@
     </div>
 
     <script>
-        // JavaScript 코드는 여기에 추가할 수 있습니다.
+        document.getElementById('recommendation-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // 폼 제출 기본 동작 방지
+
+            // FormData 객체를 통해 폼 데이터를 수집
+            const formData = new FormData(event.target);
+            const params = new URLSearchParams(formData).toString(); // 쿼리 문자열로 변환
+
+            // Fetch API로 GET 요청 보내기
+            fetch('/api/profile/recommendation?' + params) 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 결과 표시
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = ''; // 이전 결과 초기화
+                    if (data.length > 0) {
+                        const list = document.createElement('ul');
+                        data.forEach(user => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${user.username} (티어: ${user.riot_tier}, 포지션: ${user.positions.join(', ')})`;
+                            list.appendChild(listItem);
+                        });
+                        resultDiv.appendChild(list);
+                    } else {
+                        resultDiv.textContent = '추천된 유저가 없습니다.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching recommendations:', error);
+                });
+        });
+        
     </script>
 </body>
 </html>

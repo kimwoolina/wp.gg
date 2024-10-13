@@ -90,6 +90,17 @@
                     alert("Please select a chat room and enter a message.");
                 }
             });
+
+            // 채팅방 생성 버튼 클릭 시 호출
+            $('#create-chat-room').click(function() {
+                const user2Id = $('#user2-id').val();
+                if (user2Id) {
+                    createChatRoom(user2Id);
+                    $('#user2-id').val(''); // 입력창 초기화
+                } else {
+                    alert("Please enter a user ID.");
+                }
+            });
     
             // 폴링 시작 함수
             function startPolling(roomId) {
@@ -106,6 +117,11 @@
             // 사용자 인증 토큰을 로컬 저장소에서 가져옵니다.
             function getAccessToken() {
                 return localStorage.getItem('access_token');
+            }
+
+            // CSRF 토큰 가져오기 (Django용)
+            function getCsrfToken() {
+                return $('input[name="csrfmiddlewaretoken"]').val(); // CSRF 토큰 가져오기
             }
     
             // 메시지 및 채팅방 로드 함수
@@ -150,7 +166,10 @@
                 $.ajax({
                     url: '/api/chat/private-chats/' + roomId + '/messages/',
                     method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                    headers: { 
+                        'Authorization': 'Bearer ' + getAccessToken(),
+                        'X-CSRFToken': getCsrfToken() // CSRF 토큰 추가
+                    },
                     contentType: 'application/json',
                     data: JSON.stringify({ room_id: roomId, content: content }), // room_id 사용
                     success: function(message) {
@@ -167,7 +186,10 @@
                 $.ajax({
                     url: '/api/chat/private-chat/',
                     method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                    headers: { 
+                        'Authorization': 'Bearer ' + getAccessToken(),
+                        'X-CSRFToken': getCsrfToken() // CSRF 토큰 추가
+                    },
                     contentType: 'application/json',
                     data: JSON.stringify({ user2: user2Id }),
                     success: function(room) {
@@ -180,6 +202,5 @@
             }
         });
     </script>
-    
 </body>
 </html>

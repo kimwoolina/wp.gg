@@ -1,7 +1,7 @@
+from rest_framework import serializers
 from requests import request
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import serializers
 from articles.models import (
     Articles, 
     ArticleImages, 
@@ -14,6 +14,13 @@ from users.serializers import (
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'riot_username', 'riot_tag', 'profile_image']
+
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta :
@@ -30,12 +37,15 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    article_images = ArticleImageSerializer(many=True)
-
-    class Meta :
-        model=Articles
-        fields= ['title', 'content', 'article_score', 'article_images', 'reviewer', 'reviewee']
+    reviewer = UserSerializer()  # reviewer의 프로필 정보를 UserSerializer로 직렬화
+    reviewee = UserSerializer()  # reviewee의 프로필 정보를 UserSerializer로 직렬화
+    article_images = ArticleImageSerializer(many=True)  # 글에 포함된 이미지를 직렬화
     
+    class Meta:
+        model = Articles
+        fields = ['id', 'title', 'content', 'article_score', 'article_images', 'reviewer', 'reviewee', 'created_at', 'updated_at']
+
+
     def create(self, validated_data):
         article = Articles.objects.create(**validated_data)
         img_files = self.context['request'].FILES

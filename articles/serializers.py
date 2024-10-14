@@ -11,6 +11,7 @@ from users.models import Evaluations
 from users.serializers import (
     UserProfileSerializer
 )
+from django.db.models import Avg
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -36,66 +37,79 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['article', 'user',]
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleListSerializer(serializers.ModelSerializer):
     reviewer = UserSerializer()  # reviewer의 프로필 정보를 UserSerializer로 직렬화
     reviewee = UserSerializer()  # reviewee의 프로필 정보를 UserSerializer로 직렬화
-    article_images = ArticleImageSerializer(many=True)  # 글에 포함된 이미지를 직렬화
+    article_images = ArticleImageSerializer(many=True, required=False)  # 글에 포함된 이미지를 직렬화
     
     class Meta:
         model = Articles
         fields = ['id', 'title', 'content', 'article_score', 'article_images', 'reviewer', 'reviewee', 'created_at', 'updated_at']
 
+
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Articles
+        fields = '__all__' 
+
     def update_user_score(self, reviewee):
-        # reviewee가 평가받은 모든 article들의 평균 점수를 계산
+        """
+        reviewee가 평가받은 모든 article들의 평균 점수를 계산하여 업데이트합니다.
+        """
         reviews = reviewee.reviewees.all()
         if reviews.exists():
             reviewee.score = reviews.aggregate(Avg('article_score'))['article_score__avg']
         else:
             reviewee.score = 0.0
         reviewee.save()
-        
+
     def create(self, validated_data):
+        """
+        새로운 기사를 생성하고 관련 데이터를 처리합니다.
+        """
+        # Articles 객체 생성
         article = Articles.objects.create(**validated_data)
-        
+
         # 이미지 파일 처리
-        img_files = self.context['request'].FILES
-        if img_files:
-            for img_file in img_files.getlist('img'):
-                ArticleImages.objects.create(article=article, img=img_file)
+        self._handle_image_files(article)
 
         # 평가 데이터 처리
-        req_data = self.context['request'].data
-        target_evaluation_data = {
-            'kindness': int(req_data.get('kindness', 0)),
-            'teamwork': int(req_data.get('teamwork', 0)),
-            'communication': int(req_data.get('communication', 0)),
-            'mental_strength': int(req_data.get('mental_strength', 0)),
-            'punctuality': int(req_data.get('punctuality', 0)),
-            'positivity': int(req_data.get('positivity', 0)),
-            'mvp': int(req_data.get('mvp', 0)),
-            'mechanical_skill': int(req_data.get('mechanical_skill', 0)),
-            'operation': int(req_data.get('operation', 0)),
-            'negativity': int(req_data.get('negativity', 0)),
-            'profanity': int(req_data.get('profanity', 0)),
-            'afk': int(req_data.get('afk', 0)),
-            'cheating': int(req_data.get('cheating', 0)),
-            'verbal_abuse': int(req_data.get('verbal_abuse', 0)),
-        }
-
-        # 평가가 있으면 업데이트, 없으면 생성
-        if Evaluations.objects.filter(user_id=article.reviewee).exists():
-            Evaluations.objects.filter(user=article.reviewee).update(**target_evaluation_data)
-        else:
-            Evaluations.objects.create(user=article.reviewee, **target_evaluation_data)
+        self._handle_evaluation_data(article)
 
         # 리뷰어의 점수 업데이트
         self.update_user_score(article.reviewee)
 
         return article
 
-    
-    
-    
+    def _handle_image_files(self, article):
+        """
+        이미지 파일을 처리하여 ArticleImages를 생성합니다.
+        """
+        img_files = self.context['request'].FILES.getlist('img')
+        for img_file in img_files:
+            ArticleImages.objects.create(article=article, img=img_file)
+
+    def _handle_evaluation_data(self, article):
+        """
+        평가 데이터를 처리하여 Evaluations 객체를 생성 또는 업데이트합니다.
+        체크된 항목에 대해 +1씩 추가합니다.
+        """
+        req_data = self.context['request'].data
+        evaluation, created = Evaluations.objects.get_or_create(user=article.reviewee)
+
+        # 각 항목에 대해 체크 여부에 따라 +1 추가
+        for field in [
+            'kindness', 'teamwork', 'communication', 'mental_strength', 
+            'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
+            'operation', 'negativity', 'profanity', 'afk', 
+            'cheating', 'verbal_abuse'
+        ]:
+            if req_data.get(field) == '1':  # 체크된 항목일 경우
+                setattr(evaluation, field, getattr(evaluation, field, 0) + 1)
+
+        # 업데이트된 평가 데이터를 저장
+        evaluation.save()
+
     def update(self, instance, validated_data):
         article = super().update(instance, validated_data)
         article.update_user_score()  # 아티클이 업데이트될 때 점수 업데이트

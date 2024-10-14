@@ -3,22 +3,24 @@ from rest_framework.response import Response
 from articles.serializers import (
     ArticleSerializer,
     ArticleListSerializer,
-    ArticleReadSerializer,
+    ArticleDetailSerializer,
     CommentSerializer,
     UserSerializer
 )
 from articles.models import Articles, Comments
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView
 from django.contrib.auth import get_user_model
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
-class ArticleDetailView(RetrieveAPIView):
-    queryset = Articles.objects.all()
-    serializer_class = ArticleReadSerializer
+class ArticleDetailView(APIView):
+    def get(self, request, pk):  # URL에서 article_id를 받아옵니다.
+        article = get_object_or_404(Articles, id=pk)  # ID로 기사 찾기
+        serializer = ArticleDetailSerializer(article)  # Serializer를 사용하여 데이터 변환
+        return Response(serializer.data, status=status.HTTP_200_OK)  # JSON 응답 반환
+
 
 
 class RevieweeSearchView(APIView):

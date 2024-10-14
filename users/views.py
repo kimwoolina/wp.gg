@@ -167,7 +167,6 @@ class discordLoginView(generic.View):
     """
     
     def get(self, request):
-        # 사용자가 로그인한 경우 리다이렉트
         if self.request.user.is_authenticated:
             return redirect("index")
 
@@ -193,37 +192,23 @@ class discordLoginView(generic.View):
                 user.set_unusable_password()  # 비밀번호를 사용할 수 없게 설정
                 user.save()
 
-            # 사용자의 backend 설정
-            backend = get_backends()[0]  # 첫 번째 인증 백엔드 사용 (필요 시 수정)
-            user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
-
             # 로그인 처리
-            login(request, user)
-            
-            user = self.request.user
+            backend = 'django.contrib.auth.backends.ModelBackend'
+            user.backend = backend  # 인증 백엔드 설정
+            login(request, user)  # Django 인증 시스템에 사용자 로그인 처리
 
             # JWT 토큰 생성
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
 
-            # 로그인 성공 후 응답 구성
-            response_data = {
-                'message': f'{user.discord_username}님 안녕하세요😊',
-                'access': access_token,
-                'refresh': refresh_token
-            }
-
-            # return JsonResponse(response_data)  # JSON 응답 반환(DRF)
-            
-            # return redirect("user_index") 
-            # JWT 토큰을 세션에 저장 (필요에 따라)
+            # JWT 토큰 세션에 저장 (선택 사항)
             request.session['access_token'] = access_token
             request.session['refresh_token'] = refresh_token
-            
-            # 로그인 성공 후 user_index로 리다이렉트
-            # return redirect("user_index") 
+
+            # 로그인 성공 후 다른 페이지로 리다이렉트
             return redirect(f"/home/?access={access_token}&refresh={refresh_token}")
+
 
         # 코드가 없으면 디스코드 API로 리다이렉트
         else:

@@ -59,25 +59,24 @@
 
         .logo-container img {
             width: 100px;
-            transition: transform 0.2s ease; /* 호버 애니메이션 적용 */
         }
 
-
-        /* 로고 호버시 통통 튀는 애니메이션 */
-        .logo-container img:hover {
-            animation: bounce 0.3s infinite alternate; /* 통통 애니메이션 */
-            animation-iteration-count: 6; /* 두 번 점프 */
+        /* 로고 애니메이션 추가 */
+        .logo-container img {
+            animation: bounce 0.7s ease-in-out infinite;
         }
 
         @keyframes bounce {
             0% {
-                transform: translateY(0px); /* 기본 위치 */
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
             }
             100% {
-                transform: translateY(-13px); /* 위로 튀는 위치 */
+                transform: translateY(0);
             }
         }
-
 
         /* 페이지 하단 화살표 */
         .back-arrow {
@@ -92,6 +91,10 @@
             cursor: pointer;
             margin-left: 10px;
             margin-bottom: 5px;
+        }
+
+        .back-arrow img:hover {
+            color: #6f69a5
         }
 
     </style>
@@ -136,17 +139,17 @@
 
             // 발로란트 클릭 시 팝업
             valorantImage.addEventListener('click', function() {
-                alert('현재 발로란트는 서버 업데이트 중 입니다. 🙏');
+                alert('현재 발로란트는 서버 업데이트 중입니다.');
             });
 
             // 로켓리그 클릭 시 팝업
             rocketImage.addEventListener('click', function() {
-                alert('현재 로켓리그는 서버 업데이트 중 입니다.🙏');
+                alert('현재 로켓리그는 서버 업데이트 중입니다.');
             });
 
             // 도타2 클릭 시 팝업
             dotaImage.addEventListener('click', function() {
-                alert('현재 도타2는 서버 업데이트 중 입니다. 🙏');
+                alert('현재 도타2는 서버 업데이트 중입니다.');
             });
         });
     </script>

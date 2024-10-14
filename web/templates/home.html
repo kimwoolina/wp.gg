@@ -105,11 +105,6 @@
             margin-bottom: 150px;
         }
 
-        /* 검색 바 호버 시 로고에 애니메이션 추가 */
-        .search-bar:hover .logo {
-            animation: bounce 0.7s ease-in-out infinite;
-        }
-
         .search-box {
             width: 600px;
             padding: 15px;
@@ -282,14 +277,6 @@
             });
         }
         });
-
-        // 홈 화면 캐시된 페이지 강제 새로고침
-        {% comment %} window.onload = function() {
-            const accessToken = localStorage.getItem('access_token');
-            if (!accessToken) {
-                window.location.reload(true);  
-            }
-        }; {% endcomment %}
         
 </script>
 

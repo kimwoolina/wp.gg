@@ -23,6 +23,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'riot_username', 'riot_tag', 'profile_image']
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    # class Meta :
+    #     model=Comments
+    #     fields=['content']
+    #     read_only_fields = ['article', 'user',]
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Comments
+        fields = ['id', 'user', 'content', 'created_at', 'updated_at', 'parent_comment']
+        
+
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta :
         model=ArticleImages
@@ -30,11 +42,15 @@ class ArticleImageSerializer(serializers.ModelSerializer):
         read_only_fields = ['article',]
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta :
-        model=Comments
-        fields=['content']
-        read_only_fields = ['article', 'user',]
+class ArticleDetailSerializer(serializers.ModelSerializer):
+    reviewer = UserSerializer(read_only=True)
+    reviewee = UserSerializer(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    article_images = ArticleImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Articles
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'reviewer', 'reviewee', 'article_images', 'comments']
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
@@ -114,11 +130,3 @@ class ArticleSerializer(serializers.ModelSerializer):
         article = super().update(instance, validated_data)
         article.update_user_score()  # 아티클이 업데이트될 때 점수 업데이트
         return article
-
-
-class ArticleReadSerializer(serializers.ModelSerializer):
-    # profile = 
-    comments = CommentSerializer(many=True, read_only=True)
-    class Meta :
-        model=Articles
-        fields= ['title', 'content', 'article_score', 'created_at', 'reviewer', 'reviewee', 'comments']

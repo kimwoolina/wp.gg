@@ -205,12 +205,12 @@
                 // 로컬 스토리지에서 리프레시 토큰 가져오기
                 const refreshToken = localStorage.getItem('refresh_token');
 
-                // 리프레시 토큰이 없으면 바로 로그아웃 처리
+                /*// 리프레시 토큰이 없으면 바로 로그아웃 처리
                 if (!refreshToken) {
                     alert('로그아웃 되었습니다. 다시 로그인 해주세요');
                     window.location.href = '/home/';
                     return;
-                }
+                }*/
 
                 // 새로운 액세스 토큰을 요청하는 함수
                 function refreshAccessToken() {
@@ -220,20 +220,29 @@
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰을 헤더에 포함
                         },
-                        body: JSON.stringify({ "refresh_token": refreshToken }) // 리프레시 토큰 전송
+                        body: JSON.stringify({ "refresh": refreshToken }) // 리프레시 토큰 전송
                     })
                     .then(response => {
-                        if (response.ok) {
-                            return response.json().then(data => {
-                                localStorage.setItem('access_token', data.access_token);
-                                return data.access_token;
-                            });
-                        } else {
+                        if (!response.ok) {
                             alert('로그아웃 되었습니다. 다시 로그인 해주세요');
                             localStorage.removeItem('refresh_token');
                             window.location.href = '/home/';
-                            return null;
+                        } 
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.access) {
+                            console.log('새로운 액세스 토큰 받음:', data.access);
+                            localStorage.setItem('access_token', data.access);
+                            return data.access;
+                        } else {
+                            console.error('응답에서 액세스 토큰을 찾을 수 없습니다.');
+                            return Promise.reject('No access token in response');
                         }
+                    })
+                    .catch(error => {
+                        console.error('토큰 갱신 중 오류 발생:', error);
+                        return Promise.reject(error);
                     });
                 }
 

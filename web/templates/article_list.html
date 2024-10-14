@@ -1,1 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Articles</title>
+    <style>
+        .article {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+        }
+        .article-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .article-content {
+            margin-top: 5px;
+            color: #555;
+        }
+        .article-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .profile-image {
+            width: 50px; /* Adjust the size as needed */
+            height: 50px; /* Adjust the size as needed */
+            border-radius: 50%; /* Make it circular */
+        }
+    </style>
+</head>
+<body>
 
+    <div id="article-list"></div>
+    
+    <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
+
+    <script>
+        // API URL
+        const apiUrl = 'http://127.0.0.1:8000/api/articles/';
+
+        // DOM element for article list
+        const articleList = document.getElementById('article-list');
+
+        // Function to truncate content to 10 characters
+        function truncateContent(content) {
+            return content.length > 10 ? content.substring(0, 10) + '...' : content;
+        }
+
+        // Function to create and append an article to the DOM
+        function appendArticle(article) {
+            const reviewer = article.reviewer;
+            const reviewee = article.reviewee;
+
+            // Reviewer info
+            const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
+            const reviewerTag = reviewer.riot_tag ? `#${reviewer.riot_tag}` : '';
+            const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : 'default-profile.png';
+
+            // Reviewee info
+            const revieweeUsername = reviewee.riot_username ? reviewee.riot_username : reviewee.username;
+            const revieweeTag = reviewee.riot_tag ? `#${reviewee.riot_tag}` : '';
+            const revieweeProfileImage = reviewee.profile_image ? reviewee.profile_image : 'default-profile.png';
+
+            // Article score (add 👍🏻 or 👎🏻 based on the score)
+            const scoreEmoji = article.article_score > 5 ? '👍🏻' : '👎🏻';
+
+            // Truncated content
+            const truncatedContent = truncateContent(article.content);
+
+            // Create article element
+            const articleElement = document.createElement('div');
+            articleElement.classList.add('article');
+
+            // Create a link to the article detail page
+            const articleLink = document.createElement('a');
+            articleLink.href = `/article/${article.id}/`; // Update this line to use the correct path
+            articleLink.innerHTML = `
+                <div class="article-title">
+                    <img src="{% static 'img/default_profile_image.png' %}" alt="Profile Image" class="profile-image">
+                    ${revieweeUsername}${revieweeTag} ${scoreEmoji}
+                </div>
+                <div class="article-content">
+                    ${truncatedContent}
+                </div>
+            `;
+            articleLink.style.textDecoration = 'none'; // Remove underline from link
+
+            // Append the link to the article element
+            articleElement.appendChild(articleLink);
+
+            // Append to the list
+            articleList.appendChild(articleElement);
+        }
+
+        // Fetch articles from API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(article => {
+                    appendArticle(article);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching articles:', error);
+            });
+    </script>
+
+</body>
+</html>

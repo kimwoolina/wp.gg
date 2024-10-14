@@ -1,77 +1,169 @@
-{% extends "base.html" %}
-{% load rest_framework %}
+<form action="{% url 'articles:articles' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- 1. 유저 검색 기능 -->
+    <div>
+        <input type="text" id="user-search" placeholder="Search for users by username or riot_username">
+        <select id="reviewee" name="reviewee">
+            <option value="">--평가 할 사람을 고르세요--</option>
+        </select>
+    </div>
+    
+    <!-- 2. 이미지 업로드 및 미리보기 -->
+    <label for="img">Image</label>
+    <input type="file" name="img" id="img" multiple accept="image/*" onchange="previewImages(event)">
+    <div id="image-preview"></div>
 
-{% block content %}
-    <form action="{% url 'articles:articles' %}" method="POST">
-        {% csrf_token %}
-        <div>
-            <select id="reviewee" name="reviewee">
-                <option value="">--평가 할 사람을 고르세요--</option>
-                {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.username }} | {{ user.riot_username }}{{ user.riot_tag }}</option>
-                {% endfor %}
-                </select>
-        </div>
+    <!-- 3. title & content -->
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title" required><br>
+    
+    <label for="content">Content</label>
+    <input type="text" name="content" id="content" required><br>
 
+    <!-- 4. 이모티콘 점수 선택 -->
+    <label for="article_score">Score</label>
+    <div id="emoji-score">
+        <label>
+            <input type="radio" name="article_score" value="10" required> 😍
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="9" required> 🥰
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="8" required> 😘
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="7" required> 😄
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="6" required> 😙
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="5" required> 🙂
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="4" required> 🥺
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="3" required> 😞
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="2" required> 😣
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="1" required> 😡
+        </label>
+        <label>
+            <input type="radio" name="article_score" value="0" required> 🤮
+        </label>
+    </div>
+
+    <!-- 5. 평가 항목들 -->
+    <label> 평가 항목</label>
+    <div>
+    <input type="checkbox" id="kindness" value="1" name="kindness">
+    <label for="kindness">Kindness</label>
+
+    <input type="checkbox" id="teamwork" value="1" name="teamwork">
+    <label for="teamwork">Teamwork</label>
+
+    <input type="checkbox" id="communication" value="1" name="communication">
+    <label for="communication">Communication</label>
+
+    <input type="checkbox" id="mental_strength" value="1" name="mental_strength">
+    <label for="mental_strength">Mental Strength</label>
+
+    <input type="checkbox" id="punctuality" value="1" name="punctuality">
+    <label for="punctuality">Punctuality</label>
+
+    <input type="checkbox" id="positivity" value="1" name="positivity">
+    <label for="positivity">Positivity</label>
+
+    <input type="checkbox" id="mvp" value="1" name="mvp">
+    <label for="mvp">MVP</label>
+
+    <input type="checkbox" id="mechanical_skill" value="1" name="mechanical_skill">
+    <label for="mechanical_skill">Mechanical Skill</label>
+
+    <input type="checkbox" id="operation" value="1" name="operation">
+    <label for="operation">Operation</label>
+
+    <input type="checkbox" id="negativity" value="1" name="negativity">
+    <label for="negativity">Negativity</label>
+
+    <input type="checkbox" id="profanity" value="1" name="profanity">
+    <label for="profanity">Profanity</label>
+
+    <input type="checkbox" id="afk" value="1" name="afk">
+    <label for="afk">AFK</label>
+
+    <input type="checkbox" id="cheating" value="1" name="cheating">
+    <label for="cheating">Cheating</label>
+
+    <input type="checkbox" id="verbal_abuse" value="1" name="verbal_abuse">
+    <label for="verbal_abuse">Verbal Abuse</label>
+</div>
+
+    <input type="submit" value="Save" />
+</form>
+
+<script>
+    // CSRF 토큰을 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+
+    // 1. 유저 검색 기능
+    document.getElementById('user-search').addEventListener('input', function (e) {
+        const query = e.target.value;
+        const revieweeSelect = document.getElementById('reviewee');
+        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>';
         
-        <label for="title">title</label>
-        <input type="text" name="title" id="title" required><br>
+        fetch(`/api/articles/search_user/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                data.users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    const riotUsername = user.riot_username ? user.riot_username : '';
+                    const riotTag = user.riot_tag ? user.riot_tag : '';
+                    option.textContent = `${user.username} | ${riotUsername}${riotTag}`;
+                    revieweeSelect.appendChild(option);
+                });
+            });
+    });
+
+    // 2. 이미지 미리보기 기능
+    function previewImages(event) {
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = '';
         
-        <label for="content">content</label>
-        <input type="text" name="content" id="content" required><br>
+        const files = event.target.files;
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgElement = document.createElement('img');
+                imgElement.src = e.target.result;
+                imgElement.style.maxWidth = '100px';
+                imgElement.style.marginRight = '10px';
+                previewContainer.appendChild(imgElement);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 
-        <!-- <label for="reviewee">reviewee</label>
-        <input type="text" id="reviewee" min="1" required><br> -->
-        
-        <label for="img">image</label>
-        <input type="file" name="img" id="img" multiple><br>
-
-        <label for="article_score">score</label>
-        <input type="range" name="article_score" id="article_score" min="0" max="10" required><br>
-        <div>
-            <input type="radio" id="kindness" value="kindness" name="kindness">
-            <label for="kindness">kindness</label>
-
-            <input type="radio" id="teamwork" value="teamwork" name="teamwork">
-            <label for="teamwork">teamwork</label>
-
-            <input type="radio" id="communication" value="communication" name="communication">
-            <label for="communication">communication</label>
-
-            <input type="radio" id="mental_strength" value="mental_strength" name="mental_strength">
-            <label for="mental_strength">mental_strength</label>
-
-            <input type="radio" id="punctuality" value="punctuality" name="punctuality">
-            <label for="punctuality">punctuality</label>
-
-            <input type="radio" id="positivity" value="positivity" name="positivity">
-            <label for="positivity">positivity</label>
-
-            <input type="radio" id="mvp" value="mvp" name="mvp">
-            <label for="mvp">mvp</label>
-
-            <input type="radio" id="mechanical_skill" value="mechanical_skill" name="mechanical_skill">
-            <label for="mechanical_skill">mechanical_skill</label>
-
-            <input type="radio" id="operation" value="operation" name="operation">
-            <label for="operation">operation</label>
-
-            <input type="radio" id="negativity" value="negativity">
-            <label for="negativity" name="negativity">negativity</label>
-
-            <input type="radio" id="profanity" value="profanity" name="profanity">
-            <label for="profanity">profanity</label>
-
-            <input type="radio" id="afk" value="afk">
-            <label for="afk">afk</label>
-
-            <input type="radio" id="cheating" value="cheating">
-            <label for="cheating">cheating</label>
-
-            <input type="radio" id="verbal_abuse" value="verbal_abuse">
-            <label for="verbal_abuse">verbal_abuse</label>
-        </div>
-
-        <input type="submit" value="Save" />
-    </form> 
-{% endblock %}
+</script>

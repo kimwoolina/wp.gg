@@ -1,11 +1,54 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{{ article.title }}</title>
+    <style>
+        /* CSS로 이미지 크기 조정 */
+        .profile-image {
+            width: 50px; /* 원하는 너비로 조정 */
+            height: auto; /* 비율을 유지 */
+        }
+    </style>
 </head>
 <body>
-    detail
+    <div class="article-detail">
+        <h1>{{ article.title }}</h1>
+        <p>작성일: {{ article.created_at }}</p>
+        <div>
+            <h2>작성자: {{ article.reviewer.username }}</h2>
+            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
+        </div>
+        <div>
+            <h2>평가 대상: {{ article.reviewee.username }}</h2>
+            <p>Riot 유저명: {{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</p>
+            <img class="profile-image" src="{% if article.reviewee.profile_image %}{{ article.reviewee.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewee.username }} 프로필 이미지">
+        </div>
+        <div>
+            <h3>이미지들</h3>
+            {% for image in article.article_images %}
+                <img src="{{ image.img.url }}" alt="Article 이미지">
+            {% endfor %}
+        </div>
+        <div>
+            <h3>글 내용</h3>
+            <p>{{ article.content }}</p>
+        </div>
+        <div>
+            <h3>댓글</h3>
+            {% for comment in article.comments %}
+                <div class="comment">
+                    <h4>{{ comment.user.username }}</h4>
+                    <p>{{ comment.content }}</p>
+                    <p>작성일: {{ comment.created_at }}</p>
+                    {% if comment.parent_comment %}
+                        <p>부모 댓글 ID: {{ comment.parent_comment.id }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

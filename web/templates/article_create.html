@@ -62,94 +62,108 @@
     <!-- 5. 평가 항목들 -->
     <label> 평가 항목</label>
     <div>
-        <input type="checkbox" id="kindness" value="1" name="evaluation">
-        <label for="kindness">Kindness</label>
+    <input type="checkbox" id="kindness" value="1" name="kindness">
+    <label for="kindness">Kindness</label>
 
-        <input type="checkbox" id="teamwork" value="1" name="evaluation">
-        <label for="teamwork">Teamwork</label>
+    <input type="checkbox" id="teamwork" value="1" name="teamwork">
+    <label for="teamwork">Teamwork</label>
 
-        <input type="checkbox" id="communication" value="1" name="evaluation">
-        <label for="communication">Communication</label>
+    <input type="checkbox" id="communication" value="1" name="communication">
+    <label for="communication">Communication</label>
 
-        <input type="checkbox" id="mental_strength" value="1" name="evaluation">
-        <label for="mental_strength">Mental Strength</label>
+    <input type="checkbox" id="mental_strength" value="1" name="mental_strength">
+    <label for="mental_strength">Mental Strength</label>
 
-        <input type="checkbox" id="punctuality" value="1" name="evaluation">
-        <label for="punctuality">Punctuality</label>
+    <input type="checkbox" id="punctuality" value="1" name="punctuality">
+    <label for="punctuality">Punctuality</label>
 
-        <input type="checkbox" id="positivity" value="1" name="evaluation">
-        <label for="positivity">Positivity</label>
+    <input type="checkbox" id="positivity" value="1" name="positivity">
+    <label for="positivity">Positivity</label>
 
-        <input type="checkbox" id="mvp" value="1" name="evaluation">
-        <label for="mvp">MVP</label>
+    <input type="checkbox" id="mvp" value="1" name="mvp">
+    <label for="mvp">MVP</label>
 
-        <input type="checkbox" id="mechanical_skill" value="1" name="evaluation">
-        <label for="mechanical_skill">Mechanical Skill</label>
+    <input type="checkbox" id="mechanical_skill" value="1" name="mechanical_skill">
+    <label for="mechanical_skill">Mechanical Skill</label>
 
-        <input type="checkbox" id="operation" value="1" name="evaluation">
-        <label for="operation">Operation</label>
+    <input type="checkbox" id="operation" value="1" name="operation">
+    <label for="operation">Operation</label>
 
-        <input type="checkbox" id="negativity" value="1" name="evaluation">
-        <label for="negativity">Negativity</label>
+    <input type="checkbox" id="negativity" value="1" name="negativity">
+    <label for="negativity">Negativity</label>
 
-        <input type="checkbox" id="profanity" value="1" name="evaluation">
-        <label for="profanity">Profanity</label>
+    <input type="checkbox" id="profanity" value="1" name="profanity">
+    <label for="profanity">Profanity</label>
 
-        <input type="checkbox" id="afk" value="1" name="evaluation">
-        <label for="afk">AFK</label>
+    <input type="checkbox" id="afk" value="1" name="afk">
+    <label for="afk">AFK</label>
 
-        <input type="checkbox" id="cheating" value="1" name="evaluation">
-        <label for="cheating">Cheating</label>
+    <input type="checkbox" id="cheating" value="1" name="cheating">
+    <label for="cheating">Cheating</label>
 
-        <input type="checkbox" id="verbal_abuse" value="1" name="evaluation">
-        <label for="verbal_abuse">Verbal Abuse</label>
-    </div>
+    <input type="checkbox" id="verbal_abuse" value="1" name="verbal_abuse">
+    <label for="verbal_abuse">Verbal Abuse</label>
+</div>
 
     <input type="submit" value="Save" />
 </form>
 
 <script>
-// 1. 유저 검색 기능
-document.getElementById('user-search').addEventListener('input', function (e) {
-    const query = e.target.value;
-    const revieweeSelect = document.getElementById('reviewee');
-    revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>';
-    
-    fetch(`/api/articles/search_user/?q=${query}`)
-        .then(response => response.json())
-        .then(data => {
-            data.users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = `${user.username} | ${user.riot_username}${user.riot_tag}`;
-                revieweeSelect.appendChild(option);
-            });
-        });
-});
-
-// 2. 이미지 미리보기 기능
-function previewImages(event) {
-    const previewContainer = document.getElementById('image-preview');
-    previewContainer.innerHTML = '';
-    
-    const files = event.target.files;
-    Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const imgElement = document.createElement('img');
-            imgElement.src = e.target.result;
-            imgElement.style.maxWidth = '100px';
-            imgElement.style.marginRight = '10px';
-            previewContainer.appendChild(imgElement);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-// 3. 라디오 버튼 선택 해제 기능
-function toggleRadio(radio) {
-    if (radio.checked) {
-        radio.checked = false;
+    // CSRF 토큰을 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
-}
+    
+    const csrftoken = getCookie('csrftoken');
+
+    // 1. 유저 검색 기능
+    document.getElementById('user-search').addEventListener('input', function (e) {
+        const query = e.target.value;
+        const revieweeSelect = document.getElementById('reviewee');
+        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>';
+        
+        fetch(`/api/articles/search_user/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                data.users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    const riotUsername = user.riot_username ? user.riot_username : '';
+                    const riotTag = user.riot_tag ? user.riot_tag : '';
+                    option.textContent = `${user.username} | ${riotUsername}${riotTag}`;
+                    revieweeSelect.appendChild(option);
+                });
+            });
+    });
+
+    // 2. 이미지 미리보기 기능
+    function previewImages(event) {
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = '';
+        
+        const files = event.target.files;
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgElement = document.createElement('img');
+                imgElement.src = e.target.result;
+                imgElement.style.maxWidth = '100px';
+                imgElement.style.marginRight = '10px';
+                previewContainer.appendChild(imgElement);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
 </script>

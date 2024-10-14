@@ -37,7 +37,6 @@
     
     <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
 
-
     <script>
         // API URL
         const apiUrl = 'http://127.0.0.1:8000/api/articles/';
@@ -45,7 +44,7 @@
         // DOM element for article list
         const articleList = document.getElementById('article-list');
 
-        // Function to truncate content to 2 characters
+        // Function to truncate content to 10 characters
         function truncateContent(content) {
             return content.length > 10 ? content.substring(0, 10) + '...' : content;
         }
@@ -74,8 +73,11 @@
             // Create article element
             const articleElement = document.createElement('div');
             articleElement.classList.add('article');
-            
-            articleElement.innerHTML = `
+
+            // Create a link to the article detail page
+            const articleLink = document.createElement('a');
+            articleLink.href = `/article/${article.id}/`; // Update this line to use the correct path
+            articleLink.innerHTML = `
                 <div class="article-title">
                     <img src="{% static 'img/default_profile_image.png' %}" alt="Profile Image" class="profile-image">
                     ${revieweeUsername}${revieweeTag} ${scoreEmoji}
@@ -84,6 +86,10 @@
                     ${truncatedContent}
                 </div>
             `;
+            articleLink.style.textDecoration = 'none'; // Remove underline from link
+
+            // Append the link to the article element
+            articleElement.appendChild(articleLink);
 
             // Append to the list
             articleList.appendChild(articleElement);

@@ -20,7 +20,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', include('web.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # django-allauth URL 설정
     path('auth/', include('users.urls')),  # 사용자 정의 URL 설정
@@ -28,4 +27,5 @@ urlpatterns = [
     path('api/chat/', include('chats.urls')),  # chat URL 설정
     path('api/party/', include('parties.urls')), # party URL 설정
     path('api/profile/', include('profiles.urls')),
+    path('', include('web.urls')),
 ]

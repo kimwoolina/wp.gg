@@ -18,7 +18,7 @@ from wpgg.settings import RIOT_API_KEY
 
 class UserDetailView(generics.GenericAPIView):
     """
-    유저를 검색하여 해당하는 유저의 상세정보 조회
+    유저를 검색하여 해당하는 유저의 상세정보 + 라이엇 정보 조회
     작성자: 김우린
     작성 날짜: 2024.09.30
 
@@ -30,62 +30,57 @@ class UserDetailView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         username = kwargs.get('username')
-        riot_tag = request.query_params.get('riot_tag')
+        riot_tag = request.query_params.get('riot_tag')  # GetRiotInfoView의 tag_line과 동일하게 사용
+        riot_info = None  # RIOT API 정보
 
+        # riot_tag가 있으면 RIOT API 호출
+        if riot_tag:
+            user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
+            if 'error' not in user_info:
+                riot_info = user_info
+            else:
+                return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
         # riot_tag가 있으면 같이 필터링, 없으면 riot_username만 필터링
         filters = {'riot_username': username}
         if riot_tag:
             filters['riot_tag'] = riot_tag
-        
-        ''' 
-        # test
-        queryset = User.objects.all()
-        serializer = UserSerializer(queryset, many=True)  # 직렬화
-        return Response(serializer.data)
-        '''
-        
+
         # 유저검색
-        if riot_tag:
-            user = User.objects.filter(**filters).first()
-        else:
-            # riot_tag가 없을 때 해당 유저네임으로 필터링
-            user_queryset = User.objects.filter(riot_username=username)
-
-            if user_queryset.exists():
-                # 검색 결과가 있을 때
-                if user_queryset.count() == 1:
-                    # 유저가 한 명인 경우, 상세 정보 바로 조회
-                    user = user_queryset.first()
-                else:
-                    # 유저가 여러 명인 경우, 필요한 필드만 가져오기
-                    user_list = user_queryset.values('riot_username', 'riot_tag')
-                    return Response({
-                        "users": list(user_list)
-                    })
-            else:
-                return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})
+        user_queryset = User.objects.filter(**filters)
         
+        if not user_queryset.exists():
+            return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         
-        if user:
-            # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
-            articles = Articles.objects.filter(reviewee=user)
-            serializer = self.get_serializer(user)
-            serializer_data = serializer.data
-            
-            # Evaluations를 serializer_data에 추가
-            try:
-                evaluations = Evaluations.objects.get(user=user)
-                serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
-            except Evaluations.DoesNotExist:
-                serializer_data['evaluations'] = None
-                
-            # articles를 serializer_data에 추가
-            article_serializer = ArticleSerializer(articles, many=True)
-            serializer_data['articles'] = article_serializer.data
-            
-            return Response(serializer_data)
+        # 유저가 여러 명인 경우 필드만 가져오기
+        if user_queryset.count() > 1:
+            user_list = user_queryset.values('riot_username', 'riot_tag')
+            return Response({
+                "users": list(user_list)
+            })
 
-        return Response({"message": "해당 소환사에 대한 평판 정보가 없습니다."})
+        # 유저 한 명만 있는 경우 상세 정보 조회
+        user = user_queryset.first()
+        serializer = self.get_serializer(user)
+        serializer_data = serializer.data
+
+        # Evaluations 추가
+        try:
+            evaluations = Evaluations.objects.get(user=user)
+            serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
+        except Evaluations.DoesNotExist:
+            serializer_data['evaluations'] = None
+
+        # Articles 추가
+        articles = Articles.objects.filter(reviewee=user)
+        article_serializer = ArticleSerializer(articles, many=True)
+        serializer_data['articles'] = article_serializer.data
+
+        # RIOT API 정보가 있을 경우 추가
+        if riot_info:
+            serializer_data['riot_info'] = riot_info
+
+        return Response(serializer_data)
 
 
 class MannerRankingView(ListAPIView):

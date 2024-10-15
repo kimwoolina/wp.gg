@@ -5,7 +5,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.db.models import F, Q
-from users.models import User, Evaluations
+from users.models import User, Evaluations, Positions
 from articles.models import Articles
 from .serializers import ( UserSerializer, EvaluationSerializer, 
                         ArticleSerializer,  UserRankingSerializer )
@@ -23,64 +23,74 @@ class UserDetailView(generics.GenericAPIView):
     작성 날짜: 2024.09.30
 
     메서드:
-        GET: 특정 사용자의 riot_username과 riot_tag에 따른 정보를 반환합니다.
+    GET: 특정 사용자의 riot_username과 riot_tag에 따른 정보를 반환하고,
+    라이엇 정보와 비교하여 user.riot_iag, user.positions에 값 저장
     """
     
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
         username = kwargs.get('username')
-        riot_tag = request.query_params.get('riot_tag')  # GetRiotInfoView의 tag_line과 동일하게 사용
-        riot_info = None  # RIOT API 정보
+        riot_tag = request.query_params.get('riot_tag')
 
-        # riot_tag가 있으면 RIOT API 호출
-        if riot_tag:
-            user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
-            if 'error' not in user_info:
-                riot_info = user_info
-            else:
-                return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-        
         # riot_tag가 있으면 같이 필터링, 없으면 riot_username만 필터링
         filters = {'riot_username': username}
         if riot_tag:
             filters['riot_tag'] = riot_tag
-
+        
         # 유저검색
         user_queryset = User.objects.filter(**filters)
-        
-        if not user_queryset.exists():
-            return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-        
-        # 유저가 여러 명인 경우 필드만 가져오기
-        if user_queryset.count() > 1:
-            user_list = user_queryset.values('riot_username', 'riot_tag')
-            return Response({
-                "users": list(user_list)
-            })
 
-        # 유저 한 명만 있는 경우 상세 정보 조회
-        user = user_queryset.first()
-        serializer = self.get_serializer(user)
-        serializer_data = serializer.data
+        if user_queryset.exists():
+            user = user_queryset.first()
 
-        # Evaluations 추가
-        try:
-            evaluations = Evaluations.objects.get(user=user)
-            serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
-        except Evaluations.DoesNotExist:
-            serializer_data['evaluations'] = None
+            # 라이엇 정보 가져오기
+            if riot_tag:  # riot_tag가 있는 경우에만 라이엇 정보 호출
+                user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
 
-        # Articles 추가
-        articles = Articles.objects.filter(reviewee=user)
-        article_serializer = ArticleSerializer(articles, many=True)
-        serializer_data['articles'] = article_serializer.data
+                if 'error' in user_info:
+                    return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-        # RIOT API 정보가 있을 경우 추가
-        if riot_info:
-            serializer_data['riot_info'] = riot_info
+                # riot_tier 업데이트
+                league_info = user_info.get('league', [])
+                if league_info:
+                    tier = league_info[0].get('tier')
+                    if tier and tier != user.riot_tier:
+                        user.riot_tier = tier
+                        user.save()  # 변경된 내용을 저장
 
-        return Response(serializer_data)
+                # positions 업데이트
+                preferred_position = user_info.get('preferredPosition')
+                if preferred_position:
+                    # 기존 positions 초기화
+                    user.positions.clear()
+                    position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
+                    user.positions.add(position)
+
+            # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
+            articles = Articles.objects.filter(reviewee=user)
+            serializer = self.get_serializer(user)
+            serializer_data = serializer.data
+            
+            # Evaluations를 serializer_data에 추가
+            try:
+                evaluations = Evaluations.objects.get(user=user)
+                serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
+            except Evaluations.DoesNotExist:
+                serializer_data['evaluations'] = None
+                
+            # articles를 serializer_data에 추가
+            article_serializer = ArticleSerializer(articles, many=True)
+            serializer_data['articles'] = article_serializer.data
+            
+            # 라이엇 정보 추가
+            if riot_tag:
+                serializer_data['riot_info'] = user_info
+
+            return Response(serializer_data)
+
+        return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})
+
 
 
 class MannerRankingView(ListAPIView):

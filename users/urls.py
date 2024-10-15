@@ -7,6 +7,7 @@ urlpatterns = [
     path('register/', views.CustomRegisterView.as_view(), name='register'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
+    path('delete-session/', views.delete_session, name='delete-session'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Access와 Refresh 토큰 발급
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh 토큰 갱신
     path('delete/', views.CustomDeleteUserView.as_view(), name='delete_user'), 

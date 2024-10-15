@@ -177,7 +177,7 @@
             .then(response => {
                 if (response.ok) {
                     alert('회원가입 완료👌');
-                    window.location.href = '/auth/login-page/';
+                    window.location.href = '/home/';
                 } else {
                     return response.json().then(data => {
                         alert('회원가입 실패: ' + data.error);

@@ -20,7 +20,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'riot_username', 'riot_tag', 'profile_image']
+        fields = ['id', 'username', 'riot_username', 'riot_tag', 'profile_image']
 
 
 class CommentSerializer(serializers.ModelSerializer):

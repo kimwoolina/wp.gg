@@ -1,10 +1,9 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }}</title>
+
+{% block title %}{{ article.title }}{% endblock title %}
+
+{% block css %}
     <style>
         /* CSS로 이미지 크기 조정 */
         .profile-image {
@@ -12,8 +11,10 @@
             height: auto; /* 비율을 유지 */
         }
     </style>
-</head>
-<body>
+{% endblock css %}
+
+
+{% block content %}
     <div class="article-detail">
         <h1>{{ article.title }}</h1>
         <p>작성일: {{ article.created_at }}</p>
@@ -50,5 +51,5 @@
             {% endfor %}
         </div>
     </div>
-</body>
-</html>
+{% endblock content %}
+

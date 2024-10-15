@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}리뷰 작성{% endblock title %}
+
+{% block content %}
+
 <form id="articleForm" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
@@ -108,12 +114,15 @@
     <input type="submit" value="Save" />
 </form>
 
+{% endblock content %}
+
+{% block javascript%}
 <script>
     // Bearer 토큰 가져오는 함수
     function getAccessToken() {
         return localStorage.getItem('access_token');
     }
-    
+
     // CSRF 토큰을 가져오는 함수
     function getCookie(name) {
         let cookieValue = null;
@@ -206,3 +215,5 @@
     });
 
 </script>
+
+{% endblock javascript%}

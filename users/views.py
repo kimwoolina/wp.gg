@@ -107,11 +107,6 @@ class CustomLogoutView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-# # #로그아웃
-# class CustomLogoutView(LogoutView):
-#     def post(self, request, *args, **kwargs):
-#         logout(request) 
-#         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)  
 
 # 회원탈퇴
 User = get_user_model()

@@ -53,6 +53,24 @@
             margin-bottom: 15px;
         }
 
+        /* 회원가입 버튼 */
+        .signup-btn {
+            width: 300px;
+            padding: 17px;
+            background-color: #716490;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .signup-btn:hover {
+            background-color: #B19CD9;
+        }
+
         .login-btn:hover {
             background-color: #B19CD9;
         }
@@ -131,9 +149,10 @@
 
     <!-- 로그인 선택 컨테이너 -->
     <div class="login-container">
-        <button class="login-btn" id="discord-btn">디스코드로 로그인</button>
-        <button class="login-btn" id="riot-btn">라이엇으로 로그인</button>
-        <button class="login-btn" id="google-btn">구글계정으로 로그인</button>
+        <button class="login-btn" id="discord-btn">디스코드 계정 연결</button>
+        <button class="login-btn" id="riot-btn">라이엇으로 계정 연결</button>
+        <button class="login-btn" id="google-btn">로그인</button>
+        <button class="signup-btn" id="signup-btn">회원가입</button>
     </div>
 
     <!-- 상단 로고 -->
@@ -169,6 +188,10 @@
         document.getElementById('google-btn').addEventListener('click', function() {
             window.location.href = '/login-page/';
         });
+        document.getElementById('signup-btn').addEventListener('click', function() {
+            window.location.href = '/register-page/';
+        });
+
 
         // 게임 전환 > 팝업 alert 추가
         function switchGame() {

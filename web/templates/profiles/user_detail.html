@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}유저검색{% endblock title %}    
+
+{% block content %}
+
+    <div class="user-details">
+        <h1 id="username"></h1>
+        <p id="riot-username"></p>
+        <p id="riot-tag"></p>
+        <p id="riot-tier"></p>
+        <p id="score"></p>
+        <h2>Evaluations</h2>
+        <div id="evaluations"></div>
+        <h2>Articles</h2>
+        <div id="articles"></div>
+    </div>
+
+{% endblock content %}
+
+{% block javascript%}
+
+    <script>
+        // 페이지 로드 시 유저 정보를 가져오는 함수
+        window.onload = function() {
+            const username = window.location.pathname.split('/').pop(); // URL에서 유저 이름 추출
+            fetchUserData(username);
+        };
+
+        // 유저 데이터를 가져오는 함수
+        function fetchUserData(username) {
+            fetch(`http://127.0.0.1:8000/api/profile/${username}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('유저 정보를 가져오는 데 실패했습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayUserData(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('유저 정보를 가져오는 데 문제가 발생했습니다.');
+                });
+        }
+
+        // 유저 데이터를 페이지에 표시하는 함수
+        function displayUserData(data) {
+            document.getElementById('username').innerText = `Username: ${data.username}`;
+            document.getElementById('riot-username').innerText = `Riot Username: ${data.riot_username}`;
+            document.getElementById('riot-tag').innerText = `Riot Tag: ${data.riot_tag}`;
+            document.getElementById('riot-tier').innerText = `Riot Tier: ${data.riot_tier || '정보 없음'}`;
+            document.getElementById('score').innerText = `Score: ${data.score}`;
+
+            // Evaluations 출력
+            const evaluations = document.getElementById('evaluations');
+            evaluations.innerHTML = `
+                Kindness: ${data.evaluations.kindness}<br>
+                Teamwork: ${data.evaluations.teamwork}<br>
+                Communication: ${data.evaluations.communication}<br>
+                Mental Strength: ${data.evaluations.mental_strength}<br>
+                Punctuality: ${data.evaluations.punctuality}<br>
+                Positivity: ${data.evaluations.positivity}<br>
+                MVP: ${data.evaluations.mvp}<br>
+                Mechanical Skill: ${data.evaluations.mechanical_skill}<br>
+                Operation: ${data.evaluations.operation}<br>
+                Negativity: ${data.evaluations.negativity}<br>
+                Profanity: ${data.evaluations.profanity}<br>
+                AFK: ${data.evaluations.afk}<br>
+                Cheating: ${data.evaluations.cheating}<br>
+                Verbal Abuse: ${data.evaluations.verbal_abuse}
+            `;
+
+            // Articles 출력
+            const articles = document.getElementById('articles');
+            data.articles.forEach(article => {
+                articles.innerHTML += `
+                    <div>
+                        <h3>${article.title}</h3>
+                        <p>Score: ${article.article_score}</p>
+                        <p>Created At: ${new Date(article.created_at).toLocaleString()}</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
+
+    {% endblock javascript%}

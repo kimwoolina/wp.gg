@@ -90,7 +90,11 @@
     <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'img/back-arrow.png' %}" alt="뒤로가기"></a>
 </div>
 
+{% block javascript %}
+{% endblock javascript%}
+
 <script>
+    
     // 홈으로 리다이렉트 (로고 클릭 시)
     document.querySelector('.logo-home').addEventListener('click', function() {
         window.location.href = '/home/';

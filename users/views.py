@@ -98,7 +98,7 @@ class CustomLogoutView(APIView):
             token = RefreshToken(refresh_token)
             token.blacklist()  # 블랙리스트에 추가
             logout(request)
-            # return Response({"message": "로그아웃 성공!"}, status=status.HTTP_200_OK)
+            return Response({"message": "로그아웃 성공!"}, status=status.HTTP_200_OK)
         
         except TokenError:
             # 토큰이 유효하지 않거나 만료된 경우

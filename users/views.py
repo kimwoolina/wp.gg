@@ -25,11 +25,22 @@ from django.contrib.auth import login
 from django.contrib.auth import get_backends
 from django.http import JsonResponse
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 @never_cache
 def home_view(request):
     return render(request, 'home.html')
 
+@csrf_exempt
+def delete_session(request):
+    if request.method == 'POST':
+        # 세션 삭제
+        request.session.flush()  # 모든 세션 데이터 삭제
+        logout(request)  # 로그아웃 처리
+        return JsonResponse({'message': '세션 삭제 완료'}, status=200)
+    return JsonResponse({'error': '잘못된 요청'}, status=400)
 
 
 # 회원가입

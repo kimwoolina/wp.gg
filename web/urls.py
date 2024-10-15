@@ -18,5 +18,6 @@ urlpatterns = [
     path('article_create/', views.article_create_page, name='article-create'), #생성
     path('article/<int:article_id>/', views.article_detail_view, name='article-detail'), # 글 상세페이지 조회
     path('', views.home, name='home'), # 기본 홈 화면
+    path('base/', views.base, name='base'),
     path('discord/', views.indexView.as_view(), name='user_index'),
 ]

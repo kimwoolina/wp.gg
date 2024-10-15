@@ -109,6 +109,11 @@
 </form>
 
 <script>
+    // Bearer 토큰 가져오는 함수
+    function getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
+    
     // CSRF 토큰을 가져오는 함수
     function getCookie(name) {
         let cookieValue = null;
@@ -131,21 +136,29 @@
     document.getElementById('user-search').addEventListener('input', function (e) {
         const query = e.target.value;
         const revieweeSelect = document.getElementById('reviewee');
-        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>';
-        
-        fetch(`/api/articles/search_user/?q=${query}`)
+        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>'; // 초기 옵션 설정
+
+        fetch(`/api/articles/search_user/?q=${query}`, {
+            method: 'GET', 
+            headers: {
+                'X-CSRFToken': csrftoken, 
+                'Authorization': 'Bearer ' + getAccessToken() 
+            }
+            })
             .then(response => response.json())
             .then(data => {
+                if (data.users.length === 0) {
+                    return; // 검색 결과가 없을 경우 종료
+                }
                 data.users.forEach(user => {
                     const option = document.createElement('option');
+                    option.textContent = `${user.username} | ${user.riot_username || ''}${user.riot_tag || ''}`;
                     option.value = user.id;
-                    const riotUsername = user.riot_username ? user.riot_username : '';
-                    const riotTag = user.riot_tag ? user.riot_tag : '';
-                    option.textContent = `${user.username} | ${riotUsername}${riotTag}`;
-                    revieweeSelect.appendChild(option);
+                    revieweeSelect.appendChild(option); // 선택 옵션에 추가
                 });
             });
     });
+
 
     // 2. 이미지 미리보기 기능
     function previewImages(event) {
@@ -165,12 +178,8 @@
             reader.readAsDataURL(file);
         });
     }
-    // Bearer 토큰 가져오는 함수
-    function getAccessToken() {
-        return localStorage.getItem('access_token');
-    }
 
-    // 폼 전송 시 Bearer 토큰을 함께 전송하는 함수
+    // 폼 전송 시 Bearer 토큰을 함께 전송
     document.getElementById('articleForm').addEventListener('submit', function(event) {
         event.preventDefault(); // 기본 폼 제출 방지
 

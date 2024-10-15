@@ -34,19 +34,19 @@ def profile(request):
 
 # profile 앱 관련
 class RiotPageView(generic.TemplateView):
-    template_name = 'riot.html'
+    template_name = 'profiles/riot.html'
     
 class MatchingPageView(TemplateView):
-    template_name = 'matching.html'
+    template_name = 'profiles/matching.html'
     
 class SearchPageView(TemplateView):
-    template_name = 'user_search.html'
+    template_name = 'profiles/user_search.html'
 
 def ranking(request):
-    return render(request, 'rankings.html')
+    return render(request, 'profiles/rankings.html')
 
 def matching_result(request):
-    return render(request, 'matching.html')
+    return render(request, 'profiles/matching.html')
 
 
 # chats 앱 관련
@@ -60,13 +60,13 @@ class ChatRoomTemplateView(generic.TemplateView):
 
 # articles 앱 관련
 def article_detail_page(request):
-	return render(request, 'article_detail.html')
+	return render(request, 'articles/article_detail.html')
 
 def article_list_page(request):
-	return render(request, 'article_list.html')
+	return render(request, 'articles/article_list.html')
 
 def article_create_page(request):
-	return render(request, 'article_create.html')
+	return render(request, 'articles/article_create.html')
 
 
 def article_detail_view(request, article_id):
@@ -78,8 +78,8 @@ def article_detail_view(request, article_id):
     except requests.exceptions.HTTPError:
         raise Http404("Article not found.")  # 404 오류 발생
     
-    return render(request, 'article_detail.html', {'article': article})
+    return render(request, 'articles/article_detail.html', {'article': article})
 
 
 class indexView(generic.TemplateView):
-    template_name = 'users/index.html'
+    template_name = 'users/discordIndex.html'

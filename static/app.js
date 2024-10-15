@@ -1,4 +1,4 @@
-// 로그인 처리
+/*// 로그인 처리
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -54,4 +54,4 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
         }
     })
     .catch(error => console.error('회원가입 중 오류 발생:', error));
-});
+});*/

@@ -23,7 +23,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px; /* 로고와 로그인 버튼 사이 간격 */
+            margin-bottom: 3px; /* 로고와 로그인 버튼 사이 간격 */
         }
 
         .game-logo {
@@ -53,6 +53,24 @@
             margin-bottom: 15px;
         }
 
+        /* 회원가입 버튼 */
+        .signup-btn {
+            width: 300px;
+            padding: 17px;
+            background-color: #716490;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .signup-btn:hover {
+            background-color: #B19CD9;
+        }
+
         .login-btn:hover {
             background-color: #B19CD9;
         }
@@ -72,17 +90,19 @@
         /* 게임 전환 드롭다운 스타일 */
         .switch-game {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 35px;
             display: flex;
             align-items: center;
         }
         
         .switch-game select {
             background-color: #3B3A4F;
-            color: white;
-            padding: 10px 13px; /* 드롭다운 크기 조정 */
-            font-size: 16px; /* 폰트 크기 증가 */
+            color: #e5d7ff;
+            font-size: 14px;
+            font-family: FUNFLOW SURVIVOR;
+            cursor: pointer;
+            padding: 8px 13px; /* 드롭다운 크기 조정 */
             border: 1px solid #716490;
             border-radius: 26px; /* 더 둥근 테두리 */
             cursor: pointer;
@@ -129,9 +149,10 @@
 
     <!-- 로그인 선택 컨테이너 -->
     <div class="login-container">
-        <button class="login-btn" id="discord-btn">디스코드로 로그인</button>
-        <button class="login-btn" id="riot-btn">라이엇으로 로그인</button>
-        <button class="login-btn" id="google-btn">구글계정으로 로그인</button>
+        <button class="login-btn" id="discord-btn">디스코드 계정 연결</button>
+        <button class="login-btn" id="riot-btn">라이엇으로 계정 연결</button>
+        <button class="login-btn" id="google-btn">로그인</button>
+        <button class="signup-btn" id="signup-btn">회원가입</button>
     </div>
 
     <!-- 상단 로고 -->
@@ -142,10 +163,10 @@
     <!-- 상단 게임 전환 드롭다운 -->
     <div class="switch-game">
         <select id="game-switcher" onchange="switchGame()">
-            <option value="lol" selected>👀</option>
-            <option value="valorant">발로란트</option>
-            <option value="rocket">로켓리그</option>
-            <option value="dota">도타2</option>
+            <option value="lol" selected>게임 전환 👀</option>
+            <option value="valorant">Valorant</option>
+            <option value="rocket">Rocket</option>
+            <option value="dota2">Dota&nbsp;2</option>
         </select>
     </div>
 
@@ -167,21 +188,22 @@
         document.getElementById('google-btn').addEventListener('click', function() {
             window.location.href = '/login-page/';
         });
+        document.getElementById('signup-btn').addEventListener('click', function() {
+            window.location.href = '/register-page/';
+        });
 
-        // 게임 전환 드롭다운 처리
+
+        // 게임 전환 > 팝업 alert 추가
         function switchGame() {
             var selectedGame = document.getElementById('game-switcher').value;
             switch (selectedGame) {
                 case 'valorant':
-                    window.location.href = '/login-selection-page-valorant/';
-                    break;
                 case 'rocket':
-                    window.location.href = '/login-selection-page-rocket/';
-                    break;
                 case 'dota2':
-                    window.location.href = '/login-selection-page-dota/';
+                    alert('현재 해당 게임은 서버 업데이트 중입니다. 잠시만 기다려주세요.');
                     break;
                 default:
+                    alert('잘못된 선택입니다.');
                     break;
             }
         }

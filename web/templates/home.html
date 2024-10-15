@@ -21,11 +21,29 @@
             padding-right: 40px;
         }
 
+        /* 네브바 호버 시 로고 통통 튀는 애니메이션 */
+        .nav-bar:hover .logo {
+            animation: bounce 0.7s ease-in-out infinite /* 반복 애니메이션 */
+        }
+    
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); /* 위로 튀는 높이 설정 */
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+
         /* 로고 이미지 */
         .logo {
             width: 150px;
             cursor: pointer;
-            margin-left: 12px;
+            margin-left: 6px;
         }
 
         /* 상단 가운데 텍스트 */
@@ -36,29 +54,42 @@
         }
 
         .nav-center a {
-            color: white;
             font-size: 18px;
             text-decoration: none;
+            cursor: pointer;
+            color: #f6f1ff;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: FUNFLOW SURVIVOR;
             cursor: pointer;
         }
 
         .nav-center a:hover {
             color: #B19CD9;
+            font-weight: bold;
         }
 
         /* Join 버튼과 Login, Logout, Mypage 버튼 */
         .action-btn {
             background-color: #716490;
             color: white;
-            padding: 6px 14px;
-            border-radius: 5px;
+            padding: 7px 14px;
+            border-radius: 10px;
             text-decoration: none;
             cursor: pointer;
             margin-left: 2px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            border: 2px solid transparent; /* 기본 상태에서 테두리 투명 */
+            box-sizing: border-box; /* 패딩과 테두리를 포함하여 크기 계산 */
         }
-
+        
         .action-btn:hover {
             background-color: #B19CD9;
+            color: #461B66;
+            font-weight: bold;
+            border: 2px solid #B19CD9; /* 호버 시 테두리 색상 적용 */
         }
 
         /* 우상단 버튼 여백 */
@@ -92,12 +123,12 @@
             background: none;
             border: none;
             outline: none;
-            color: white;
+            color: 	#F6F6FD;
             font-size: 16px;
         }
 
-        .search-box input::placeholder {
-            color: #e0e0e0;
+        .search-box input:placeholder {
+            color: #7A7EBD;
         }
 
         /* 햄버거 아이콘 */
@@ -105,6 +136,11 @@
             color: #C0C0C0;
             font-size: 20px;
             cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .hamburger:hover {
+            color: #7A7EBD
         }
 
         /* 돋보기 아이콘 */
@@ -113,24 +149,13 @@
             height: 20px;
             fill: #C0C0C0;
             cursor: pointer;
+            margin-right: 10px;
         }
 
         .search-icon:hover {
-            fill: #7C4DFF;
+            fill: #7A7EBD
         }
 
-        /* 페이지 하단 화살표 버튼 */
-        .back-arrow {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-        }
-
-        .back-arrow img {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -148,10 +173,9 @@
         <!-- 상단 오른쪽 Login, Logout, Join, Mypage 버튼 -->
         <div class="nav-right">
             {% if request.user.is_authenticated %}
-                <button id="mypage-btn" class="action-btn">Mypage</button>
+                <button id="mypage-btn" class="action-btn">My Page</button>
                 <button id="logout-btn" class="action-btn">Logout</button>
             {% else %}
-                <a href="{% url 'login_page' %}" class="action-btn">Login</a>
                 <a href="{% url 'gamechoice' %}" class="action-btn">Join</a>
             {% endif %}
         </div>
@@ -196,12 +220,12 @@
                 // 로컬 스토리지에서 리프레시 토큰 가져오기
                 const refreshToken = localStorage.getItem('refresh_token');
 
-                // 리프레시 토큰이 없으면 바로 로그아웃 처리
+                /*// 리프레시 토큰이 없으면 바로 로그아웃 처리
                 if (!refreshToken) {
                     alert('로그아웃 되었습니다. 다시 로그인 해주세요');
                     window.location.href = '/home/';
                     return;
-                }
+                }*/
 
                 // 새로운 액세스 토큰을 요청하는 함수
                 function refreshAccessToken() {
@@ -211,20 +235,29 @@
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰을 헤더에 포함
                         },
-                        body: JSON.stringify({ "refresh_token": refreshToken }) // 리프레시 토큰 전송
+                        body: JSON.stringify({ "refresh": refreshToken }) // 리프레시 토큰 전송
                     })
                     .then(response => {
-                        if (response.ok) {
-                            return response.json().then(data => {
-                                localStorage.setItem('access_token', data.access_token);
-                                return data.access_token;
-                            });
-                        } else {
+                        if (!response.ok) {
                             alert('로그아웃 되었습니다. 다시 로그인 해주세요');
                             localStorage.removeItem('refresh_token');
                             window.location.href = '/home/';
-                            return null;
+                        } 
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.access) {
+                            console.log('새로운 액세스 토큰 받음:', data.access);
+                            localStorage.setItem('access_token', data.access);
+                            return data.access;
+                        } else {
+                            console.error('응답에서 액세스 토큰을 찾을 수 없습니다.');
+                            return Promise.reject('No access token in response');
                         }
+                    })
+                    .catch(error => {
+                        console.error('토큰 갱신 중 오류 발생:', error);
+                        return Promise.reject(error);
                     });
                 }
 
@@ -271,14 +304,6 @@
             });
         }
         });
-
-        // 홈 화면 캐시된 페이지 강제 새로고침
-        {% comment %} window.onload = function() {
-            const accessToken = localStorage.getItem('access_token');
-            if (!accessToken) {
-                window.location.reload(true);  
-            }
-        }; {% endcomment %}
         
 </script>
 

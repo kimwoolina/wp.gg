@@ -44,13 +44,15 @@
         /* 계정전환 텍스트 스타일 */
         #account-toggle {
             background-color: transparent;
-            color: white;
+            color: #d0c3e3;
             padding: 10px;
-            border: none; /* 테두리 제거 */
-            border-radius: 5px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
             width: 115px;
-            font-size: 17px;
+            font-size: 16px;
+            font-family: FUNFLOW SURVIVOR
+            font-style: bold
         }
 
         /* 드롭다운 메뉴 스타일 */
@@ -180,7 +182,7 @@
         
         <!-- 계정전환 -->
         <div class="account-switch">
-            <button id="account-toggle">▾&nbsp 계정 전환</button>
+            <button id="account-toggle">계정 전환</button>
             <div class="dropdown" id="dropdown-menu">
                 <label><input type="radio" name="account" value="riot"> Riot</label>
                 <label><input type="radio" name="account" value="discord"> Discord</label>

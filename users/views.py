@@ -83,7 +83,7 @@ class CustomLoginView(LoginView):
         return response
     
 
-#로그아웃
+# 로그아웃
 class CustomLogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -98,7 +98,7 @@ class CustomLogoutView(APIView):
             token = RefreshToken(refresh_token)
             token.blacklist()  # 블랙리스트에 추가
             logout(request)
-            return Response({"message": "로그아웃 성공!"}, status=status.HTTP_200_OK)
+            # return Response({"message": "로그아웃 성공!"}, status=status.HTTP_200_OK)
         
         except TokenError:
             # 토큰이 유효하지 않거나 만료된 경우
@@ -106,12 +106,6 @@ class CustomLogoutView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-# #로그아웃
-# class CustomLogoutView(LogoutView):
-#     def post(self, request, *args, **kwargs):
-#         logout(request) 
-#         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_200_OK)  
-
 # 회원탈퇴
 User = get_user_model()
 

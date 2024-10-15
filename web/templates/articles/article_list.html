@@ -7,8 +7,9 @@
     <style>
         .article {
             border: 1px solid #ccc;
-            padding: 10px;
+            padding: 20px;
             margin: 10px;
+            position: relative; /* 자식 요소를 절대 위치로 배치하기 위해 부모에 상대 위치 지정 */
         }
         .article-title {
             font-size: 18px;
@@ -24,92 +25,151 @@
             border-radius: 50%;
         }
         .profile-image {
-            width: 50px; /* Adjust the size as needed */
-            height: 50px; /* Adjust the size as needed */
+            width: 40px; 
+            height: 40px;
             border-radius: 50%; /* Make it circular */
         }
         
-    </style>
-    {% endblock css %}
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            margin-bottom: 22px; /* 버튼과 아래 요소 사이의 간격 */
+        }
 
-    {% block content %}
-    <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
+        .button-81 {
+            background-color: #6f69a5;
+            border: 0 solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-sizing: border-box;
+            color: #ECE7F9;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Basier circle",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+            font-size: 1rem !important;
+            font-weight: 600;
+            line-height: 1;
+            padding: 0.8rem 2rem !important;
+            text-align: center;
+            text-decoration: none #0d172a solid;
+            text-decoration-thickness: auto;
+            transition: all .1s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            float: right; /* 버튼을 오른쪽으로 이동 */
+        }
+        
+        .button-81:hover {
+            background-color: #8a3ffc;
+            color: #fff;
+        }
+        
+        /* 아이콘 배치 및 크기 조정 */
+        .score-icon {
+            width: 40px; /* 아이콘 크기 */
+            height: 40px;
+            position: absolute;
+            top: 10px;
+            right: 10px; /* 우측 상단 배치 */
+        }
+
+        @media (min-width: 768px) {
+            .button-81 {
+            font-size: 1.125rem;
+            padding: 1rem 2rem;
+            }
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+    
+    <div class="button-container">
+        <button class="button-81" role="button" onclick="window.location.href='{% url 'article-create' %}'">리뷰 작성하기</button>
+    </div>
 
     <div id="article-list"></div>
 
-    {% endblock content %}
+{% endblock content %}
 
-    {% block javascript%}
-    <script>
-        // API URL
-        const apiUrl = 'http://127.0.0.1:8000/api/articles/';
+{% block javascript %}
+<script>
+    // API URL
+    const apiUrl = 'http://127.0.0.1:8000/api/articles/';
 
-        // DOM element for article list
-        const articleList = document.getElementById('article-list');
+    // DOM element for article list
+    const articleList = document.getElementById('article-list');
 
-        // Function to truncate content to 10 characters
-        function truncateContent(content) {
-            return content.length > 10 ? content.substring(0, 10) + '...' : content;
-        }
+    // Function to truncate content to 10 characters
+    function truncateContent(content) {
+        return content.length > 10 ? content.substring(0, 10) + '...' : content;
+    }
 
-        // Function to create and append an article to the DOM
-        function appendArticle(article) {
-            const reviewer = article.reviewer;
-            const reviewee = article.reviewee;
+    // Function to create and append an article to the DOM
+    function appendArticle(article) {
+        const reviewer = article.reviewer;
+        const reviewee = article.reviewee;
 
-            // Reviewer info
-            const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
-            const reviewerTag = reviewer.riot_tag ? `#${reviewer.riot_tag}` : '';
-            const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : 'default-profile.png';
+        // Reviewer info
+        const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
+        const reviewerTag = reviewer.riot_tag ? `#${reviewer.riot_tag}` : '';
+        const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : 'default-profile.png';
 
-            // Reviewee info
-            const revieweeUsername = reviewee.riot_username ? reviewee.riot_username : reviewee.username;
-            const revieweeTag = reviewee.riot_tag ? `#${reviewee.riot_tag}` : '';
-            const revieweeProfileImage = reviewee.profile_image ? reviewee.profile_image : 'default-profile.png';
+        // Reviewee info
+        const revieweeUsername = reviewee.riot_username ? reviewee.riot_username : reviewee.username;
+        const revieweeTag = reviewee.riot_tag ? `#${reviewee.riot_tag}` : '';
+        const revieweeProfileImage = reviewee.profile_image ? reviewee.profile_image : 'default-profile.png';
 
-            // Article score (add 👍🏻 or 👎🏻 based on the score)
-            const scoreEmoji = article.article_score > 5 ? '👍🏻' : '👎🏻';
+        // Score image (👍🏻 or 👎🏻 based on the score)
+        const scoreImageSrc = article.article_score > 5 ? 'https://cdn-icons-png.flaticon.com/512/2954/2954893.png' : 'https://cdn-icons-png.flaticon.com/512/2954/2954891.png';
 
-            // Truncated content
-            const truncatedContent = truncateContent(article.content);
+        // Truncated content
+        const truncatedContent = truncateContent(article.content);
 
-            // Create article element
-            const articleElement = document.createElement('div');
-            articleElement.classList.add('article');
+        // Create article element
+        const articleElement = document.createElement('div');
+        articleElement.classList.add('article');
 
-            // Create a link to the article detail page
-            const articleLink = document.createElement('a');
-            articleLink.href = `/article/${article.id}/`; // Update this line to use the correct path
-            articleLink.innerHTML = `
-                <div class="article-title">
-                    <img src="{% static 'img/default_profile_image.png' %}" alt="Profile Image" class="profile-image">
-                    ${revieweeUsername}${revieweeTag} ${scoreEmoji}
-                </div>
-                <div class="article-content">
-                    ${truncatedContent}
-                </div>
-            `;
-            articleLink.style.textDecoration = 'none'; // Remove underline from link
+        // Create a link to the article detail page
+        const articleLink = document.createElement('a');
+        articleLink.href = `/article/${article.id}/`; // Update this line to use the correct path
+        articleLink.innerHTML = `
+            <div class="article-title">
+                <img src="{% static 'img/default_profile_image.png' %}" alt="Profile Image" class="profile-image">
+                ${revieweeUsername}${revieweeTag}
+            </div>
+            <div class="article-content">
+                ${truncatedContent}
+            </div>
+        `;
+        articleLink.style.textDecoration = 'none'; // Remove underline from link
 
-            // Append the link to the article element
-            articleElement.appendChild(articleLink);
+        // Create score icon element
+        const scoreIcon = document.createElement('img');
+        scoreIcon.src = scoreImageSrc;
+        scoreIcon.alt = 'Score Icon';
+        scoreIcon.classList.add('score-icon');
 
-            // Append to the list
-            articleList.appendChild(articleElement);
-        }
+        // Append the link and score icon to the article element
+        articleElement.appendChild(articleLink);
+        articleElement.appendChild(scoreIcon);
 
-        // Fetch articles from API
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(article => {
-                    appendArticle(article);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching articles:', error);
+        // Append to the list
+        articleList.appendChild(articleElement);
+    }
+
+    // Fetch articles from API
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(article => {
+                appendArticle(article);
             });
-        
-    </script>
+        })
+        .catch(error => {
+            console.error('Error fetching articles:', error);
+        });
 
-    {% endblock javascript%}
+</script>
+{% endblock javascript %}

@@ -51,6 +51,14 @@ class UserDetailView(generics.GenericAPIView):
                 if 'error' in user_info:
                     return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
+                print(">>>user_info >>>>>" , user_info)
+                
+                # 라이엇 프로필 이미지 저장
+                profile_icon_link = user_info.get('profileIconLink')
+                if profile_icon_link:
+                    user.riot_profile_image = profile_icon_link  # 프로필 이미지를 업데이트
+                    user.save()  # 변경된 내용을 저장
+
                 # riot_tier 업데이트
                 league_info = user_info.get('league', [])
                 if league_info:

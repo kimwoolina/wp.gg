@@ -95,9 +95,9 @@
             users.forEach((user, index) => {
                 const row = document.createElement('dl');
                 row.innerHTML = `
-                    <dt>
+                    <dt id="user-info">
                         ${index + 1}위 ${user.username} ${user.riot_username || ''} ${user.riot_tag || ''} 
-                        <span id="user-score">${user.score}<span>
+                        <span class="user-score">👍${user.score}<span>
                     </dt>
                     <dd>
                     💗상냥함 ${user.evaluations.kindness} 

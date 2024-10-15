@@ -169,6 +169,21 @@
 
 <!-- 로그아웃 및 마이페이지 이동 -->
 <script>
+    // 페이지 로드 시 JWT 토큰을 확인하고 저장하기
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access');
+        const refreshToken = urlParams.get('refresh');
+
+        // JWT 토큰이 있으면 로컬 스토리지에 저장
+        if (accessToken && refreshToken) {
+            localStorage.setItem('access_token', accessToken);
+            localStorage.setItem('refresh_token', refreshToken);
+
+            // URL에서 토큰 파라미터 제거
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
     document.addEventListener('DOMContentLoaded', function () {
         const logoutButton = document.getElementById('logout-btn');
         const mypageButton = document.getElementById('mypage-btn');

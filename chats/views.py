@@ -23,7 +23,7 @@ User = get_user_model()
 
 # 개인 채팅방 생성
 class PrivateChatRoomCreateView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         user2_id = request.data.get('user2')  # user2 ID를 가져옴
@@ -39,7 +39,7 @@ class PrivateChatRoomCreateView(APIView):
 
     
 class PrivateChatRoomListView(APIView):
-    # permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
+    permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
 
     def get(self, request):
         user = request.user

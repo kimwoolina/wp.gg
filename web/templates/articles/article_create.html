@@ -1,4 +1,4 @@
-<form action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
+<form id="articleForm" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
     <!-- 1. 유저 검색 기능 -->
@@ -165,5 +165,35 @@
             reader.readAsDataURL(file);
         });
     }
+    // Bearer 토큰 가져오는 함수
+    function getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    // 폼 전송 시 Bearer 토큰을 함께 전송하는 함수
+    document.getElementById('articleForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Authorization': 'Bearer ' + getAccessToken() // Bearer 토큰 추가
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // 성공 시 처리할 로직
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // 실패 시 처리할 로직
+        });
+    });
 
 </script>

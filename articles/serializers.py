@@ -66,7 +66,10 @@ class ArticleListSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articles
-        fields = '__all__' 
+        fields = '__all__'
+        extra_kwargs = {
+            'reviewer': {'read_only': True}  
+        }
 
     def update_user_score(self, reviewee):
         """
@@ -83,7 +86,10 @@ class ArticleSerializer(serializers.ModelSerializer):
         """
         새로운 기사를 생성하고 관련 데이터를 처리합니다.
         """
-        # Articles 객체 생성
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            validated_data['reviewer'] = request.user
+    
         article = Articles.objects.create(**validated_data)
 
         # 이미지 파일 처리

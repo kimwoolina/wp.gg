@@ -9,32 +9,33 @@
 {% block content %}
 
     <h1>유저 랭킹</h1>
+    <div class="top-container">
+        <div class="filter-container">
+            <label for="positions">포지션 선택:</label>
+            <select id="positions" multiple>
+                <option value="top">탑</option>
+                <option value="jungle">정글</option>
+                <option value="mid">미드</option>
+                <option value="adc">원딜</option>
+                <option value="support">서포터</option>
+            </select>
 
-    <div class="filter-container">
-        <label for="positions">포지션 선택:</label>
-        <select id="positions" multiple>
-            <option value="top">탑</option>
-            <option value="jungle">정글</option>
-            <option value="mid">미드</option>
-            <option value="adc">원딜</option>
-            <option value="support">서포터</option>
-        </select>
+            <label for="sort_by">정렬 기준:</label>
+            <select id="sort_by">
+                <option value="score">점수</option>
+                <option value="kindness">친절함</option>
+                <option value="teamwork">팀워크</option>
+                <option value="communication">소통</option>
+                <option value="mental_strength">정신력</option>
+                <option value="punctuality">성실함</option>
+                <option value="positivity">긍정적</option>
+                <option value="mvp">MVP</option>
+                <option value="mechanical_skill">피지컬</option>
+                <option value="operation">운영</option>
+            </select>
 
-        <label for="sort_by">정렬 기준:</label>
-        <select id="sort_by">
-            <option value="score">점수</option>
-            <option value="kindness">친절함</option>
-            <option value="teamwork">팀워크</option>
-            <option value="communication">소통</option>
-            <option value="mental_strength">정신력</option>
-            <option value="punctuality">성실함</option>
-            <option value="positivity">긍정적</option>
-            <option value="mvp">MVP</option>
-            <option value="mechanical_skill">피지컬</option>
-            <option value="operation">운영</option>
-        </select>
-
-        <button onclick="applyFilters()">필터 적용</button>
+            <button onclick="applyFilters()">필터 적용</button>
+        </div>
     </div>
 
     <table id="ranking-table">

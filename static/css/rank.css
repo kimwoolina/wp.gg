@@ -13,9 +13,14 @@ th, td {
 }
 th {
     background-color: #f2f2f2;
+    color: black;
+}
+.top-container {
+    display: flex;
 }
 .filter-container {
     margin-bottom: 20px;
+    margin-left: auto;
 }
 select {
     margin-right: 10px;

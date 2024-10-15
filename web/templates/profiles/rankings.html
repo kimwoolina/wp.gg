@@ -1,67 +1,45 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>랭킹 페이지</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .filter-container {
-            margin-bottom: 20px;
-        }
-        select {
-            margin-right: 10px;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}title내용{% endblock title %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static '/css/rank.css' %}">
+{% endblock css %}
+{% block content %}
 
     <h1>유저 랭킹</h1>
+    <div class="top-container">
+        <div class="filter-container">
+            <label for="positions">포지션 선택:</label>
+            <select id="positions" multiple>
+                <option value="top">탑</option>
+                <option value="jungle">정글</option>
+                <option value="mid">미드</option>
+                <option value="adc">원딜</option>
+                <option value="support">서포터</option>
+            </select>
 
-    <div class="filter-container">
-        <label for="positions">포지션 선택:</label>
-        <select id="positions" multiple>
-            <option value="top">탑</option>
-            <option value="jungle">정글</option>
-            <option value="mid">미드</option>
-            <option value="adc">원딜</option>
-            <option value="support">서포터</option>
-        </select>
+            <label for="sort_by">정렬 기준:</label>
+            <select id="sort_by">
+                <option value="score">점수</option>
+                <option value="kindness">친절함</option>
+                <option value="teamwork">팀워크</option>
+                <option value="communication">소통</option>
+                <option value="mental_strength">정신력</option>
+                <option value="punctuality">성실함</option>
+                <option value="positivity">긍정적</option>
+                <option value="mvp">MVP</option>
+                <option value="mechanical_skill">피지컬</option>
+                <option value="operation">운영</option>
+            </select>
 
-        <label for="sort_by">정렬 기준:</label>
-        <select id="sort_by">
-            <option value="score">점수</option>
-            <option value="kindness">친절함</option>
-            <option value="teamwork">팀워크</option>
-            <option value="communication">소통</option>
-            <option value="mental_strength">정신력</option>
-            <option value="punctuality">성실함</option>
-            <option value="positivity">긍정적</option>
-            <option value="mvp">MVP</option>
-            <option value="mechanical_skill">피지컬</option>
-            <option value="operation">운영</option>
-        </select>
-
-        <button onclick="applyFilters()">필터 적용</button>
+            <button onclick="applyFilters()">필터 적용</button>
+        </div>
     </div>
 
     <table id="ranking-table">
-        <thead>
+        <!-- <thead>
             <tr>
                 <th>순위</th>
                 <th>사용자 이름</th>
@@ -78,12 +56,13 @@
                 <th>피지컬</th>
                 <th>운영</th>
             </tr>
-        </thead>
+        </thead> -->
         <tbody>
             <!-- 데이터가 여기에 추가됩니다. -->
         </tbody>
     </table>
-
+{% endblock content %}
+{% block javascript %}
     <script>
         // 초기 데이터 로드
         function loadInitialData() {
@@ -114,22 +93,24 @@
             }
 
             users.forEach((user, index) => {
-                const row = document.createElement('tr');
+                const row = document.createElement('dl');
+                let score = Number(user.score.toFixed(2));
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${user.username}</td>
-                    <td>${user.riot_username || 'N/A'}</td>
-                    <td>${user.riot_tag || 'N/A'}</td>
-                    <td>${user.score}</td>
-                    <td>${user.evaluations.kindness}</td>
-                    <td>${user.evaluations.teamwork}</td>
-                    <td>${user.evaluations.communication}</td>
-                    <td>${user.evaluations.mental_strength}</td>
-                    <td>${user.evaluations.punctuality}</td>
-                    <td>${user.evaluations.positivity}</td>
-                    <td>${user.evaluations.mvp}</td>
-                    <td>${user.evaluations.mechanical_skill}</td>
-                    <td>${user.evaluations.operation}</td>
+                    <dt class="user-info">
+                        <h2>${index + 1}위 ${user.username} ${user.riot_username || ''} ${user.riot_tag || ''}</h2> 
+                        <span class="user-score">👍${score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
                 `;
                 tableBody.appendChild(row);
             });
@@ -171,6 +152,4 @@
         // 페이지 로드 시 데이터 가져오기
         window.onload = loadInitialData;
     </script>
-
-</body>
-</html>
+{% endblock javascript %}

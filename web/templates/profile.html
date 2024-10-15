@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!doctype html>
 <html class="no-js" lang="ko">
 
@@ -91,7 +92,7 @@
                         <input type="text" id="username" value="{{ request.user.username }}" readonly>
 
                         <label for="riot-nickname">riot nickname</label>
-                        <input type="text" id="riot-nickname" value="{{ request.user.riot_username }}" readonly>
+                        <input type="text" id="riot-username" value="{{ request.user.riot_username }}" readonly>
 
                         <label for="riot-tag">riot tag</label>
                         <input type="text" id="riot-tag" value="{{ request.user.riot_tag }}" readonly>
@@ -149,7 +150,7 @@
                         <div class="rating-scale">
                             <span class="thumb-down">&#128078;</span>
                             <div class="rating-bar">
-                                <div class="rating-fill" style="width: {{ request.user.score }}%;"></div>
+                                <div class="rating-fill" style="width: {{ request.user.score|multiply:10 }}%;"></div>
                             </div>
                             <span class="thumb-up">&#128077;</span>
                         </div>

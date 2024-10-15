@@ -1,35 +1,12 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>랭킹 페이지</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .filter-container {
-            margin-bottom: 20px;
-        }
-        select {
-            margin-right: 10px;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}title내용{% endblock title %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static '/css/rank.css' %}">
+{% endblock css %}
+{% block content %}
 
     <h1>유저 랭킹</h1>
 
@@ -83,7 +60,8 @@
             <!-- 데이터가 여기에 추가됩니다. -->
         </tbody>
     </table>
-
+{% endblock content %}
+{% block javascript %}
     <script>
         // 초기 데이터 로드
         function loadInitialData() {
@@ -171,6 +149,4 @@
         // 페이지 로드 시 데이터 가져오기
         window.onload = loadInitialData;
     </script>
-
-</body>
-</html>
+{% endblock javascript %}

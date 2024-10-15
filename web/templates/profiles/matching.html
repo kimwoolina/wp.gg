@@ -16,12 +16,6 @@
             display: block;
             margin-bottom: 5px;
         }
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
         button {
             width: 100%;
             padding: 10px;
@@ -46,7 +40,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="riot_tier">리그 티어 선택:</label>
-                <select id="riot_tier" name="riot_tier" multiple>
+                <select id="riot_tier" name="riot_tier" multiple style="width: 100%;">
                     <option value="bronze">브론즈</option>
                     <option value="silver">실버</option>
                     <option value="gold">골드</option>
@@ -59,7 +53,7 @@
             </div>
             <div class="form-group">
                 <label for="positions">포지션 선택:</label>
-                <select id="positions" name="positions" multiple>
+                <select id="positions" name="positions" multiple style="width: 100%;">
                     <option value="top">탑</option>
                     <option value="jungle">정글</option>
                     <option value="mid">미드</option>
@@ -69,7 +63,7 @@
             </div>
             <div class="form-group">
                 <label for="filter_fields">평가 항목 선택:</label>
-                <select id="filter_fields" name="filter_fields" multiple>
+                <select id="filter_fields" name="filter_fields" multiple style="width: 100%;">
                     <option value="kindness">친절도</option>
                     <option value="teamwork">팀워크</option>
                     <option value="communication">커뮤니케이션</option>
@@ -84,7 +78,7 @@
             </div>
             <div class="form-group">
                 <label for="user_preference">유저의 선호도:</label>
-                <input type="text" id="user_preference" name="user_preference" placeholder="예: 전략적 플레이를 선호합니다.">
+                <input style="width: 100%;" type="text" id="user_preference" name="user_preference" placeholder="예: 전략적 플레이를 선호합니다.">
             </div>
             <button type="submit">추천하기</button>
         </form>

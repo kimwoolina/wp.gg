@@ -38,6 +38,7 @@
         </div>
     </div>
 
+    <div id="rank-list"> <!-- 데이터가 여기에 추가됩니다. --> </div>
     <table id="ranking-table">
         <thead>
             <tr>
@@ -93,22 +94,23 @@
             }
 
             users.forEach((user, index) => {
-                const row = document.createElement('tr');
+                const row = document.createElement('dl');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${user.username}</td>
-                    <td>${user.riot_username || 'N/A'}</td>
-                    <td>${user.riot_tag || 'N/A'}</td>
-                    <td>${user.score}</td>
-                    <td>${user.evaluations.kindness}</td>
-                    <td>${user.evaluations.teamwork}</td>
-                    <td>${user.evaluations.communication}</td>
-                    <td>${user.evaluations.mental_strength}</td>
-                    <td>${user.evaluations.punctuality}</td>
-                    <td>${user.evaluations.positivity}</td>
-                    <td>${user.evaluations.mvp}</td>
-                    <td>${user.evaluations.mechanical_skill}</td>
-                    <td>${user.evaluations.operation}</td>
+                    <dt>
+                        ${index + 1}위 ${user.username} ${user.riot_username || 'N/A'} ${user.riot_tag || 'N/A'} 
+                        <span id="user-score">${user.score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
                 `;
                 tableBody.appendChild(row);
             });

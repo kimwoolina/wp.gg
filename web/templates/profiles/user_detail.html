@@ -10,6 +10,15 @@
         <p id="riot-tag"></p>
         <p id="riot-tier"></p>
         <p id="score"></p>
+        
+        <h2>Riot 정보</h2>
+        <img id="profile-icon" alt="Profile Icon" style="width: 50px; height: 50px;"/>
+        <p id="summoner-level"></p>
+        <p id="preferred-position"></p>
+        <p id="league-info"></p>
+        <h2>Top Champions</h2>
+        <div id="top-champions"></div>
+        
         <h2>Evaluations</h2>
         <div id="evaluations"></div>
         <h2>Articles</h2>
@@ -53,6 +62,29 @@
             document.getElementById('riot-tier').innerText = `Riot Tier: ${data.riot_tier || '정보 없음'}`;
             document.getElementById('score').innerText = `Score: ${data.score}`;
 
+            // 라이엇 정보 출력
+            if (data.riot_info) {
+                document.getElementById('profile-icon').src = data.riot_info.profileIconLink;
+                document.getElementById('summoner-level').innerText = `Summoner Level: ${data.riot_info.summonerLevel}`;
+                document.getElementById('preferred-position').innerText = `Preferred Position: ${data.riot_info.preferredPosition}`;
+
+                const leagueInfo = data.riot_info.league.map(league => {
+                    return `${league.tier} ${league.rank} (${league.leaguePoints} LP) - Wins: ${league.wins}, Losses: ${league.losses}`;
+                }).join('<br>');
+                document.getElementById('league-info').innerHTML = `League Info:<br>${leagueInfo}`;
+
+                // Top Champions 출력
+                const topChampions = document.getElementById('top-champions');
+                data.riot_info.topChampions.forEach(champion => {
+                    topChampions.innerHTML += `
+                        <div>
+                            <p>${champion.championName}</p>
+                            <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
+                        </div>
+                    `;
+                });
+            }
+
             // Evaluations 출력
             const evaluations = document.getElementById('evaluations');
             evaluations.innerHTML = `
@@ -86,4 +118,4 @@
         }
     </script>
 
-    {% endblock javascript%}
+{% endblock javascript %}

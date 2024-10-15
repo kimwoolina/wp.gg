@@ -106,14 +106,18 @@
                     <div class="sns-category">라이엇 계정</div>
                     <div class="sns-container">
                         <div class="account-info">
-                            {% if request.user.profile_image %}
-                                <img src="{{ request.user.profile_image.url }}" alt="profile" class="profile-img">
+                            {% if request.user.riot_profile_image %}
+                                <img src="{{ request.user.riot_profile_image }}" alt="profile" class="profile-img">
                             {% else %}
                                 <img src="{% static 'img/userprofile_02.png' %}" alt="profile" class="profile-img">
                             {% endif %}
                             <div class="username">{{ request.user.riot_username }}</div>
                         </div>
+                        {% if request.user.riot_username %}
+                        <div class="action-button">라이엇 계정 연결됨</div>
+                        {% else %}
                         <div class="action-button">라이엇 계정 연결하기</div>
+                        {% endif %}
                     </div>
 
                     <div class="sns-category">디스코드 계정</div>
@@ -126,7 +130,11 @@
                             {% endif %}
                             <div class="username">{{ request.user.discord_username }}</div>
                         </div>
+                        {% if request.user.riot_username %}
+                        <div class="action-button">디스코드 계정 연결됨</div>
+                        {% else %}
                         <div class="action-button">디스코드 계정 연결하기</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

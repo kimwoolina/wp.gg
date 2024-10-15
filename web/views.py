@@ -83,3 +83,8 @@ def article_detail_view(request, article_id):
 
 class indexView(generic.TemplateView):
     template_name = 'users/discordIndex.html'
+
+
+def base(request):
+    return render(request, 'base.html')
+    

@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riot 유저 프로필</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}title내용{% endblock title %}
+
+{% block css %}
+{% comment %} <link rel="stylesheet" href="{% static '/css/내css파일이름.css' %}"> {% endcomment %}
+{% endblock css %}
+
+{% block content %}
+
     <h1>리그 오브 레전드 유저 정보 조회</h1>
     <form id="riotForm" onsubmit="fetchUserInfo(event)">
         <label for="riotId">유저 이름:</label>
@@ -20,72 +21,74 @@
 
     <div id="result" style="margin-top: 20px;"></div>
 
-    <script>
-        async function fetchUserInfo(event) {
-            event.preventDefault();  // 기본 폼 제출 방지
-            const riotId = document.getElementById("riotId").value;
-            const tagLine = document.getElementById("tagLine").value;
+{% endblock content %}
 
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/api/profile/riot/?riot_id=${encodeURIComponent(riotId)}&tag_line=${encodeURIComponent(tagLine)}`, {
-                    method: 'GET',  // GET 메서드로 변경
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+{% block javascript%}
+<script>
+    async function fetchUserInfo(event) {
+        event.preventDefault();  // 기본 폼 제출 방지
+        const riotId = document.getElementById("riotId").value;
+        const tagLine = document.getElementById("tagLine").value;
 
-                if (!response.ok) {
-                    throw new Error('존재하지 않는 소환사명입니다.');
-                }
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/profile/riot/?riot_id=${encodeURIComponent(riotId)}&tag_line=${encodeURIComponent(tagLine)}`, {
+                method: 'GET',  // GET 메서드로 변경
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                const data = await response.json();
-                displayUserInfo(data);
-            } catch (error) {
-                document.getElementById("result").innerText = error.message;
-            }
-        }
-
-        function displayUserInfo(data) {
-            const resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = ""; // 이전 결과 지우기
-
-            if (data.message) {
-                resultDiv.innerText = data.message;
-                return;
+            if (!response.ok) {
+                throw new Error('존재하지 않는 소환사명입니다.');
             }
 
-            // 프로필 아이콘 표시
-            const profileImg = document.createElement("img");
-            profileImg.src = data.profileIconLink;
-            profileImg.alt = "프로필 아이콘";
-            profileImg.style.width = "50px";
-            profileImg.style.height = "50px";
-            resultDiv.appendChild(profileImg);
-
-            // 유저 정보 표시
-            const userInfoHtml = `
-                <h2>${data.summonerLevel} 레벨</h2>
-                <p>최종 수정일: ${new Date(data.revisionDate).toLocaleString()}</p>
-                <h3>리그 정보</h3>
-                <ul>
-                    ${data.league.map(entry => `
-                        <li>${entry.tier} ${entry.rank} - 승: ${entry.wins}, 패: ${entry.losses}</li>
-                    `).join('')}
-                </ul>
-                <p>선호 포지션: ${data.preferredPosition}</p>
-                <h3>상위 챔피언</h3>
-                <ul>
-                    ${data.topChampions.map(champion => `
-                        <li>
-                            <img src="${champion.championImage}" alt="${champion.championName}" style="width: 30px; height: 30px;">
-                            ${champion.championName}
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-
-            resultDiv.innerHTML += userInfoHtml;
+            const data = await response.json();
+            displayUserInfo(data);
+        } catch (error) {
+            document.getElementById("result").innerText = error.message;
         }
-    </script>
-</body>
-</html>
+    }
+
+    function displayUserInfo(data) {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = ""; // 이전 결과 지우기
+
+        if (data.message) {
+            resultDiv.innerText = data.message;
+            return;
+        }
+
+        // 프로필 아이콘 표시
+        const profileImg = document.createElement("img");
+        profileImg.src = data.profileIconLink;
+        profileImg.alt = "프로필 아이콘";
+        profileImg.style.width = "50px";
+        profileImg.style.height = "50px";
+        resultDiv.appendChild(profileImg);
+
+        // 유저 정보 표시
+        const userInfoHtml = `
+            <h2>${data.summonerLevel} 레벨</h2>
+            <p>최종 수정일: ${new Date(data.revisionDate).toLocaleString()}</p>
+            <h3>리그 정보</h3>
+            <ul>
+                ${data.league.map(entry => `
+                    <li>${entry.tier} ${entry.rank} - 승: ${entry.wins}, 패: ${entry.losses}</li>
+                `).join('')}
+            </ul>
+            <p>선호 포지션: ${data.preferredPosition}</p>
+            <h3>상위 챔피언</h3>
+            <ul>
+                ${data.topChampions.map(champion => `
+                    <li>
+                        <img src="${champion.championImage}" alt="${champion.championName}" style="width: 30px; height: 30px;">
+                        ${champion.championName}
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+
+        resultDiv.innerHTML += userInfoHtml;
+    }
+</script>
+{% endblock javascript%}

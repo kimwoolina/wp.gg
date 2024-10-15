@@ -48,6 +48,7 @@ body {
     flex: 1;
 }
 
+
 /* 왼쪽 */
 .logo {
     margin-bottom: 10px;
@@ -197,9 +198,7 @@ body {
 
 /* 본문  */
 main {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: block;
     padding: 20px;
 }
 

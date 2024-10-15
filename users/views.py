@@ -88,7 +88,6 @@ class CustomLogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        print("1234")
         refresh_token = request.data.get('refresh_token')
 
         if not refresh_token:
@@ -99,7 +98,7 @@ class CustomLogoutView(APIView):
             token = RefreshToken(refresh_token)
             token.blacklist()  # 블랙리스트에 추가
             logout(request)
-            return Response({"message": "로그아웃 성공!"}, status=status.HTTP_205_RESET_CONTENT)
+            # return Response({"message": "로그아웃 성공!"}, status=status.HTTP_200_OK)
         
         except TokenError:
             # 토큰이 유효하지 않거나 만료된 경우
@@ -107,7 +106,6 @@ class CustomLogoutView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-
 # 회원탈퇴
 User = get_user_model()
 
@@ -164,7 +162,7 @@ class discordLoginView(generic.View):
     
     def get(self, request):
         if self.request.user.is_authenticated:
-            return redirect("index")
+            return redirect("home")
 
         # URL에 코드가 있는 경우
         elif len(self.request.META['QUERY_STRING']) > 0:

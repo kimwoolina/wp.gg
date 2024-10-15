@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>Discord Login Test</title>
+
+    <!-- Oxygen Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen&display=swap" rel="stylesheet">
+    
+    <script>
+        // 페이지 로드 시 JWT 토큰을 확인하고 저장하기
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get('access');
+            const refreshToken = urlParams.get('refresh');
+
+            // JWT 토큰이 있으면 로컬 스토리지에 저장
+            if (accessToken && refreshToken) {
+                localStorage.setItem('access_token', accessToken);
+                localStorage.setItem('refresh_token', refreshToken);
+
+                // URL에서 토큰 파라미터 제거
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // CSRF 토큰을 가져오는 함수
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        function logout(event) {
+            event.preventDefault(); // 기본 링크 동작을 막음
+            const refreshToken = localStorage.getItem('refresh_token');
+            const accessToken = localStorage.getItem('access_token'); // Access token 추가
+            {% comment %} console.log(getAccessToken()); {% endcomment %}
+
+            if (refreshToken) {
+                fetch("{% url 'logout' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                        'Authorization': 'Bearer ' + accessToken // Bearer 토큰 추가
+                    },
+                    body: JSON.stringify({
+                        'refresh_token': refreshToken
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // 로그아웃 성공 시 로컬 스토리지에서 토큰 제거
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                        window.location.href = '/'; // 메인 페이지로 리다이렉트
+                    } else if (data.error) {
+                        console.error(data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                console.error('리프레시 토큰이 없습니다.');
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- CSRF Token -->
+    <form style="display:none;">
+        {% csrf_token %}
+    </form>
+
+    {% if not user.is_anonymous %}
+        <div>
+            <span>{{ user.discord_username }}#{{ user.discord_tag }} 님 안녕하세요!</span>
+            <button onclick="logout(event)">Logout</button>
+        </div>
+    {% else %}
+        <div>
+            <a class="login-button" href="{% url 'login' %}">
+                <span>Login</span>
+            </a>
+        </div>
+    {% endif %}
+
+</body>
+</html>

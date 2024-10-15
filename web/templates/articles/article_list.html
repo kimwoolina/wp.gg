@@ -1,10 +1,9 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Articles</title>
+
+{% block title %}리뷰 목록{% endblock title %}
+
+{% block css %}
     <style>
         .article {
             border: 1px solid #ccc;
@@ -30,13 +29,17 @@
             border-radius: 50%; /* Make it circular */
         }
     </style>
-</head>
-<body>
+    {% endblock css %}
+
+    {% block content %}
 
     <div id="article-list"></div>
     
     <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
 
+    {% endblock content %}
+
+    {% block javascript%}
     <script>
         // API URL
         const apiUrl = 'http://127.0.0.1:8000/api/articles/';
@@ -109,5 +112,4 @@
         
     </script>
 
-</body>
-</html>
+    {% endblock javascript%}

@@ -28,14 +28,14 @@
             height: 50px; /* Adjust the size as needed */
             border-radius: 50%; /* Make it circular */
         }
+        
     </style>
     {% endblock css %}
 
     {% block content %}
+    <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
 
     <div id="article-list"></div>
-    
-    <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
 
     {% endblock content %}
 

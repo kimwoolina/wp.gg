@@ -23,7 +23,7 @@
         <div class="search-box">
             <span class="hamburger">☰</span>
                 <div class="search-box">
-                    <input type="text" placeholder="유저 정보를 검색해보세요!">
+                    <input type="text" placeholder="소환사 이름 +  #태그 ">
                     <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
                     </svg>
@@ -106,11 +106,6 @@
         window.location.href = '/home/';
     });
 
-    // 마이페이지로 리다이렉트 (프로필 클릭 시)
-    document.querySelector('.mypage-button').addEventListener('click', function() {
-        window.location.href = '/profile/';
-    });
-
     // 로그아웃 이벤트 처리
     document.querySelector('.logout-button').addEventListener('click', function() {
         const refreshToken = localStorage.getItem('refresh_token');
@@ -139,6 +134,42 @@
             }
         })
         .catch(error => console.error('Error:', error));
+    });
+
+    // 유저 검색을 위한 함수
+    function searchUser(inputValue) {
+        // 입력값이 비어있는지 확인
+        if (!inputValue) {
+            alert('검색어를 입력해주세요.');
+            return;
+        }
+
+        // 입력값이 '#' 문자를 포함하는지 확인
+        if (inputValue.includes('#')) {
+            // 태그가 포함된 경우
+            const [summonerName, riotTag] = inputValue.split('#');
+            // URL 인코딩
+            const encodedTag = encodeURIComponent(riotTag.trim());
+            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+        } else {
+            // 기본 검색 경우
+            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(inputValue.trim())}`;
+        }
+    }
+    
+    // 검색 박스에 엔터키 이벤트 추가
+    const searchInput = document.querySelector('.search-box input[type="text"]');
+    const searchIcon = document.querySelector('.search-icon');
+
+    searchInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // 기본 엔터키 동작 방지
+            searchUser(searchInput.value);
+        }
+    });
+
+    searchIcon.addEventListener('click', function() {
+        searchUser(searchInput.value);
     });
 </script>
 </body>

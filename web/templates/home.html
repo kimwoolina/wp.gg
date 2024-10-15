@@ -6,157 +6,7 @@
     <title>홈</title>
     {% load static %}
     <script src="{% static 'app.js' %}"></script>
-    <style>
-        /* 전체 배경 색상 */
-        body {
-            background-color: #1E1E1E;
-        }
-
-        /* 네비게이션 바 */
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            padding-right: 40px;
-        }
-
-        /* 네브바 호버 시 로고 통통 튀는 애니메이션 */
-        .nav-bar:hover .logo {
-            animation: bounce 0.7s ease-in-out infinite /* 반복 애니메이션 */
-        }
-    
-        @keyframes bounce {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px); /* 위로 튀는 높이 설정 */
-            }
-            100% {
-                transform: translateY(0);
-            }
-        }
-        
-
-        /* 로고 이미지 */
-        .logo {
-            width: 150px;
-            cursor: pointer;
-            margin-left: 6px;
-        }
-
-        /* 상단 가운데 텍스트 */
-        .nav-center {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .nav-center a {
-            font-size: 18px;
-            text-decoration: none;
-            cursor: pointer;
-            color: #f6f1ff;
-            font-size: 18px;
-            text-decoration: none;
-            cursor: pointer;
-            font-family: FUNFLOW SURVIVOR;
-            cursor: pointer;
-        }
-
-        .nav-center a:hover {
-            color: #B19CD9;
-            font-weight: bold;
-        }
-
-        /* Join 버튼과 Login, Logout, Mypage 버튼 */
-        .action-btn {
-            background-color: #716490;
-            color: white;
-            padding: 7px 14px;
-            border-radius: 10px;
-            text-decoration: none;
-            cursor: pointer;
-            margin-left: 2px;
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
-            border: 2px solid transparent; /* 기본 상태에서 테두리 투명 */
-            box-sizing: border-box; /* 패딩과 테두리를 포함하여 크기 계산 */
-        }
-        
-        .action-btn:hover {
-            background-color: #B19CD9;
-            color: #461B66;
-            font-weight: bold;
-            border: 2px solid #B19CD9; /* 호버 시 테두리 색상 적용 */
-        }
-
-        /* 우상단 버튼 여백 */
-        .nav-right {
-            display: flex;
-            gap: 10px;
-            margin-right: 7px;
-        }
-
-        /* 검색 바 */
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 150px;
-            margin-bottom: 150px;
-        }
-
-        .search-box {
-            width: 600px;
-            padding: 15px;
-            background-color: #554477;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .search-box input {
-            width: 85%;
-            background: none;
-            border: none;
-            outline: none;
-            color: 	#F6F6FD;
-            font-size: 16px;
-        }
-
-        .search-box input:placeholder {
-            color: #7A7EBD;
-        }
-
-        /* 햄버거 아이콘 */
-        .hamburger {
-            color: #C0C0C0;
-            font-size: 20px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .hamburger:hover {
-            color: #7A7EBD
-        }
-
-        /* 돋보기 아이콘 */
-        .search-icon {
-            width: 20px;
-            height: 20px;
-            fill: #C0C0C0;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .search-icon:hover {
-            fill: #7A7EBD
-        }
-
-    </style>
+    <link rel="stylesheet" href="{% static '/css/home_style.css' %}">
 </head>
 <body>
     <!-- 네비게이션 바 -->
@@ -166,7 +16,7 @@
             <a href="{% url 'article-list' %}">유저리뷰</a>
             <a href="{% url 'ranking' %}">매너랭킹</a>
             <a href="{% url 'user_matching' %}">유저추천</a>
-            <a href="/team-matching/">팀매칭</a>
+            <a href="/api/party/">팀매칭</a>
             <a href="{% url 'chat-room-template' %}">채팅</a>
         </div>
 
@@ -184,8 +34,8 @@
     <div class="search-bar">
         <div class="search-box">
             <span class="hamburger">☰</span>
-            <input type="text" placeholder="유저를 검색하세요...">
-            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <input type="text" id="user-search" placeholder="유저를 검색하세요...">
+            <svg id="search-icon" class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
             </svg>
         </div>
@@ -244,9 +94,12 @@
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     }
+
     document.addEventListener('DOMContentLoaded', function () {
         const logoutButton = document.getElementById('logout-btn');
         const mypageButton = document.getElementById('mypage-btn');
+        const searchInput = document.getElementById('user-search');
+        const searchIcon = document.getElementById('search-icon');
 
         if (logoutButton) {
             // 로그아웃 버튼 클릭 시 이벤트 처리
@@ -332,10 +185,40 @@
                 window.location.href = '/profile/';
             });
         }
-        });
-        
-</script>
 
+        // 검색 아이콘 클릭 시 이벤트 리스너
+        searchIcon.addEventListener('click', function () {
+            const inputValue = searchInput.value.trim();
+            searchUser(inputValue);
+        });
+
+        // Enter 키를 눌렀을 때도 검색 기능 추가
+        searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                const inputValue = searchInput.value.trim();
+                searchUser(inputValue);
+            }
+        });
+
+        // 유저 검색을 위한 함수
+        function searchUser(inputValue) {
+            // 입력값이 비어있지 않은지 확인
+            if (inputValue) {
+                // 유저 이름과 태그 분리
+                const [username, riotTag] = inputValue.split('#');
+                if (username) {
+                    // URL 생성
+                    const url = `http://127.0.0.1:8000/${encodeURIComponent(username)}`;
+                    const params = riotTag ? `?riot_tag=${encodeURIComponent(riotTag)}` : '';
+                    // 페이지 이동
+                    window.location.href = url + params;
+                }
+            } else {
+                alert('검색어를 입력해주세요.');
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -2,28 +2,42 @@
 
 {% block title %}유저검색{% endblock title %}    
 
+{% block css %}
+<style>
+{% comment %} /* 스피너 */ {% endcomment %}
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+
+    {% comment %} /* 화면 중앙에 배치 */ {% endcomment %}
+    position: fixed; 
+    top: 50%; 
+    left: 55%; 
+    transform: translate(-50%, -50%); 
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+</style>
+{% endblock css%}
+
 {% block content %}
 
-    <div class="user-details">
-        <h1 id="username"></h1>
-        <p id="riot-username"></p>
-        <p id="riot-tag"></p>
-        <p id="riot-tier"></p>
-        <p id="score"></p>
-        
-        <h2>Riot 정보</h2>
-        <img id="profile-icon" alt="Profile Icon" style="width: 50px; height: 50px;"/>
-        <p id="summoner-level"></p>
-        <p id="preferred-position"></p>
-        <p id="league-info"></p>
-        <h2>Top Champions</h2>
-        <div id="top-champions"></div>
-        
-        <h2>Evaluations</h2>
-        <div id="evaluations"></div>
-        <h2>Articles</h2>
-        <div id="articles"></div>
-    </div>
+<span class="loader" id="loader" style="display: none;"></span>
+<div id="result" style="margin-top: 20px;"></div>
+
 
 {% endblock content %}
 
@@ -47,6 +61,10 @@
             if (riotTag) {
                 apiUrl += `?riot_tag=${encodeURIComponent(riotTag)}`; // 태그가 있을 경우 추가
             }
+            // 로딩 스피너 표시
+            document.getElementById('loader').style.display = 'inline-block';
+            // 이전 내용 초기화
+            document.getElementById('result').innerHTML = ''; 
 
             fetch(apiUrl)
                 .then(response => {
@@ -56,37 +74,44 @@
                     return response.json();
                 })
                 .then(data => {
+                    document.getElementById('loader').style.display = 'none';
                     displayUserData(data);
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('유저 정보를 가져오는 데 문제가 발생했습니다.');
+                    // alert('유저 정보를 가져오는 데 문제가 발생했습니다.'); 
+                    document.getElementById("result").innerText = '소환사 정보를 찾을 수 없습니다.'
                 });
         }
 
         // 유저 데이터를 페이지에 표시하는 함수
         function displayUserData(data) {
-            document.getElementById('username').innerText = `Username: ${data.username}`;
-            document.getElementById('riot-username').innerText = `Riot Username: ${data.riot_username}`;
-            document.getElementById('riot-tag').innerText = `Riot Tag: ${data.riot_tag}`;
-            document.getElementById('riot-tier').innerText = `Riot Tier: ${data.riot_tier || '정보 없음'}`;
-            document.getElementById('score').innerText = `Score: ${data.score}`;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // 이전 내용 초기화
+
+            // 유저 기본 정보
+            resultDiv.innerHTML += `<h1>Username: ${data.username}</h1>`;
+            resultDiv.innerHTML += `<p>Riot Username: ${data.riot_username}</p>`;
+            resultDiv.innerHTML += `<p>Riot Tag: #${data.riot_tag}</p>`;
+            resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier || '정보 없음'}</p>`;
+            resultDiv.innerHTML += `<p>Score: ${data.score}</p>`;
 
             // 라이엇 정보 출력
             if (data.riot_info) {
-                document.getElementById('profile-icon').src = data.riot_info.profileIconLink;
-                document.getElementById('summoner-level').innerText = `Summoner Level: ${data.riot_info.summonerLevel}`;
-                document.getElementById('preferred-position').innerText = `Preferred Position: ${data.riot_info.preferredPosition}`;
+                resultDiv.innerHTML += `<img id="profile-icon" src="${data.riot_info.profileIconLink}" alt="Profile Icon" />`;
+                resultDiv.innerHTML += `<p>Summoner Level: ${data.riot_info.summonerLevel}</p>`;
+                resultDiv.innerHTML += `<p>Preferred Position: ${data.riot_info.preferredPosition}</p>`;
 
                 const leagueInfo = data.riot_info.league.map(league => {
                     return `${league.tier} ${league.rank} (${league.leaguePoints} LP) - Wins: ${league.wins}, Losses: ${league.losses}`;
                 }).join('<br>');
-                document.getElementById('league-info').innerHTML = `League Info:<br>${leagueInfo}`;
+                resultDiv.innerHTML += `<h2>League Info:</h2><div>${leagueInfo}</div>`;
 
                 // Top Champions 출력
-                const topChampions = document.getElementById('top-champions');
+                resultDiv.innerHTML += `<h2>Top Champions</h2><div id="top-champions"></div>`;
+                const topChampionsDiv = document.getElementById('top-champions');
                 data.riot_info.topChampions.forEach(champion => {
-                    topChampions.innerHTML += `
+                    topChampionsDiv.innerHTML += `
                         <div>
                             <p>${champion.championName}</p>
                             <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
@@ -96,28 +121,31 @@
             }
 
             // Evaluations 출력
-            const evaluations = document.getElementById('evaluations');
-            evaluations.innerHTML = `
-                Kindness: ${data.evaluations.kindness}<br>
-                Teamwork: ${data.evaluations.teamwork}<br>
-                Communication: ${data.evaluations.communication}<br>
-                Mental Strength: ${data.evaluations.mental_strength}<br>
-                Punctuality: ${data.evaluations.punctuality}<br>
-                Positivity: ${data.evaluations.positivity}<br>
-                MVP: ${data.evaluations.mvp}<br>
-                Mechanical Skill: ${data.evaluations.mechanical_skill}<br>
-                Operation: ${data.evaluations.operation}<br>
-                Negativity: ${data.evaluations.negativity}<br>
-                Profanity: ${data.evaluations.profanity}<br>
-                AFK: ${data.evaluations.afk}<br>
-                Cheating: ${data.evaluations.cheating}<br>
-                Verbal Abuse: ${data.evaluations.verbal_abuse}
+            resultDiv.innerHTML += `<h2>Evaluations</h2>`;
+            resultDiv.innerHTML += `
+                <div>
+                    Kindness: ${data.evaluations.kindness}<br>
+                    Teamwork: ${data.evaluations.teamwork}<br>
+                    Communication: ${data.evaluations.communication}<br>
+                    Mental Strength: ${data.evaluations.mental_strength}<br>
+                    Punctuality: ${data.evaluations.punctuality}<br>
+                    Positivity: ${data.evaluations.positivity}<br>
+                    MVP: ${data.evaluations.mvp}<br>
+                    Mechanical Skill: ${data.evaluations.mechanical_skill}<br>
+                    Operation: ${data.evaluations.operation}<br>
+                    Negativity: ${data.evaluations.negativity}<br>
+                    Profanity: ${data.evaluations.profanity}<br>
+                    AFK: ${data.evaluations.afk}<br>
+                    Cheating: ${data.evaluations.cheating}<br>
+                    Verbal Abuse: ${data.evaluations.verbal_abuse}
+                </div>
             `;
 
             // Articles 출력
-            const articles = document.getElementById('articles');
+            resultDiv.innerHTML += `<h2>Articles</h2>`;
+            const articlesDiv = document.createElement('div');
             data.articles.forEach(article => {
-                articles.innerHTML += `
+                articlesDiv.innerHTML += `
                     <div>
                         <h3>${article.title}</h3>
                         <p>Score: ${article.article_score}</p>
@@ -125,6 +153,7 @@
                     </div>
                 `;
             });
+            resultDiv.appendChild(articlesDiv);
         }
     </script>
 

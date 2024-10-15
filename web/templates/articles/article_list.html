@@ -7,109 +7,175 @@
     <style>
         .article {
             border: 1px solid #ccc;
-            padding: 10px;
+            padding: 20px;
             margin: 10px;
+            display: flex; /* Flexbox 사용하여 정렬 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            cursor: pointer; /* 클릭 가능한 요소로 보이도록 커서 변경 */
         }
-        .article-title {
-            font-size: 18px;
-            font-weight: bold;
+        .article-icons {
+            display: flex; /* 아이콘을 수평으로 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            margin-right: 10px; /* 아이콘과 내용 사이의 간격 조정 */
         }
-        .article-content {
-            margin-top: 5px;
-            color: #555;
-        }
-        .article-image {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 5px; /* 아이콘 간의 간격 조정 */
         }
         .profile-image {
-            width: 50px; /* Adjust the size as needed */
-            height: 50px; /* Adjust the size as needed */
-            border-radius: 50%; /* Make it circular */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .article-content {
+            margin-left: 10px;
+            color: #555;
+            flex-grow: 1; /* 남은 공간 차지 */
+        }
+        .username {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .created-at {
+            font-size: 12px;
+            color: #777;
+        }
+        .truncated-content {
+            font-size: 14px; /* 내용 폰트 크기 약간 증가 */
+            color: #fff; /* 내용 색상 하얀색으로 조정 */
+            margin-top: 5px; /* 닉네임과 날짜와의 간격 조정 */
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            margin-bottom: 22px; /* 버튼과 아래 요소 사이의 간격 */
+        }
+        .button-81 {
+            background-color: #6f69a5;
+            border: 0 solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-sizing: border-box;
+            color: #ECE7F9;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Basier circle",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+            font-size: 1rem !important;
+            font-weight: 600;
+            line-height: 1;
+            padding: 0.8rem 2rem !important;
+            text-align: center;
+            text-decoration: none #0d172a solid;
+            text-decoration-thickness: auto;
+            transition: all .1s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            float: right; /* 버튼을 오른쪽으로 이동 */
         }
         
+        .button-81:hover {
+            background-color: #8a3ffc;
+            color: #fff;
+        }
     </style>
-    {% endblock css %}
+{% endblock css %}
 
-    {% block content %}
-    <a href="{% url 'article-create' %}" class="create-review-button">리뷰 작성하기</a>
+{% block content %}
+<div class="button-container">
+    <button class="button-81" role="button" onclick="window.location.href='{% url 'article-create' %}'">리뷰 작성하기</button>
+</div>
 
-    <div id="article-list"></div>
+<div id="article-list"></div>
+{% endblock content %}
 
-    {% endblock content %}
+{% block javascript %}
+<script>
+// API URL
+const apiUrl = 'http://127.0.0.1:8000/api/articles/';
 
-    {% block javascript%}
-    <script>
-        // API URL
-        const apiUrl = 'http://127.0.0.1:8000/api/articles/';
+// DOM element for article list
+const articleList = document.getElementById('article-list');
 
-        // DOM element for article list
-        const articleList = document.getElementById('article-list');
+// Function to format the date as "YYYY.MM.DD" or "X days ago"
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-        // Function to truncate content to 10 characters
-        function truncateContent(content) {
-            return content.length > 10 ? content.substring(0, 10) + '...' : content;
+    if (diffDays === 0) {
+        const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+        if (diffHours === 0) {
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            return diffMinutes + " minutes ago";
         }
+        return diffHours + " hours ago";
+    } else if (diffDays < 7) {
+        return diffDays + " days ago";
+    } else {
+        return date.toISOString().split('T')[0].replace(/-/g, '.');
+    }
+}
 
-        // Function to create and append an article to the DOM
-        function appendArticle(article) {
-            const reviewer = article.reviewer;
-            const reviewee = article.reviewee;
+// Function to create and append an article to the DOM
+function appendArticle(article) {
+    const reviewer = article.reviewer;
 
-            // Reviewer info
-            const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
-            const reviewerTag = reviewer.riot_tag ? `#${reviewer.riot_tag}` : '';
-            const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : 'default-profile.png';
+    // Icons based on article score
+    const scoreIcon = article.article_score >= 5 
+        ? 'https://cdn-icons-png.flaticon.com/512/2717/2717378.png' // 따봉 아이콘
+        : 'https://cdn-icons-png.flaticon.com/512/7218/7218755.png'; // 낮은 점수 아이콘
+    const moreIcon = 'https://www.svgrepo.com/show/335225/ellipsis.svg'; // 말줄임표 아이콘
 
-            // Reviewee info
-            const revieweeUsername = reviewee.riot_username ? reviewee.riot_username : reviewee.username;
-            const revieweeTag = reviewee.riot_tag ? `#${reviewee.riot_tag}` : '';
-            const revieweeProfileImage = reviewee.profile_image ? reviewee.profile_image : 'default-profile.png';
+    // Reviewer info
+    const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
+    const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : '{% static "img/default_profile_image.png" %}';
 
-            // Article score (add 👍🏻 or 👎🏻 based on the score)
-            const scoreEmoji = article.article_score > 5 ? '👍🏻' : '👎🏻';
+    // Truncated content with a limit of 30 characters
+    const maxLength = 30; // 최대 글자 수
+    const truncatedContent = article.content.length > maxLength 
+        ? article.content.substring(0, maxLength) + '...' 
+        : article.content;
 
-            // Truncated content
-            const truncatedContent = truncateContent(article.content);
+    // Create article element
+    const articleElement = document.createElement('div');
+    articleElement.classList.add('article');
 
-            // Create article element
-            const articleElement = document.createElement('div');
-            articleElement.classList.add('article');
+    // Create article content
+    articleElement.innerHTML = `
+        <div class="article-icons">
+            <img src="${scoreIcon}" alt="Score Icon" class="icon">
+            <img src="${moreIcon}" alt="More" class="icon" style="filter: brightness(0) invert(1);"> 
+            <img src="${reviewerProfileImage}" alt="Profile Image" class="profile-image">
+        </div>
+        <div class="article-content">
+            <div class="username">${reviewerUsername}</div>
+            <div class="created-at">${formatDate(article.created_at)}</div>
+            <div class="truncated-content">${truncatedContent}</div>
+        </div>
+    `;
 
-            // Create a link to the article detail page
-            const articleLink = document.createElement('a');
-            articleLink.href = `/article/${article.id}/`; // Update this line to use the correct path
-            articleLink.innerHTML = `
-                <div class="article-title">
-                    <img src="{% static 'img/default_profile_image.png' %}" alt="Profile Image" class="profile-image">
-                    ${revieweeUsername}${revieweeTag} ${scoreEmoji}
-                </div>
-                <div class="article-content">
-                    ${truncatedContent}
-                </div>
-            `;
-            articleLink.style.textDecoration = 'none'; // Remove underline from link
+    // Add click event to redirect to the article detail page
+    articleElement.onclick = () => {
+        window.location.href = `/article/${article.id}/`;
+    };
 
-            // Append the link to the article element
-            articleElement.appendChild(articleLink);
+    // Append to the list
+    articleList.appendChild(articleElement);
+}
 
-            // Append to the list
-            articleList.appendChild(articleElement);
-        }
-
-        // Fetch articles from API
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(article => {
-                    appendArticle(article);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching articles:', error);
-            });
-        
-    </script>
-
-    {% endblock javascript%}
+// Fetch articles from API
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(article => {
+            appendArticle(article);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching articles:', error);
+    });
+</script>
+{% endblock javascript %}

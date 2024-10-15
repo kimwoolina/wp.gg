@@ -32,13 +32,23 @@
     <script>
         // 페이지 로드 시 유저 정보를 가져오는 함수
         window.onload = function() {
-            const username = window.location.pathname.split('/').pop(); // URL에서 유저 이름 추출
-            fetchUserData(username);
+            const pathParts = window.location.pathname.split('/');
+            const username = pathParts[pathParts.length - 1]; // URL에서 유저 이름 추출
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const riotTag = urlParams.get('riot_tag'); // URL에서 Riot 태그 추출
+            
+            fetchUserData(username, riotTag);
         };
 
         // 유저 데이터를 가져오는 함수
-        function fetchUserData(username) {
-            fetch(`http://127.0.0.1:8000/api/profile/${username}`)
+        function fetchUserData(username, riotTag) {
+            let apiUrl = `http://127.0.0.1:8000/api/profile/${username}`;
+            if (riotTag) {
+                apiUrl += `?riot_tag=${encodeURIComponent(riotTag)}`; // 태그가 있을 경우 추가
+            }
+
+            fetch(apiUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('유저 정보를 가져오는 데 실패했습니다.');

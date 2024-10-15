@@ -11,6 +11,7 @@
             margin: 10px;
             display: flex; /* Flexbox 사용하여 정렬 */
             border-radius: 5px; /* 모서리 둥글게 */
+            cursor: pointer; /* 클릭 가능한 요소로 보이도록 커서 변경 */
         }
         .article-icons {
             display: flex; /* 아이콘을 수평으로 정렬 */
@@ -41,8 +42,8 @@
             color: #777;
         }
         .truncated-content {
-            font-size: 12px; /* 내용 폰트 크기 조정 */
-            color: #333; /* 내용 색상 조정 */
+            font-size: 14px; /* 내용 폰트 크기 약간 증가 */
+            color: #fff; /* 내용 색상 하얀색으로 조정 */
             margin-top: 5px; /* 닉네임과 날짜와의 간격 조정 */
         }
         .button-container {
@@ -155,6 +156,11 @@ function appendArticle(article) {
             <div class="truncated-content">${truncatedContent}</div>
         </div>
     `;
+
+    // Add click event to redirect to the article detail page
+    articleElement.onclick = () => {
+        window.location.href = `/article/${article.id}/`;
+    };
 
     // Append to the list
     articleList.appendChild(articleElement);

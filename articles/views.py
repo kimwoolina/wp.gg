@@ -22,7 +22,6 @@ class ArticleDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)  # JSON 응답 반환
 
 
-
 class RevieweeSearchView(APIView):
     """
     username 또는 riot_username으로 평가할 유저 검색 (본인 제외)

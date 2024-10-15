@@ -56,8 +56,6 @@ class ArticleAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        print(">>>>request>>>>>> ", request)
-        print(">>>>request.data>>>>>> ", request.data)
         if not request.user.is_authenticated:
             return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
 

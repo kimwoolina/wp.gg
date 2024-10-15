@@ -1,11 +1,10 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Application</title>
+    {% load static %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/chat.css' %}">
@@ -22,13 +21,6 @@
             margin-left: 150px;
         }
 
-        /* 로고 이미지 */
-        .logo {
-            width: 150px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
         /* 채팅 컨테이너 */
         .container {
             display: flex;
@@ -40,141 +32,142 @@
             color: #e7deff;
             overflow: hidden;
             margin-right: 300px;
-            margin-left: 10px
-            color: #e7deff;
-            font-family: FUNFLOW SURVIVOR;
+            margin-left: 10px;
+            font-family: 'FUNFLOW SURVIVOR', sans-serif;
         }
 
         .sidebar {
             color: white;
-            border-right: 1px solid #ccc;
-            width: 350px;
+            border-right: 0px solid #ccc;
+            width: 438px;
             background-color: #211e2f00;
             padding: 40px;
             display: flex;
-            color: #e7deff;
-            padding: 10px;
-            border-right: 0px solid transparent;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: nowrap;
-            flex-direction: column-reverse;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .sidebar h2 {
-            font-size: 24px;
+        sidebar h2 {
+            font-size: 23px;
             margin-bottom: 20px;
+            color: #c1b1e0;
+            margin-top: 25px;
         }
 
-        /* 채팅방 생성 버튼 */
-        button#create-chat-room {
-            background-color: #716490;
+        /* 채팅방 생성 영역 */
+        .create-chat-room {
+            display: flex;
+            align-items: center;
+            background-color: #3A3A3A;
+            padding: 9px;
+            border-radius: 50px;
+        }
+
+        .create-chat-room input {
+            flex-grow: 1;
+            background-color: #3A3A3A;
+            border: 10px;
             color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-family: 'FUNFLOW SURVIVOR';
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
-
-        input[type="text"] {
-            width: 90%;
             padding: 8px;
-            margin-right: -1px;
-            color: #6f69a5;
-
+            border-radius: 10px;
+            margin-right: 20px;
         }
 
-        button#create-chat-room:hover {
+        .create-chat-room input:focus {
+            outline: none;
+        }
+
+        .create-chat-room button {
+            background-color: #716490;
+            border: none;
+            color: white;
+            padding: 7px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .create-chat-room button:hover {
             background-color: #8B72B1;
         }
 
         #chat-room-list {
-            list-style: center;
-            padding: ;
-            width: 120%;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 112px;
+            width: 100%;
         }
 
         #chat-room-list li {
             display: flex;
-            align-items: center;
-            padding: 10px;
+            padding: 5px;
             margin-bottom: 10px;
-            margin-left: 10px;
-            background-color: transparent;
-            border-radius: 14px;
+            background-color: #2C2F33;
+            border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
+            align-items: center;
+            justify-content: space-evenly;
+            flex-direction: column;
+        }
+
+        .select-chat-room {
+            background-color: transparent;
+            color: transparent;
+            border: none;
+            padding: 0px 0px;
+            border-radius: 0px;
+            cursor: pointer;
+            margin-right: 0px;
         }
 
         #chat-room-list li:hover {
-            boader-color: #6f69a5;
-        }
-
-    
-        .select-chat-room {
-            background-color: transparent;
-            color: transparent; /* 글자색 */
-            padding: 10px 20px; /* 버튼 크기 조정 */
-            border-radius: 10px; /* 둥근 테두리 */
-            border: none; /* 테두리 없앰 */
-            cursor: pointer; /* 마우스 커서 변경 */
-        }
-        
-        .select-chat-room:hover {
-            color: transparent
+            background-color: #716490;
         }
 
         /* 채팅 영역 */
         .chat-area {
             color: #e7deff;
-            font-family: FUNFLOW SURVIVOR;
-            width: 80%;
+            font-family: 'FUNFLOW SURVIVOR', sans-serif;
+            width: 100%;
             flex-grow: 1;
-            padding: 66px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* 채팅 영역 */
-        .chat-messages {
-            color: #e7deff;
-            font-family: FUNFLOW SURVIVOR;
-            width: 75%;
-            flex-grow: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;            
-        }
-
-
-
-        /* 보낸 메시지 스타일 */
-        .msgbtright {
-            color: #C4E5F3;
-            align-self: flex-end; /* 오른쪽 정렬 */
-            margin-left: auto;
+        /* 채팅 메시지 */
+        .msgbyright {
+            background-color: transparent;
+            color: #85c2ff;
+            padding: 10px;
             margin-bottom: 10px;
+            border-radius: 10px 10px 10px 0;
             text-align: right;
-            border-radius: 10px 10px 0 10px;
-            font-family: FUNFLOW SURVIVOR;
+            align-self: flex-start;
         }
 
         /* 받은 메시지 스타일 */
-        .msgbtleft {
-            background-color: #2C2F33; /* 어두운 그레이 */
-            color: #EAEAEA;
-            align-self: flex-end; /* 왼쪽 정렬 */
-            margin-left: auto;
-            margin-bottom: 10px;
-            text-align: left;
-            border-radius: 10px 10px 10px 0;
+        .msgbyleft {
+            background-color: transparent;
+            color: #bbfffd;
+            padding: 3px;
+            margin-bottom: 0px;
+            border-radius: 10px 10px 0 10px;
+            margin-left: 5px;
         }
 
+        /* 보낸 메시지 스타일 */
+        .msgbyright {
+            background-color: transparent;
+            color: #8fb7ff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px 10px 10px 0;
+            text-align: right;
+            align-self: flex-start;
+        }
 
         /* 메시지 입력 */
         .message-input {
@@ -183,7 +176,6 @@
             border-radius: 10px;
             background-color: #3A3A3A;
             padding: 10px;
-            margin-top: 20px;
         }
 
         .message-input input {
@@ -213,18 +205,29 @@
             background-color: #8B72B1;
         }
 
-        
+        #chat-messages {
+            height: 602px;
+            overflow-y: scroll;
+            border: 0px solid #5252525e;
+            padding: 13px;
+            margin-bottom: 13px;
+            background-color: #0e0c10;
+            boader-radius: 10px;
+
+        }
+
+
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <!-- 로고 이미지 추가 -->
-            <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo" id="logo">
             <h2>Chat Rooms</h2>
             <ul id="chat-room-list"></ul>
-            <input type="text" id="user2-id" placeholder="채팅하고 싶은 유저 ID ❤️">
-            <button id="create-chat-room">Create Chat Room</button>
+            <div class="create-chat-room">
+                <input type="text" id="user2-id" placeholder="채팅하고 싶은 유저 ID">
+                <button id="create-chat-room">Create</button>
+            </div>
         </div>
         <div class="chat-area">
             <h2>Chat Messages</h2>
@@ -239,48 +242,41 @@
     <script>
       const myuser = '{{ user.username }}'
         $(document).ready(function() {
-            // 로고 클릭 시 홈 화면으로 리다이렉트
-            $('#logo').click(function() {
-                window.location.href = '/';  // 홈 화면 URL로 리다이렉트
-            });
-
-            loadChatRooms(); // 페이지 로드 시 채팅방 목록 로드
+            // 채팅방 목록 로드
+            loadChatRooms();
     
-            let pollingInterval; // 폴링 인터벌 변수
+            let pollingInterval;
     
             // 채팅방 선택 시 메시지 로드
             $(document).on('click', '.select-chat-room', function() {
-                const roomId = $(this).data('room-id'); // 클릭한 채팅방 ID 가져오기
+                const roomId = $(this).data('room-id');
 
-                // 모든 채팅방에서 selected 클래스 제거
                 $('.select-chat-room').removeClass('selected');
-
-                // 클릭한 채팅방에 selected 클래스 추가
                 $(this).addClass('selected');
 
                 loadMessages(roomId);
-                startPolling(roomId); // 폴링 시작
+                startPolling(roomId);
             });
     
             // 메시지 전송
             $('#send-message').click(function() {
-                const roomId = $('.select-chat-room.selected').data('room-id'); // 선택된 채팅방 ID
+                const roomId = $('.select-chat-room.selected').data('room-id');
                 const messageContent = $('#message-input').val();
 
                 if (messageContent && roomId) {
                     sendMessage(roomId, messageContent);
-                    $('#message-input').val(''); // 입력창 초기화
+                    $('#message-input').val('');
                 } else {
                     alert("Please select a chat room and enter a message.");
                 }
             });
 
-            // 채팅방 생성 버튼 클릭 시 호출
+            // 채팅방 생성 버튼 클릭 시
             $('#create-chat-room').click(function() {
                 const user2Id = $('#user2-id').val();
                 if (user2Id) {
                     createChatRoom(user2Id);
-                    $('#user2-id').val(''); // 입력창 초기화
+                    $('#user2-id').val('');
                 } else {
                     alert("Please enter a user ID.");
                 }
@@ -289,25 +285,19 @@
             // 폴링 시작 함수
             function startPolling(roomId) {
                 if (pollingInterval) {
-                    clearInterval(pollingInterval); // 기존 폴링 중지
+                    clearInterval(pollingInterval);
                 }
     
-                // 일정 간격으로 메시지 로드
                 pollingInterval = setInterval(function() {
                     loadMessages(roomId);
-                }, 500); // 0.5초 간격으로 로드
+                }, 500);
             }
     
-            // 사용자 인증 토큰을 로컬 저장소에서 가져옵니다.
+            // 사용자 인증 토큰 가져오기
             function getAccessToken() {
                 return localStorage.getItem('access_token');
             }
 
-            // CSRF 토큰 가져오기 (Django용)
-            function getCsrfToken() {
-                return $('input[name="csrfmiddlewaretoken"]').val(); // CSRF 토큰 가져오기
-            }
-    
             // 메시지 및 채팅방 로드 함수
             function loadChatRooms() {
                 $.ajax({
@@ -317,7 +307,7 @@
                     success: function(data) {
                         $('#chat-room-list').empty();
                         data.forEach(function(room) {
-                            $('#chat-room-list').append('<li>' + room.room_name + ' <button class="select-chat-room" data-room-id="' + room.id + '">님과의 채팅창 열기</button></li>');
+                            $('#chat-room-list').append('<li>' + room.room_name + ' <button class="select-chat-room" data-room-id="' + room.id + '">OPEN THIS CHAT ROOM</button></li>');
                         });
                     },
                     error: function(xhr) {
@@ -326,8 +316,7 @@
                 });
             }
     
-            // 선택한 채팅방의 메시지를 로드하는 함수
-
+            // 메시지 로드 함수
             function loadMessages(roomId) {
                 $.ajax({
                     url: '/api/chat/private-chats/' + roomId + '/messages/',
@@ -341,9 +330,8 @@
                             } else {
                                 $('#chat-messages').append('<p class="msgbyleft"><strong>' + message.sender.username + ' &nbsp; </strong> ' + message.content + '</p>');
                             }
-                         
                         });
-                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight); // 스크롤을 가장 아래로
+                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);  // 스크롤을 가장 아래로
                     },
                     error: function(xhr) {
                         alert("Failed to load messages. Error: " + xhr.responseText);
@@ -358,12 +346,12 @@
                     method: 'POST',
                     headers: { 
                         'Authorization': 'Bearer ' + getAccessToken(),
-                        'X-CSRFToken': getCsrfToken() // CSRF 토큰 추가
+                        'X-CSRFToken': '{{ csrf_token }}'
                     },
                     contentType: 'application/json',
-                    data: JSON.stringify({ room_id: roomId, content: content }), // room_id 사용
+                    data: JSON.stringify({ room_id: roomId, content: content }),
                     success: function(message) {
-                        // 메시지 전송 후 아무 동작 없이 종료
+                        // 메시지 전송 후 처리
                     },
                     error: function(xhr) {
                         alert("Failed to send message. Error: " + xhr.responseText);
@@ -378,12 +366,12 @@
                     method: 'POST',
                     headers: { 
                         'Authorization': 'Bearer ' + getAccessToken(),
-                        'X-CSRFToken': getCsrfToken() // CSRF 토큰 추가
+                        'X-CSRFToken': '{{ csrf_token }}'
                     },
                     contentType: 'application/json',
                     data: JSON.stringify({ user2: user2Id }),
                     success: function(room) {
-                        loadChatRooms(); // 새로운 채팅방 생성 후 목록 재로드
+                        loadChatRooms();
                     },
                     error: function(xhr) {
                         alert("Failed to create chat room. Error: " + xhr.responseText);

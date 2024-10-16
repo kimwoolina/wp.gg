@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 
 User = get_user_model()
 
@@ -117,3 +118,13 @@ class CommentAPIView(APIView):
             data = {"pk": f"{pk} 삭제됨"}
             return Response(data, status=status.HTTP_200_OK)
         return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def search_user(request):
+    query = request.GET.get('q', None)
+    if query:
+        users = User.objects.filter(username__icontains=query) | User.objects.filter(riot_username__icontains=query)
+        user_data = [{"id": user.id, "username": user.username, "riot_username": user.profile.riot_username} for user in users]
+        return Response({"users": user_data})
+    return Response({"users": []})

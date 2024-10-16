@@ -2,116 +2,440 @@
 
 {% block title %}리뷰 작성{% endblock title %}
 
+{% block css %}
+    <style>
+        /* 전체 배경색 */
+        body {
+            background-color: #1E1E1E;
+            color: #fff;
+        }
+        
+        /* 유저 검색 상자 */
+        .user-search-container {
+            margin: 30px;
+            padding: 4px;
+            display: flex;
+            gap: 10px;
+            max-width: 820px;
+            width: 100%;
+            margin: 5%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+            border-radius: 10px;
+            overflow-y: auto;
+            max-height: 1000px;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 18px;
+            flex-direction: column;
+            margin-left: -3px;
+        }
+        
+        
+        .reviewee-select {
+            width: 176px;
+            padding: 10px;
+            border-radius: 13px;
+            background-color: #333;
+            color: #deddec;
+            margin-top: 34px;
+            font-size: 14px;
+            margin-left: 5px;
+            margin-right: 8px;
+            border: transparent;
+        }
+        
+        /* 이모티콘 점수 선택 */
+        .emoji-score label {
+            font-size: 50px;
+            margin-right: 15px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        
+        /* 리뷰 내용 */
+        .content-box {
+            width: 91%;
+            height: 100px;
+            border-radius: 15px;
+            background-color: #333;
+            color: #dbe1ff;
+            border: none;
+            padding: 10px;
+            padding: 16px;
+            font-size: 16px;
+            margin-top: 29px;
+        }
+        
+  /* 평가 항목 스타일 */
+        .review-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .review-categories label {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* 제출 버튼 */
+        .submit-btn {
+            margin-top: 40px;
+            padding: 8px 17px;
+            background-color: #716490;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 800px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #8B72B1;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background-color: #1e1e1e;
+        }
+        
+        .tag-label {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 7px 10px;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        
+        .tag-label input {
+            display: none;
+        }
+        
+        .tag-label span {
+            margin-left: 8px;
+            font-weight: bold;
+            color: black;
+        }
+        
+        .tag-label:hover {
+            background-color: #f0f0f0;
+            border-color: #716490; /* Hover border color */
+        }
+        
+        .tag-label input:checked + span {
+            background-color: #6f69a5; /* Checked background color */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .review-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 11px;
+            padding: 20px;
+        }
+        
+        .review-categories .badge {
+            background-color: #fdfdfd;
+            color: #31273d;
+            padding: 4px 10px;
+            border-radius: 14px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            display: inline-block;
+        }
+        
+        .review-categories .badge:hover {
+            background-color: #f0f0f0;
+            border: 3px solid #119c77;
+            color: #119c77;
+        }
+        
+        .review-categories .badge.selected {
+            background-color: #6d618b;
+            color: #e3d8ff;
+            border: 2px solid transparent #119c77;
+            glow: 2;
+        }
+        
+        /* 제출 버튼 */
+        .submit-btn {
+            margin-top: 40px;
+            padding: 8px 17px;
+            background-color: #716490;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 800px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #8B72B1;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background-color: #1e1e1e;
+        }
+        
+        .tag-label {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 7px 10px;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        
+        .tag-label input {
+            display: none;
+        }
+        
+        .tag-label span {
+            margin-left: 8px;
+            font-weight: bold;
+            color: black;
+        }
+        
+        .tag-label:hover {
+            background-color: #f0f0f0;
+            border-color: #716490; /* Hover border color */
+        }
+        
+        .tag-label input:checked + span {
+            background-color: #6f69a5; /* Checked background color */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .review-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 11px;
+            padding: 20px;
+        }
+        
+        .review-categories .badge {
+            background-color: #fdfdfd;
+            color: #31273d;
+            padding: 4px 10px;
+            border-radius: 14px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            display: inline-block;
+        }
+        
+        .review-categories .badge:hover {
+            background-color: #f0f0f0;
+            border: 3px solid #119c77;
+            color: #119c77;
+        }
+        
+        .review-categories .badge.selected {
+            background-color: #6d618b;
+            color: #e3d8ff;
+            border: 2px solid transparent #119c77;
+            glow: 2;
+        }
+
+        /* 돋보기 아이콘 스타일 */
+        .search-btn {
+            width: 24px;
+            height: 29px;
+            cursor: pointer;
+            margin-left: 635px;
+            margin-top: -70px;
+        }
+        
+        .search-btn:hover {
+            fill: #8B72B1; /* 호버시 색상 변경 */
+        }
+
+        .search-bar {
+            padding: 16px;
+            border-radius: 19px;
+            background-color: #464646;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+            width: 57%;
+            margin-left: 185px;
+        }
+
+        /* 라디오 버튼과 이모티콘의 컨테이너 */
+        .emoji-radio-container {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 37px;
+            margin-right: 12px;
+            margin-left: -30px;
+        }
+    
+        /* 이모티콘 스타일 */
+        .emoji-label {
+            font-size: 50px;
+            display: block;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    
+        /* 라디오 버튼 기본 스타일 */
+        .emoji-radio {
+            display: block;
+            margin: 0 auto;
+            appearance: none; /* 기본 라디오 버튼 숨김 */
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid #f09eff;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        /* 라디오 버튼 체크시 보라색으로 채우기 */
+        .emoji-radio:checked {
+            background-color: #fff;
+        }
+    
+        /* 선택된 상태에서의 내부 동그라미 */
+        .emoji-radio:checked::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #6d4094;
+            border-radius: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            glow: 1;
+    }
+            
+</style>
+
+{% endblock css %}
+
 {% block content %}
 
 <form id="articleForm" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
     <!-- 1. 유저 검색 기능 -->
-    <div>
-        <input type="text" id="user-search" placeholder="Search for users by username or riot_username">
-        <select id="reviewee" name="reviewee">
-            <option value="">--평가 할 사람을 고르세요--</option>
+    <div class="user-search-container">
+        <input type="text" id="user-search" class="search-bar" placeholder="&nbsp;유저 찾기">
+        <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="search-btn" fill="white">
+            <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
+        </svg>
+        <select id="reviewee" name="reviewee" class="reviewee-select">
+            <option value="">평가 할 사람을 고르세요.</option>
         </select>
     </div>
     
-    <!-- 2. 이미지 업로드 및 미리보기 -->
-    <label for="img">Image</label>
-    <input type="file" name="img" id="img" multiple accept="image/*" onchange="previewImages(event)">
-    <div id="image-preview"></div>
-
-    <!-- 3. title & content -->
-    <label for="title">Title</label>
-    <input type="text" name="title" id="title" required><br>
-    
-    <label for="content">Content</label>
-    <input type="text" name="content" id="content" required><br>
-
     <!-- 4. 이모티콘 점수 선택 -->
-    <label for="article_score">Score</label>
-    <div id="emoji-score">
-        <label>
-            <input type="radio" name="article_score" value="10" required> 😍
+    <div class="emoji-radio-container">
+        <label class="emoji-label">
+            😍
+            <input type="radio" name="rating" class="emoji-radio" value="10">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="9" required> 🥰
+        <label class="emoji-label">
+            🥰
+            <input type="radio" name="rating" class="emoji-radio" value="9">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="8" required> 😘
+        <label class="emoji-label">
+            😘
+            <input type="radio" name="rating" class="emoji-radio" value="8">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="7" required> 😄
+        <label class="emoji-label">
+            😄
+            <input type="radio" name="rating" class="emoji-radio" value="7">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="6" required> 😙
+        <label class="emoji-label">
+            😙
+            <input type="radio" name="rating" class="emoji-radio" value="6">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="5" required> 🙂
+        <label class="emoji-label">
+            🙂
+            <input type="radio" name="rating" class="emoji-radio" value="5">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="4" required> 🥺
+        <label class="emoji-label">
+            🥺
+            <input type="radio" name="rating" class="emoji-radio" value="4">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="3" required> 😞
+        <label class="emoji-label">
+            😞
+            <input type="radio" name="rating" class="emoji-radio" value="3">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="2" required> 😣
+        <label class="emoji-label">
+            😣
+            <input type="radio" name="rating" class="emoji-radio" value="2">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="1" required> 😡
+        <label class="emoji-label">
+            😡
+            <input type="radio" name="rating" class="emoji-radio" value="1">
         </label>
-        <label>
-            <input type="radio" name="article_score" value="0" required> 🤮
+        <label class="emoji-label">
+            🤮
+            <input type="radio" name="rating" class="emoji-radio" value="0">
         </label>
     </div>
 
+    <!-- 3. 리뷰 내용 -->
+    <textarea id="content" name="content" class="content-box" placeholder="리뷰를 입력하세요..." required></textarea>
+
     <!-- 5. 평가 항목들 -->
-    <label> 평가 항목</label>
-    <div>
-    <input type="checkbox" id="kindness" value="1" name="kindness">
-    <label for="kindness">Kindness</label>
-
-    <input type="checkbox" id="teamwork" value="1" name="teamwork">
-    <label for="teamwork">Teamwork</label>
-
-    <input type="checkbox" id="communication" value="1" name="communication">
-    <label for="communication">Communication</label>
-
-    <input type="checkbox" id="mental_strength" value="1" name="mental_strength">
-    <label for="mental_strength">Mental Strength</label>
-
-    <input type="checkbox" id="punctuality" value="1" name="punctuality">
-    <label for="punctuality">Punctuality</label>
-
-    <input type="checkbox" id="positivity" value="1" name="positivity">
-    <label for="positivity">Positivity</label>
-
-    <input type="checkbox" id="mvp" value="1" name="mvp">
-    <label for="mvp">MVP</label>
-
-    <input type="checkbox" id="mechanical_skill" value="1" name="mechanical_skill">
-    <label for="mechanical_skill">Mechanical Skill</label>
-
-    <input type="checkbox" id="operation" value="1" name="operation">
-    <label for="operation">Operation</label>
-
-    <input type="checkbox" id="negativity" value="1" name="negativity">
-    <label for="negativity">Negativity</label>
-
-    <input type="checkbox" id="profanity" value="1" name="profanity">
-    <label for="profanity">Profanity</label>
-
-    <input type="checkbox" id="afk" value="1" name="afk">
-    <label for="afk">AFK</label>
-
-    <input type="checkbox" id="cheating" value="1" name="cheating">
-    <label for="cheating">Cheating</label>
-
-    <input type="checkbox" id="verbal_abuse" value="1" name="verbal_abuse">
-    <label for="verbal_abuse">Verbal Abuse</label>
-</div>
-
-    <input type="submit" value="Save" />
+    <div class="review-categories">
+        <span class="badge" data-value="kindness">💗 상냥함</span>
+        <span class="badge" data-value="teamwork">🛠 팀워크</span>
+        <span class="badge" data-value="communication">📢 소통왕</span>
+        <span class="badge" data-value="mental_strength">🧠 멘탈강</span>
+        <span class="badge" data-value="punctuality">⏰ 시간약속</span>
+        <span class="badge" data-value="positivity">💪 긍정적</span>
+        <span class="badge" data-value="mvp">⭐ MVP</span>
+        <span class="badge" data-value="mechanical_skill">⚙️ 기계적</span>
+        <span class="badge" data-value="operation">🎮 운영</span>
+        <span class="badge" data-value="negativity">☹️ 부정적태도</span>
+        <span class="badge" data-value="profanity">😡 욕설</span>
+        <span class="badge" data-value="afk">💤 탈주/자리비움</span>
+        <span class="badge" data-value="cheating">🎮 치트</span>
+        <span class="badge" data-value="verbal_abuse">😡 언어적폭력</span>
+    </div>
+    
+    <input type="hidden" name="selected_categories" id="selected_categories">
+    <input type="submit" value="Save" class="submit-btn">
 </form>
 
 {% endblock content %}
@@ -142,10 +466,10 @@
     const csrftoken = getCookie('csrftoken');
 
     // 1. 유저 검색 기능
-    document.getElementById('user-search').addEventListener('input', function (e) {
-        const query = e.target.value;
+    document.getElementById('search-icon').addEventListener('click', function() {
+        const query = document.getElementById('user-search').value;
         const revieweeSelect = document.getElementById('reviewee');
-        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>'; // 초기 옵션 설정
+        revieweeSelect.innerHTML = '<option value="">--평가 할 사람을 고르세요--</option>';
 
         fetch(`/api/articles/search_user/?q=${query}`, {
             method: 'GET', 
@@ -157,63 +481,48 @@
             .then(response => response.json())
             .then(data => {
                 if (data.users.length === 0) {
-                    return; // 검색 결과가 없을 경우 종료
+                    return;
                 }
                 data.users.forEach(user => {
                     const option = document.createElement('option');
                     option.textContent = `${user.username} | ${user.riot_username || ''}${user.riot_tag || ''}`;
                     option.value = user.id;
-                    revieweeSelect.appendChild(option); // 선택 옵션에 추가
+                    revieweeSelect.appendChild(option);
                 });
             });
     });
 
 
-    // 2. 이미지 미리보기 기능
-    function previewImages(event) {
-        const previewContainer = document.getElementById('image-preview');
-        previewContainer.innerHTML = '';
-        
-        const files = event.target.files;
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imgElement = document.createElement('img');
-                imgElement.src = e.target.result;
-                imgElement.style.maxWidth = '100px';
-                imgElement.style.marginRight = '10px';
-                previewContainer.appendChild(imgElement);
-            };
-            reader.readAsDataURL(file);
-        });
-    }
+    // 2. 리뷰 카테고리 선택 기능
+    document.addEventListener('DOMContentLoaded', function() {
+        const badges = document.querySelectorAll('.badge');
+        const selectedCategoriesInput = document.getElementById('selected_categories');
 
-    // 폼 전송 시 Bearer 토큰을 함께 전송
-    document.getElementById('articleForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-
-        const form = event.target;
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Authorization': 'Bearer ' + getAccessToken() // Bearer 토큰 추가
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            // 성공 시 처리할 로직
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // 실패 시 처리할 로직
+        badges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                // 선택된 뱃지에 'selected' 클래스 추가/제거
+                this.classList.toggle('selected');
+    
+                // 선택된 카테고리를 hidden input에 업데이트
+                const selectedCategories = Array.from(badges)
+                    .filter(badge => badge.classList.contains('selected'))
+                    .map(badge => badge.dataset.value);
+                selectedCategoriesInput.value = selectedCategories.join(',');
+            });
         });
     });
 
+    document.getElementById('articleForm').addEventListener('submit', function(event) {
+        const revieweeSelect = document.getElementById('reviewee');
+        if (revieweeSelect.value === "") {
+            event.preventDefault();  // 폼 제출 막기
+            alert("평가 할 유저를 선택해주세요.");  // 경고 메시지 표시
+            return;
+        }
+    });
+    
+
+    
 </script>
 
-{% endblock javascript%}
+{% endblock javascript %}

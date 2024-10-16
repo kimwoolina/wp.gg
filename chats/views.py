@@ -52,7 +52,7 @@ class PrivateChatRoomListView(APIView):
 
 # 개인 메시지 리스트 / 전송
 class PrivateChatMessageList(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, room_id, *args, **kwargs):  # room_id를 URL 경로에서 직접 받기
         if not room_id:

@@ -1,0 +1,154 @@
+/* 전체 배경색 */
+body {
+    background-color: #1E1E1E;
+    color: #fff;
+}
+
+/* 유저 검색 상자 */
+.user-search-container {
+    margin: 20px 0;
+}
+
+.search-bar {
+    width: 300px;
+    padding: 10px;
+    border-radius: 25px;
+    background-color: #333;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.reviewee-select {
+    width: 300px;
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #333;
+    color: #fff;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* 이모티콘 점수 선택 */
+.emoji-score label {
+    font-size: 30px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+/* 리뷰 내용 */
+.content-box {
+    width: 100%;
+    height: 100px;
+    border-radius: 15px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* 평가 항목 스타일 */
+.review-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.review-categories label {
+    background-color: #444;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 제출 버튼 */
+.submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #716490;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background-color: #8B72B1;
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    background-color: #1e1e1e;
+}
+
+.tag-label {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.tag-label input {
+    display: none;
+}
+
+.tag-label span {
+    margin-left: 8px;
+    font-weight: bold;
+    color: black;
+}
+
+.tag-label:hover {
+    background-color: #f0f0f0;
+    border-color: #716490; /* Hover border color */
+}
+
+.tag-label input:checked + span {
+    background-color: #6f69a5; /* Checked background color */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.review-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+}
+
+.review-categories .badge {
+    background-color: white;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.review-categories .badge:hover {
+    background-color: #f0f0f0;
+    border-color: #716490;
+}
+
+.review-categories .badge.selected {
+    background-color: #6f69a5;
+    color: white;
+}

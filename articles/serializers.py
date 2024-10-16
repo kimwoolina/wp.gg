@@ -34,6 +34,10 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comments
         fields = ['id', 'user', 'content', 'created_at', 'updated_at', 'parent_comment']
         
+    def create(self, validated_data):
+        # 부모 댓글이 없을 때 None 값 허용
+        parent_comment = validated_data.get('parent_comment', None)
+        return Comments.objects.create(**validated_data)
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta :

@@ -3,6 +3,8 @@
 {% block title %}유저검색{% endblock title %}    
 
 {% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static '/css/user_detail.css' %}">
 <style>
 {% comment %} /* 스피너 */ {% endcomment %}
 .loader {
@@ -88,56 +90,72 @@
         function displayUserData(data) {
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = ''; // 이전 내용 초기화
+            
+            let score = Number(data.score.toFixed(2));
+            resultDiv.innerHTML += `<div class="site-user-info"><h1>${data.username}</h1> <span class="score">👍${score}</span><br>`; // 사이트 유저네임, 점수
 
+            // 라이엇 정보 유무에 따른 프로필 교체
+            if(data.riot_info){
+                resultDiv.innerHTML += `<img id="profile-icon" src="${data.riot_info.profileIconLink}" alt="Profile Icon" style="width: 100px; " /><br>`;
+                resultDiv.innerHTML += `${data.riot_info.summonerLevel}`
+            }
+            else {
+                resultDiv.innerHTML += `<img id="profile-icon" src="${data.profile_image}" alt="Profile Icon" style="width: 100px; " />`;
+            }
+            
             // 유저 기본 정보
-            resultDiv.innerHTML += `<h1>Username: ${data.username}</h1>`;
-            resultDiv.innerHTML += `<p>Riot Username: ${data.riot_username}</p>`;
-            resultDiv.innerHTML += `<p>Riot Tag: #${data.riot_tag}</p>`;
-            resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier || '정보 없음'}</p>`;
-            resultDiv.innerHTML += `<p>Score: ${data.score}</p>`;
-
+            if(data.riot_username && data.riot_tag){
+                resultDiv.innerHTML += `<p class="riot_username_tag">${data.riot_username} | #${data.riot_tag}</p>`;
+            }
+            else{
+                resultDiv.innerHTML += `<p class="riot_username_tag">${data.riot_username || ''}#${data.riot_tag || ''}</p>`;
+            }
+            
+            resultDiv.innerHTML += `>>>>>>여기부터 라이엇 API정보<br>`;
+            
             // 라이엇 정보 출력
             if (data.riot_info) {
-                resultDiv.innerHTML += `<img id="profile-icon" src="${data.riot_info.profileIconLink}" alt="Profile Icon" style="width: 100px; " />`;
-                resultDiv.innerHTML += `<p>Summoner Level: ${data.riot_info.summonerLevel}</p>`;
-                resultDiv.innerHTML += `<p>Preferred Position: ${data.riot_info.preferredPosition}</p>`;
-
                 const leagueInfo = data.riot_info.league.map(league => {
                     return `${league.tier} ${league.rank} (${league.leaguePoints} LP) - Wins: ${league.wins}, Losses: ${league.losses}`;
                 }).join('<br>');
+                resultDiv.innerHTML += `<p>Preferred Position: ${data.riot_info.preferredPosition}</p>`;
                 resultDiv.innerHTML += `<h2>League Info:</h2><div>${leagueInfo}</div>`;
-
+                
+                
                 // Top Champions 출력
                 resultDiv.innerHTML += `<h2>Top Champions</h2><div id="top-champions"></div>`;
                 const topChampionsDiv = document.getElementById('top-champions');
                 data.riot_info.topChampions.forEach(champion => {
                     topChampionsDiv.innerHTML += `
-                        <div>
-                            <p>${champion.championName}</p>
-                            <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
-                        </div>
-                    `;
-                });
-            }
+                    <span class="top-champ">
+                        <p>${champion.championName}</p>
+                        <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
+                        </span>
+                        `;
+                    });
+                }
+                else{
+                    resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier || '정보 없음'} • 포지션 넣을예정</p>`;
+                }
 
             // Evaluations 출력
             resultDiv.innerHTML += `<h2>Evaluations</h2>`;
             resultDiv.innerHTML += `
                 <div>
-                    Kindness: ${data.evaluations.kindness}<br>
-                    Teamwork: ${data.evaluations.teamwork}<br>
-                    Communication: ${data.evaluations.communication}<br>
-                    Mental Strength: ${data.evaluations.mental_strength}<br>
-                    Punctuality: ${data.evaluations.punctuality}<br>
-                    Positivity: ${data.evaluations.positivity}<br>
-                    MVP: ${data.evaluations.mvp}<br>
-                    Mechanical Skill: ${data.evaluations.mechanical_skill}<br>
-                    Operation: ${data.evaluations.operation}<br>
-                    Negativity: ${data.evaluations.negativity}<br>
-                    Profanity: ${data.evaluations.profanity}<br>
-                    AFK: ${data.evaluations.afk}<br>
-                    Cheating: ${data.evaluations.cheating}<br>
-                    Verbal Abuse: ${data.evaluations.verbal_abuse}
+                    💗상냥함: ${data.evaluations.kindness} 
+                    🙌🏻팀워크: ${data.evaluations.teamwork} 
+                    🤝소통: ${data.evaluations.communication} 
+                    😇멘탈 관리: ${data.evaluations.mental_strength} 
+                    ⏱시간약속: ${data.evaluations.punctuality} 
+                    🌈긍정적: ${data.evaluations.positivity} 
+                    👑MVP: ${data.evaluations.mvp} 
+                    💪피지컬: ${data.evaluations.mechanical_skill} 
+                    🧠운영 능력: ${data.evaluations.operation} 
+                    🙁부정적 태도: ${data.evaluations.negativity} 
+                    🤬욕설: ${data.evaluations.profanity} 
+                    ❓탈주/자리비움: ${data.evaluations.afk} 
+                    🥷부정행위: ${data.evaluations.cheating} 
+                    😡공격적인언행: ${data.evaluations.verbal_abuse}
                 </div>
             `;
 

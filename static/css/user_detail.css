@@ -1,0 +1,15 @@
+body .site-user-info {
+    display: flex;
+    justify-content: center;
+}
+
+.site-user-info h1,
+    .site-user-info .score {
+        display: inline;
+    }
+
+.score {
+    background-color: #34C759;
+    padding: 2px 10px 4px 6px;
+    border-radius: 11px;
+}

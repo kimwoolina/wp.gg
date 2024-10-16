@@ -20,4 +20,5 @@ urlpatterns = [
     path('', views.home, name='home'), # 기본 홈 화면
     path('base/', views.base, name='base'),
     path('discord/', views.indexView.as_view(), name='user_index'),
+    path('party/', views.party, name='party'),
 ]

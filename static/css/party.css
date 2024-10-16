@@ -1,0 +1,69 @@
+/* 부모 컨테이너는 세로로 쌓임 (Flex 방향을 Column으로 설정) */
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 세로 간격 */
+}
+
+/* 가로로 5칸씩 배치되는 자식 컨테이너 */
+.horizontal-container {
+    display: flex;
+    gap: 10px; /* 가로 간격 */
+}
+
+/* 각각의 가로 5칸 아이템 스타일 */
+.horizontal-container div {
+    flex: 1;
+    height: 100px;
+    background-color: lightblue;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 100px;
+}
+
+/* 그리드 컨테이너 스타일 */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7개의 열 */
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;
+    margin-left: 0%;
+    margin-right: 0%;
+    padding: 20px;
+}
+
+/* 그리드 헤더 스타일 */
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}
+
+/* 셀 스타일 */
+.grid-item {
+    padding: 10px;
+    text-align: center;
+}
+
+/* 셀렉트박스 스타일 */
+select {
+    width: 100%;
+    padding: 5px;
+}
+
+/* 새로운 칸에 2줄을 차지하는 스타일 */
+.grid-item-merged {
+    grid-row: span 2; /* 2줄을 차지하도록 설정 */
+}
+
+.submit-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.mar-bot-20 {
+    margin-bottom: 20px;
+}

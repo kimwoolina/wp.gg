@@ -88,3 +88,29 @@ class indexView(generic.TemplateView):
 def base(request):
     return render(request, 'base.html')
     
+
+def party(request):
+    print(request.method)
+    if request.method == 'GET':
+        try:
+            response = requests.get('http://127.0.0.1:8000/api/party/')  # 로컬 API URL
+            response.raise_for_status()  # 오류 발생 시 예외 처리
+        except requests.exceptions.RequestException as e:
+            return HttpResponse(f"API 요청 오류: {e}", status=500)
+        
+        # API로부터 받은 JSON 데이터를 파싱
+        party_data = response.json()["Party"]
+        print(party_data)
+        # 데이터를 템플릿으로 전달하여 HTML 렌더링
+        return render(request, 'parties/parties.html', {'party': party_data})
+    #     try:
+    #         response = requests.get(f'http://127.0.0.1:8000/api/party/')
+    #         # response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+    #         # party = response.json()  # JSON으로 변환
+    #         print(response.data)
+    #     except:
+    #         print("errorsadfsafasdf")
+    #         raise Http404("Party not found.")  # 404 오류 발생
+    #     return render(request, 'parties/parties.html', {'party': party})
+    # else:
+    #     return render(request, 'parties/create.html')

@@ -5,51 +5,254 @@
 
 {% block css %}
     <style>
-        /* CSS로 이미지 크기 조정 */
+        /* 전체 테마 색상 */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .article-detail {
+            width: 100%; 
+            margin: auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .article-detail h1, h2, h3 {
+            color: #6f69a5;
+        }
+
+        .article-detail p {
+            font-size: 14px; /* 글 내용 폰트 사이즈 축소 */
+        }
+
         .profile-image {
-            width: 50px; /* 원하는 너비로 조정 */
-            height: auto; /* 비율을 유지 */
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: #ddd;
+        }
+
+        .comment h4 {
+            color: #6f69a5;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .comment-form button {
+            background-color: #6f69a5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .comment-form button:hover {
+            background-color: #5c5788;
+        }
+
+        /* 이미지 스타일 */
+        .article-detail img {
+            max-width: 100%;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            margin-bottom: 22px; /* 버튼과 아래 요소 사이의 간격 */
+        }
+        .button-81 {
+            background-color: #6f69a5;
+            border: 0 solid #e2e8f0;
+            border-radius: 1.5rem;
+            box-sizing: border-box;
+            color: #ECE7F9;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Basier circle",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+            font-size: 1rem !important;
+            font-weight: 600;
+            line-height: 1;
+            padding: 0.8rem 2rem !important;
+            text-align: center;
+            text-decoration: none #0d172a solid;
+            text-decoration-thickness: auto;
+            transition: all .1s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            float: right; /* 버튼을 오른쪽으로 이동 */
+        }
+
+        .button-81:hover {
+            background-color: #8a3ffc;
+            color: #fff;
         }
     </style>
 {% endblock css %}
 
-
 {% block content %}
-    <div class="article-detail">
-        <h1>{{ article.title }}</h1>
-        <p>작성일: {{ article.created_at }}</p>
+<div class="article-detail">
+    <h1>{{ article.title }}</h1>
+    <p><span id="formatted-date"></span></p>
+
+    <!-- 작성자 정보 -->
+    <div class="d-flex align-items-center mb-4">
+        <img class="profile-image mr-3" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
+        <h2>{{ article.reviewer.username }}</h2>
+    </div>
+
+    <!-- 평가 대상 정보 -->
+    <div class="d-flex align-items-center mb-4">
+        <img class="profile-image mr-3" src="{% if article.reviewee.profile_image %}{{ article.reviewee.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewee.username }} 프로필 이미지">
         <div>
-            <h2>작성자: {{ article.reviewer.username }}</h2>
-            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
-        </div>
-        <div>
-            <h2>평가 대상: {{ article.reviewee.username }}</h2>
+            <h2>{{ article.reviewee.username }}</h2>
             <p>Riot 유저명: {{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</p>
-            <img class="profile-image" src="{% if article.reviewee.profile_image %}{{ article.reviewee.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewee.username }} 프로필 이미지">
-        </div>
-        <div>
-            <h3>이미지들</h3>
-            {% for image in article.article_images %}
-                <img src="{{ image.img.url }}" alt="Article 이미지">
-            {% endfor %}
-        </div>
-        <div>
-            <h3>글 내용</h3>
-            <p>{{ article.content }}</p>
-        </div>
-        <div>
-            <h3>댓글</h3>
-            {% for comment in article.comments %}
-                <div class="comment">
-                    <h4>{{ comment.user.username }}</h4>
-                    <p>{{ comment.content }}</p>
-                    <p>작성일: {{ comment.created_at }}</p>
-                    {% if comment.parent_comment %}
-                        <p>부모 댓글 ID: {{ comment.parent_comment.id }}</p>
-                    {% endif %}
-                </div>
-            {% endfor %}
         </div>
     </div>
-{% endblock content %}
 
+    <!-- 이미지들 -->
+    <div class="article-images mb-4">
+        {% for image in article.article_images %}
+            <img src="{{ image.img.url }}" alt="Article 이미지">
+        {% endfor %}
+    </div>
+
+    <!-- 글 내용 -->
+    <p>{{ article.content }}</p>
+
+    <!-- 댓글 작성 (댓글 목록 위로 이동) -->
+    <div class="comment-form">
+        <textarea id="comment-content" placeholder="댓글을 작성하세요..."></textarea>
+        <div class="button-container">
+            <button id="submit-comment" class="button-81" role="button">리뷰 작성하기</button>
+        </div>
+    </div>
+
+    <!-- 댓글 섹션 (댓글 작성 칸 아래로 이동) -->
+    댓글 {{ article.comments|length }} 개
+    <div id="comments-section" class="mb-4">
+        {% for comment in article.comments %}
+            <div class="comment">
+                <h4>{{ comment.user.username }}</h4>
+                <p>{{ comment.content }}</p>
+                <p>작성일: <span class="formatted-comment-date">{{ comment.created_at }}</span></p>
+                {% if comment.parent_comment %}
+                    <p>부모 댓글 ID: {{ comment.parent_comment.id }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 스크립트 -->
+<script>
+    // Bearer 토큰 가져오는 함수
+    function getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    // 댓글 작성
+    document.getElementById('submit-comment').addEventListener('click', function() {
+        const content = document.getElementById('comment-content').value;
+        const articleId = "{{ article.id }}";
+
+        if (content.trim() === "") {
+            alert("댓글 내용을 입력하세요.");
+            return;
+        }
+
+        fetch(`/api/articles/comment/${articleId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Authorization': 'Bearer ' + getAccessToken()
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('댓글 작성에 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !data.user) {
+                throw new Error('댓글 데이터가 올바르지 않습니다.');
+            }
+
+            const newComment = `
+                <div class="comment">
+                    <h4>${data.user.username}</h4>
+                    <p>${data.content}</p>
+                    <p>작성일: ${formatDate(data.created_at)}</p>
+                </div>`;
+            document.getElementById('comments-section').insertAdjacentHTML('beforeend', newComment);
+            document.getElementById('comment-content').value = ""; // 댓글 작성 후 입력창 비우기
+        })
+        .catch(error => {
+            alert(error.message);
+            console.error('Error:', error);
+        });
+    });
+
+    // 작성일 포맷팅 함수
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) {
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            if (diffHours === 0) {
+                const diffMinutes = Math.floor(diffTime / (1000 * 60));
+                return diffMinutes + " minutes ago";
+            }
+            return diffHours + " hours ago";
+        } else if (diffDays < 7) {
+            return diffDays + " days ago";
+        } else {
+            return date.toISOString().split('T')[0].replace(/-/g, '.');
+        }
+    }
+
+    // 문서가 로드된 후에 작성일 포맷팅 적용
+    document.addEventListener('DOMContentLoaded', function() {
+        // 글 작성일 포맷팅
+        const formattedDate = formatDate("{{ article.created_at }}");
+        document.getElementById('formatted-date').textContent = formattedDate;
+
+        // 댓글 작성일 포맷팅
+        document.querySelectorAll('.formatted-comment-date').forEach(function(span) {
+            span.textContent = formatDate(span.textContent);
+        });
+    });
+</script>
+{% endblock content %}

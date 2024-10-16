@@ -22,19 +22,19 @@ class PartyView(ListCreateAPIView):
         {
             "Party": [
                 {
-                    "rank": "0", "server": "KR", "language": "KR", "age": "00", "gender": "B", 
+                    "user": 2, "rank": "0", "server": "KR", "language": "KR", "age": "10", "gender": "B", 
                     "created_at": "2024-10-07T20:38:11.910963+09:00", "is_rank": true,
                     "top1": null, "jungle1": null, "mid1": null, "support1": null, "adc1": null,
                     "top2": null, "jungle2": null, "mid2": 3, "support2": null, "adc2": null
                 },
                 {
-                    "rank": "0", "server": "KR", "language": "KR", "age": "00", "gender": "B",
+                    "user": 2, "rank": "0", "server": "KR", "language": "KR", "age": "20", "gender": "M",
                     "created_at": "2024-10-07T20:36:37.840061+09:00", "is_rank": true,
                     "top1": null, "jungle1": 2, "mid1": null, "support1": null, "adc1": null,
                     "top2": null, "jungle2": null, "mid2": null, "support2": null, "adc2": null
                 },
                 {
-                    "rank": "0", "server": "KR", "language": "KR", "age": "00", "gender": "B",
+                    "user": 2, "rank": "0", "server": "KR", "language": "KR", "age": "30", "gender": "F",
                     "created_at": "2024-10-07T20:23:28.912341+09:00", "is_rank": false,
                     "top1": 1, "jungle1": null, "mid1": null, "support1": null, "adc1": null,
                     "top2": null, "jungle2": null, "mid2": null, "support2": null, "adc2": null
@@ -45,27 +45,9 @@ class PartyView(ListCreateAPIView):
         parties = Parties.objects.all().order_by("-pk")
         # print(f"\n\n{parties}\n\n")
         serializer = PartiesSerializer(parties, many=True)
-        # keys = serializer.data["Party"]
-        tior = {
-            "0": "Unranked",
-            "1": "Iron",
-            "2": "Bronze",
-            "3": "Silver",
-            "4": "Gold",
-            "5": "Platinum",
-            "6": "Amarald",
-            "7": "Diamond",
-            "8": "Master",
-            "9": "Grand Master",
-            "10": "Challenger"
-        }
         print("\n", request.user.id, "\n")
-        # for i in serializer.data:
-        #     print(f"rank:{i['rank']}, server:{i['server']}, language:{i['language']}, age:{i['age']}, gender:{i['gender']}, is_rank:{i['is_rank']}, top1:{i['top1']}, jungle1:{i['jungle1']}, mid1:{i['mid1']}, support1:{i['support1']}, adc1:{i['adc1']}, top2:{i['top2']}, jungle2:{i['jungle2']}, mid2:{i['mid2']}, support2:{i['support2']}, adc2:{i['adc2']}, user:{i['user']}")
-        # pure django
-        return render(request, "parties/parties.html", {"party":parties, "tior":tior})
-        # rest api
-        # return Response({"Party": serializer.data})
+
+        return Response({"Party": serializer.data})
 
     # 팀 생성 RQ-021-1
     def post(self, request):
@@ -131,43 +113,154 @@ class PartyView(ListCreateAPIView):
         #                         server=request.data.get("server"), language=request.data.get("language"),
         #                         age=request.data.get("age"), gender=request.data.get("gender"),
         #                         is_rank=is_rank, adc1=request.user)
-        
-        # pure django
-        return redirect("parties:create_party")
-    
-        # rest api
-        # serializer = PartiesSerializer(party)
-        # return Response({"data": serializer.data})
 
+        serializer = PartiesSerializer(party)
+        return Response({"data": serializer.data})
 
-class PartyDetailView(APIView):
-    permission_classes = [AllowAny]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
-
-    def delete(self, request, party_pk):
+    def delete(self, request):
         print(request.user)
-        delete_party = get_object_or_404(Parties, id=party_pk)
-        # 확인용
-        print("요청접수")
+        pk=request.data.get("id")
+        delete_party = get_object_or_404(Parties, id=pk)
         # 방장만 방 폭파 가능
         if request.user == delete_party.user:
             print("delete_party")
             delete_party.delete()
-            return Response({"status": "succeed", "message": "delete_party", "delete_id": party_pk})
+            return Response({"status": "succeed", "message": "delete_party", "delete_id": pk})
         else:
             print("no party master")
             return Response({"status": "dismissed", "message": "You are not the owner of this party."})
+
+
+class PartyDetailView(APIView):
+    permission_classes = [AllowAny]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
+    def post(self, request, party_pk):
+        def putparty(id):
+            if party.top1 is request.user:
+                print("already in party")
+            elif party.jungle1 is request.user:
+                print("already in party")
+            elif party.mid1 is request.user:
+                print("already in party")
+            elif party.support1 is request.user:
+                print("already in party")
+            elif party.adc1 is request.user:
+                print("already in party")
+            
+            # 파티 중복 가능하면
+            if id=="top1":
+                if party.top1 is None:
+                    party.top1 = request.user
+                else:
+                    print("error top1 not")
+                    return Response({"status":"error", "message": "top already exist"})
+            elif id=="jun1":
+                if party.jungle1 is None:
+                    party.jungle1 = request.user
+                else:
+                    print("error jungle1 not")
+                    return Response({"status":"error", "message": "jungle already exist"})
+            elif id=="mid1":
+                if party.mid1 is None:
+                    party.mid1 = request.user
+                else:
+                    print("error mid1 not")
+                    return Response({"status":"error", "message": "mid already exist"})
+            elif id=="sup1":
+                if party.support1 is None:
+                    party.support1 = request.user
+                else:
+                    print("error support1 not")
+                    return Response({"status":"error", "message": "support already exist"})
+            elif id=="adc1":
+                if party.adc1 is None:
+                    party.adc1 = request.user
+                else:
+                    print("error adc1 not")
+                    return Response({"status":"error", "message": "adc already exist"})
+            elif id=="top2":
+                if party.top2 is None:
+                    party.top2 = request.user
+                else:
+                    print("error top2 not")
+                    return Response({"status":"error", "message": "top already exist"})
+            elif id=="jun2":
+                if party.jungle2 is None:
+                    party.jungle2 = request.user
+                else:
+                    print("error jungle2 not")
+                    return Response({"status":"error", "message": "jungle already exist"})
+            elif id=="mid2":
+                if party.mid2 is None:
+                    party.mid2 = request.user
+                else:
+                    print("error mid2 not")
+                    return Response({"status":"error", "message": "mid already exist"})
+            elif id=="sup2":
+                if party.support2 is None:
+                    party.support2 = request.user
+                else:
+                    print("error support2 not")
+                    return Response({"status":"error", "message": "support already exist"})
+            elif id=="adc2":
+                if party.adc2 is None:
+                    party.adc2 = request.user
+                else:
+                    print("error adc2 not")
+                    return Response({"status":"error", "message": "adc already exist"})
+            else:
+                print("error")
+                return Response({"status":"error", "message": "unknown position"})
+            party.save()
+            print("end")
+            return Response({"status":position, "i":"am"})
+            # 파티 중복 불가능하면
+            # if not request.user.party_top1:
+            #     print("already exist")
+            # elif request.user.party_top2:
+            #     print("already exist")
+            # elif request.user.party_mid1:
+            #     print("already exist")
+            # elif request.user.party_mid2:
+            #     print("already exist")
+            # elif request.user.party_jungle1:
+            #     print("already exist")
+            # elif request.user.party_jungle2:
+            #     print("already exist")
+            # elif request.user.party_support1:
+            #     print("already exist")
+            # elif request.user.party_support2:
+            #     print("already exist")
+            # elif request.user.party_adc1:
+            #     print("already exist")
+            # elif request.user.party_adc2:
+            #     print("already exist")
+        # print(f"{request.user.party_top1}")
+        party = get_object_or_404(Parties, id=party_pk)
+        position = request.data.get("position")
+        print(f"id:{party.id}, user:{request.user.id}")
+        if request.data.get("status") == "party in":
+            return putparty(position)
+        elif request.data.get("status") == "change":
+            return putparty(position)
+
+    def delete(self, request, party_pk):
+        return Response({"status":party_pk})
 
 
 class PartyExileView(APIView):
     # 인증(로그인)해야 이 기능 사용 가능 비로그인은 읽기 허용
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def post(self, request, party_pk, position, *args, **kwargs):
+        party_exile = get_object_or_404(party, id=party_pk)
+        party_exile.delete()
+
     def delete(self, request, party_pk, position):
         party_exile = get_object_or_404(party, id=party_pk)
         party_exile.delete()
 
 
-# class PartyChangeRankView(APIView):
+# class PartyChangeView(APIView):
 #     # 인증(로그인)해야 이 기능 사용 가능 비로그인은 읽기 허용
 #     permission_classes = [IsAuthenticatedOrReadOnly]
 

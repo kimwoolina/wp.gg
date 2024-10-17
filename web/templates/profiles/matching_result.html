@@ -61,7 +61,6 @@ hr.hr-1 {
                     } else {
                         resultDiv += `<img class="profile-image" src="{% static 'img/default_profile_image.png' %}" alt="Profile Picture">`;
                     }
-                    resultDiv += '</div>';
 
                     // 점수 출력
                     if (user.score !== undefined) {
@@ -122,6 +121,7 @@ hr.hr-1 {
                         });
                         resultDiv += articlesDiv.outerHTML;
                     }
+                    resultDiv += '</div>';
                     resultDiv += '<hr class="hr-1">';
                     userElement.innerHTML = resultDiv;
                     matchingResult.appendChild(userElement);

@@ -136,7 +136,7 @@
             justify-content: space-between;
         }
 
-        /* 채팅 메시지 */
+        {% comment %} /* 채팅 메시지 */
         .msgbyright {
             background-color: transparent;
             color: #85c2ff;
@@ -145,7 +145,7 @@
             border-radius: 10px 10px 10px 0;
             text-align: right;
             align-self: flex-start;
-        }
+        } {% endcomment %}
 
         /* 받은 메시지 스타일 */
         .msgbyleft {
@@ -300,8 +300,8 @@
                 pollingInterval = setInterval(function() {
                     loadMessages(roomId);
                 }, 500);
-            }
-    
+            } 
+
             // 사용자 인증 토큰 가져오기
             function getAccessToken() {
                 return localStorage.getItem('access_token');

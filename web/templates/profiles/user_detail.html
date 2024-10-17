@@ -138,6 +138,8 @@
                     });
                 }  
             }
+            
+            // riot_tier/positions 데이터 있을 시 출력
             else{
                 if(data.riot_tier&&data.positions[0].position_name){
                     resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier} • 포지션: ${data.positions[0].position_name}</p>`;

@@ -116,22 +116,28 @@
                 const leagueInfo = data.riot_info.league.map(league => {
                     return `${league.tier} ${league.rank} (${league.leaguePoints} LP) - Wins: ${league.wins}, Losses: ${league.losses}`;
                 }).join('<br>');
-                resultDiv.innerHTML += `<p>Preferred Position: ${data.riot_info.preferredPosition}</p>`;
-                resultDiv.innerHTML += `<h2>League Info:</h2><div>${leagueInfo}</div>`;
-                
-                
-                // Top Champions 출력
-                resultDiv.innerHTML += `<h2>Top Champions</h2><span id="top-champions"></span>`;
-                const topChampionsDiv = document.getElementById('top-champions');
-                data.riot_info.topChampions.forEach(champion => {
-                    topChampionsDiv.innerHTML += `
-                    <div>
-                        <p>${champion.championName}</p>
-                        <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
-                        </div>
-                        `;
-                    });
+                if(data.riot_info.preferredPosition != 'Invalid'){
+                    resultDiv.innerHTML += `<p>Preferred Position: ${data.riot_info.preferredPosition}</p>`;
                 }
+                if(leagueInfo){
+                    resultDiv.innerHTML += `<h2>League Info:</h2><div>${leagueInfo}</div>`;
+                }
+                
+                
+                // Top Champions 데이터 있을 시 출력
+                if(data.riot_info.topChampions){
+                    resultDiv.innerHTML += `<h2>Top Champions</h2><span id="top-champions"></span>`;
+                    const topChampionsDiv = document.getElementById('top-champions');
+                    data.riot_info.topChampions.forEach(champion => {
+                        topChampionsDiv.innerHTML += `
+                        <div>
+                            <p>${champion.championName}</p>
+                            <img src="${champion.championImage}" alt="${champion.championName}" style="width: 50px; height: 50px;"/>
+                            </div>
+                            `;
+                    });
+                }  
+            }
                 else{
                     resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier || '정보 없음'} • 포지션 넣을예정</p>`;
                 }
@@ -159,19 +165,25 @@
 
             // Articles 출력
             resultDiv.innerHTML += `<h2>Articles</h2><div id="articles"></div>`;
-            const articlesDiv = document.getElementById('articles');
-            data.articles.forEach(article => {
-                articlesDiv.innerHTML += `
-                    <div class="article">
-                        <div class="title-score">
-                            <h3 class="title">${article.title}</h3>
-                            <span class="article-score">👍${article.article_score}</span>
+            if(data.articles != false){
+                console.log(data.articles)
+                const articlesDiv = document.getElementById('articles');
+                data.articles.forEach(article => {
+                    articlesDiv.innerHTML += `
+                        <div class="article">
+                            <div class="title-score">
+                                <h3 class="title">${article.title}</h3>
+                                <span class="article-score">👍${article.article_score}</span>
+                            </div>
+                            <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
                         </div>
-                        <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
-                    </div>
-                `;
-            });
-            resultDiv.appendChild(articlesDiv);
+                    `;
+                });
+                resultDiv.appendChild(articlesDiv);
+            }
+            else{
+                articles.innerHTML += `<h3 style="color: gray;">리뷰가 없습니다.</h3>`
+            }
         }
     </script>
 

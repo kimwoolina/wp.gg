@@ -17,7 +17,11 @@
             <a href="{% url 'ranking' %}">매너랭킹</a>
             <a href="{% url 'user_matching' %}">유저추천</a>
             <a href="/api/party/">팀매칭</a>
-            <a href="{% url 'chat-room-template' %}">채팅</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'chat-room-template' %}">채팅</a>
+            {% else %}
+                <a href="{% url 'login_selection' %}?next={% url 'chat-room-template' %}">채팅</a>
+            {% endif %}
         </div>
 
         <!-- 상단 오른쪽 Login, Logout, Join, Mypage 버튼 -->

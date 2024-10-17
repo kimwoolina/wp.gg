@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
 
+
 urlpatterns = [
     path('register-page/', views.register_page, name='register_page'),  # 회원가입
     path('login-page/', views.login_page, name='login_page'), # 로그인
@@ -13,7 +14,7 @@ urlpatterns = [
     path('riotPage/', views.RiotPageView.as_view(), name='user-index'),
     path('matching/', views.MatchingPageView.as_view(), name='user_matching'), 
     path('matching_result/', views.UserRecommendationView.as_view(), name='matching_result'),
-    path('chat/', views.ChatRoomTemplateView.as_view(), name='chat-room-template'),  # 채팅방 템플릿 추가
+    path('chat/', views.chat_room_template, name='chat-room-template'),  # 채팅방 템플릿 추가
     path('article_list/', views.article_list_page, name='article-list'), #리스트
     path('article_create/', views.article_create_page, name='article-create'), #생성
     path('article/<int:article_id>/', views.article_detail_view, name='article-detail'), # 글 상세페이지 조회

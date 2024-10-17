@@ -16,6 +16,7 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -52,7 +53,6 @@ class PrivateChatRoomCreateView(APIView):
         serializer = PrivateChatRoomSerializer(private_chat_room)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    
 class PrivateChatRoomListView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
 

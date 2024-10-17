@@ -54,7 +54,6 @@ def matching_result(request):
 class UserRecommendationView(TemplateView):
     template_name = 'profiles/matching_result.html'
 
-
 class UserDetailPageView(TemplateView):
     template_name = 'profiles/user_detail.html'
 

@@ -42,6 +42,11 @@ body #result {
     color: white;
 }
 
+#articles a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .article {
     background-color: #2f2e2e;
     display: flex;

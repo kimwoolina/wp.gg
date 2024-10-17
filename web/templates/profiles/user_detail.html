@@ -239,15 +239,21 @@
             if(data.articles != false){
                 const articlesDiv = document.getElementById('articles');
                 data.articles.forEach(article => {
+                    const url = `/article/${encodeURIComponent(article.id)}/`;
                     articlesDiv.innerHTML += `
-                        <div class="article">
-                            <div class="title-score">
-                                <h3 class="title">${article.title}</h3>
-                                <span class="article-score">👍${article.article_score}</span>
+                        <a href=${url}>
+                            <div class="article">
+                                <div class="title-score">
+                                    <h3 class="title">${article.title}</h3>
+                                    <span class="article-score">👍${article.article_score}</span>
+                                </div>
+                                <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
                             </div>
-                            <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
-                        </div>
+                        </a>
                     `;
+                    articlesDiv.onclick = () => {
+                        window.location.href = `/article/${article.id}/`;
+                        };
                 });
                 resultDiv.appendChild(articlesDiv);
             }

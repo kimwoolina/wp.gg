@@ -49,11 +49,14 @@ def ranking(request):
 def matching_result(request):
     return render(request, 'profiles/matching.html')
 
+class UserDetailPageView(TemplateView):
+    template_name = 'profiles/user_detail.html'
+
 
 # chats 앱 관련
 """ 채팅방 템플릿 뷰 """
 class ChatRoomTemplateView(generic.TemplateView):
-    template_name = 'chat.html'
+    template_name = 'chats/chat.html'
     
 # class ChatRoomTemplateView(APIView):
 #     def get(self, request):

@@ -1,26 +1,11 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>유저 추천 시스템</title>
+{% extends "base.html" %}
+
+{% block title %}나에게 꼭 맞는 유저찾기❤️{% endblock title %}
+
+{% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* 기본 스타일링 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
         h1 {
             text-align: center;
         }
@@ -30,12 +15,6 @@
         label {
             display: block;
             margin-bottom: 5px;
-        }
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
         button {
             width: 100%;
@@ -53,15 +32,15 @@
             margin-top: 20px;
         }
     </style>
-</head>
-<body>
-    <div class="container">
+{% endblock css%}
+
+{% block content %}
         <h1>유저 추천 시스템</h1>
         <form id="recommendation-form">
             {% csrf_token %}
             <div class="form-group">
                 <label for="riot_tier">리그 티어 선택:</label>
-                <select id="riot_tier" name="riot_tier" multiple>
+                <select id="riot_tier" name="riot_tier" multiple style="width: 100%;">
                     <option value="bronze">브론즈</option>
                     <option value="silver">실버</option>
                     <option value="gold">골드</option>
@@ -74,7 +53,7 @@
             </div>
             <div class="form-group">
                 <label for="positions">포지션 선택:</label>
-                <select id="positions" name="positions" multiple>
+                <select id="positions" name="positions" multiple style="width: 100%;">
                     <option value="top">탑</option>
                     <option value="jungle">정글</option>
                     <option value="mid">미드</option>
@@ -84,7 +63,7 @@
             </div>
             <div class="form-group">
                 <label for="filter_fields">평가 항목 선택:</label>
-                <select id="filter_fields" name="filter_fields" multiple>
+                <select id="filter_fields" name="filter_fields" multiple style="width: 100%;">
                     <option value="kindness">친절도</option>
                     <option value="teamwork">팀워크</option>
                     <option value="communication">커뮤니케이션</option>
@@ -99,14 +78,16 @@
             </div>
             <div class="form-group">
                 <label for="user_preference">유저의 선호도:</label>
-                <input type="text" id="user_preference" name="user_preference" placeholder="예: 전략적 플레이를 선호합니다.">
+                <input style="width: 100%;" type="text" id="user_preference" name="user_preference" placeholder="예: 전략적 플레이를 선호합니다.">
             </div>
             <button type="submit">추천하기</button>
         </form>
 
         <div class="result" id="result"></div>
-    </div>
 
+{% endblock content%}
+
+{% block javascript %}
     <script>
         document.getElementById('recommendation-form').addEventListener('submit', function(event) {
             event.preventDefault(); // 폼 제출 기본 동작 방지
@@ -145,5 +126,4 @@
         });
         
     </script>
-</body>
-</html>
+{% endblock javascript %}

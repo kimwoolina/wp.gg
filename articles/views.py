@@ -12,10 +12,12 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 
 User = get_user_model()
 
 class ArticleDetailView(APIView):
+    # permission_classes = [IsAuthenticated]
     def get(self, request, pk):  # URL에서 article_id를 받아옵니다.
         article = get_object_or_404(Articles, id=pk)  # ID로 기사 찾기
         serializer = ArticleDetailSerializer(article)  # Serializer를 사용하여 데이터 변환
@@ -56,8 +58,6 @@ class ArticleAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        print(">>>>request>>>>>> ", request)
-        print(">>>>request.data>>>>>> ", request.data)
         if not request.user.is_authenticated:
             return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -106,7 +106,9 @@ class CommentAPIView(APIView):
     def post(self, request, pk):  # 댓글 생성
         if request.user.is_authenticated:
             article = get_object_or_404(Articles, pk=pk)
+                
             serializer = CommentSerializer(data=request.data)
+            
             if serializer.is_valid(raise_exception=True):
                 serializer.save(article=article, user=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -119,3 +121,13 @@ class CommentAPIView(APIView):
             data = {"pk": f"{pk} 삭제됨"}
             return Response(data, status=status.HTTP_200_OK)
         return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def search_user(request):
+    query = request.GET.get('q', None)
+    if query:
+        users = User.objects.filter(username__icontains=query) | User.objects.filter(riot_username__icontains=query)
+        user_data = [{"id": user.id, "username": user.username, "riot_username": user.profile.riot_username} for user in users]
+        return Response({"users": user_data})
+    return Response({"users": []})

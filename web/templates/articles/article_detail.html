@@ -4,52 +4,162 @@
 {% block title %}{{ article.title }}{% endblock title %}
 
 {% block css %}
-    <style>
-        /* CSS로 이미지 크기 조정 */
-        .profile-image {
-            width: 50px; /* 원하는 너비로 조정 */
-            height: auto; /* 비율을 유지 */
-        }
-    </style>
+<link rel="stylesheet" href="{% static '/css/article_detail.css' %}">
 {% endblock css %}
 
-
 {% block content %}
-    <div class="article-detail">
-        <h1>{{ article.title }}</h1>
-        <p>작성일: {{ article.created_at }}</p>
-        <div>
-            <h2>작성자: {{ article.reviewer.username }}</h2>
+<div class="article-detail">
+    <h1>{{ article.title }}</h1>
+    <p><span id="formatted-date"></span></p>
+
+    <div class="reviewers-container">
+        <!-- 작성자 정보 -->
+        <div class="reviewer">
             <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
+            <div>
+                <h2 class="username">{{ article.reviewer.username }} (Reviewer)</h2>
+            </div>
         </div>
-        <div>
-            <h2>평가 대상: {{ article.reviewee.username }}</h2>
-            <p>Riot 유저명: {{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</p>
+    
+        <!-- 평가 대상 정보 -->
+        <div class="reviewer">
             <img class="profile-image" src="{% if article.reviewee.profile_image %}{{ article.reviewee.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewee.username }} 프로필 이미지">
-        </div>
-        <div>
-            <h3>이미지들</h3>
-            {% for image in article.article_images %}
-                <img src="{{ image.img.url }}" alt="Article 이미지">
-            {% endfor %}
-        </div>
-        <div>
-            <h3>글 내용</h3>
-            <p>{{ article.content }}</p>
-        </div>
-        <div>
-            <h3>댓글</h3>
-            {% for comment in article.comments %}
-                <div class="comment">
-                    <h4>{{ comment.user.username }}</h4>
-                    <p>{{ comment.content }}</p>
-                    <p>작성일: {{ comment.created_at }}</p>
-                    {% if comment.parent_comment %}
-                        <p>부모 댓글 ID: {{ comment.parent_comment.id }}</p>
-                    {% endif %}
-                </div>
-            {% endfor %}
+            <div style="display: flex; align-items: center; justify-content: center;">
+                {% if article.reviewee.riot_username %}
+                    <img src="https://i.namu.wiki/i/CkC1jHQTylD3bFyvYoODHw24yEVJeZxzYZkqiZ6u2GR83VnUKFCsuR3ahrI1ukCK5CxJd-Vpt4VAUEcfVlh9-Q.svg" alt="Riot : " style="width:15px; margin-right: 5px; vertical-align: middle;"> 
+                    <h2 class="username">{{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</h2>
+                {% else %}
+                    <h2 class="username">{{ article.reviewee.username }}</h2>
+                {% endif %}
+                <h2 class="username" style="margin-left: 5px;">(Reviewee)</h2>
+            </div>
         </div>
     </div>
-{% endblock content %}
+    
 
+    <!-- 이미지들 -->
+    <div class="article-images mb-4">
+        {% if article.article_images %}
+        {% for image in article.article_images %}
+            <img src="{{ image.img }}" alt="Article 이미지" style="width: 100%; height: auto; margin-bottom: 10px;">
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 글 내용 -->
+    <div style="padding-bottom:80px">
+        <p style="font-size: 20px; line-height: 1.6;">{{ article.content }}</p>
+    </div>
+
+    <!-- 댓글 작성 (댓글 목록 위로 이동) -->
+    <div class="comment-form">
+        <textarea id="comment-content" placeholder="댓글을 작성하세요..."></textarea>
+        <div class="button-container">
+            <button id="submit-comment" class="button-81" role="button">리뷰 작성하기</button>
+        </div>
+    </div>
+
+    <!-- 댓글 섹션 (댓글 작성 칸 아래로 이동) -->
+    <div style="margin-left: 5px; margin-bottom: 10px;">댓글 {{ article.comments|length }} 개 </div>
+    <div id="comments-section" class="mb-4">
+        {% for comment in article.comments %}
+            <div class="comment">
+                <h4>{{ comment.user.username }}</h4>
+                <p>{{ comment.content }}</p>
+                <p><span class="formatted-comment-date">{{ comment.created_at }}</span></p>
+                {% if comment.parent_comment %}
+                    <p>{{ comment.parent_comment.id }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 스크립트 -->
+<script>
+    // Bearer 토큰 가져오는 함수
+    function getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    // 댓글 작성
+    document.getElementById('submit-comment').addEventListener('click', function() {
+        const content = document.getElementById('comment-content').value;
+        const articleId = "{{ article.id }}";
+
+        if (content.trim() === "") {
+            alert("댓글 내용을 입력하세요.");
+            return;
+        }
+
+        fetch(`/api/articles/comment/${articleId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Authorization': 'Bearer ' + getAccessToken()
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('댓글 작성에 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !data.user) {
+                throw new Error('댓글 데이터가 올바르지 않습니다.');
+            }
+
+            const newComment = `
+                <div class="comment">
+                    <h4>${data.user.username}</h4>
+                    <p>${data.content}</p>
+                    <p>${formatDate(data.created_at)}</p>
+                </div>`;
+            document.getElementById('comments-section').insertAdjacentHTML('beforeend', newComment);
+            document.getElementById('comment-content').value = ""; // 댓글 작성 후 입력창 비우기
+        })
+        .catch(error => {
+            alert(error.message);
+            console.error('Error:', error);
+        });
+    });
+
+    // 작성일 포맷팅 함수
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) {
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            if (diffHours === 0) {
+                const diffMinutes = Math.floor(diffTime / (1000 * 60));
+                return diffMinutes + " minutes ago";
+            }
+            return diffHours + " hours ago";
+        } else if (diffDays < 7) {
+            return diffDays + " days ago";
+        } else {
+            return date.toISOString().split('T')[0].replace(/-/g, '.');
+        }
+    }
+
+    // 문서가 로드된 후에 작성일 포맷팅 적용
+    document.addEventListener('DOMContentLoaded', function() {
+        // 글 작성일 포맷팅
+        const formattedDate = formatDate("{{ article.created_at }}");
+        document.getElementById('formatted-date').textContent = formattedDate;
+
+        // 댓글 작성일 포맷팅
+        document.querySelectorAll('.formatted-comment-date').forEach(function(span) {
+            span.textContent = formatDate(span.textContent);
+        });
+    });
+</script>
+{% endblock content %}

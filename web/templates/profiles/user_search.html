@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>유저 검색</title>
+{% extends "base.html" %}
+
+{% block title %}유저 검색{% endblock title %}
+
+{% block content %}
+
+
+{% block css %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* 간단한 스타일링 */
@@ -24,9 +26,10 @@
             color: red;
         }
     </style>
-</head>
-<body>
-    <div class="search-container">
+{% endblock css %}
+
+{% block content %}
+<div class="search-container">
         <h2>유저 검색</h2>
         <input type="text" id="username" placeholder="유저네임 (riot_username)">
         <input type="text" id="riot_tag" placeholder="태그 (riot_tag)">
@@ -36,7 +39,9 @@
     <div class="result-container" id="result-container">
         <!-- 검색 결과가 여기에 표시됩니다. -->
     </div>
+{% endblock content %}
 
+{% block javascript%}
     <script>
         $(document).ready(function() {
             $('#search-button').click(function() {
@@ -84,6 +89,4 @@
             });
         });
     </script>
-    
-</body>
-</html>
+{% endblock javascript %}

@@ -23,6 +23,7 @@ class User(AbstractUser):
     is_notified = models.BooleanField(default=False)
     is_blacklist = models.BooleanField(default=False)
     riot_tier = models.CharField(max_length=15, null=True, blank=True)  # 리그 오브 레전드 티어
+    riot_profile_image = models.URLField(blank=True, null=True)
     positions = models.ManyToManyField(Positions, blank=True, related_name="user")
     platforms = models.ManyToManyField('Platform', through='UserPlatform', related_name='users')
     is_notification_sound_on = models.BooleanField(default=True)  # 알람 소리 

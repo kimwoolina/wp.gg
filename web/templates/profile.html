@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!doctype html>
 <html class="no-js" lang="ko">
 
@@ -6,426 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>내 정보</title>
     {% load static %}
-    <style>
-        /* 전체 배경 색상 */
-        body {
-            background-color: #1E1E1E;
-        }
-
-        body {
-            padding: 0;
-            margin: 0;
-            background-color: #1e1e1e;
-            color: #fff;
-            display: flex;
-            height: 100vh;
-        }
-
-        /* 로고 이미지 */
-        .logo {
-            width: 150px;
-            cursor: pointer;
-            margin-left: 5px;
-            margin-top: 2px;
-        }
-
-        .right-logout {
-            position: fixed; /* 화면에 고정 */
-            top: 35px; /* 화면 하단에서 20px 위에 위치 */
-            right: 25px; /* 화면 오른쪽에서 20px 왼쪽에 위치 */
-        }
-
-        .right-logout .logout-button {
-            width: 41pxpx; /* 크기 조정 */
-            height: 44px; /* 크기 조정 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            cursor: pointer;
-            padding-right: 20px;
-            margin-right: -15px;
-        }
-
-        /* 왼쪽 오른쪽 */
-        .container {
-            display: flex;
-            width: 95%;
-        }
-
-        .main-content {
-            flex: 1;
-        }
-
-        /* 왼쪽 */
-        .logo {
-            margin-bottom: 10px;
-        }
-
-        .sidebar {
-            width: 265px;
-            background-color: #242424;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: fixed; /* 사이드바를 고정 */
-            top: 0; /* 최상단부터 시작 */
-            bottom: 0; /* 하단까지 채움 */
-            left: 0; /* 왼쪽으로 고정 */
-            overflow-y: auto; /* 콘텐츠가 넘치면 스크롤 */
-        }
-
-        /* 메인 콘텐츠가 사이드바 옆에 오도록 수정 */
-        .main-content {
-            margin-left: 255px; /* 사이드바의 넓이만큼 마진을 줘서 옆에 위치하게 함 */
-            flex: 1;
-            padding: 20px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .profile-icon {
-            width: 45px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .username {
-            font-size: 16px;
-            color: #fff;
-            margin-right: 5px;
-        }
-
-        .verified-badge {
-            width: 16px;
-            height: 16px;
-        }
-
-        .menu {
-            list-style: none;
-            padding: 20px;
-            margin-top: 1px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            margin: 28px 0;
-            font-size: 18px;
-            font-weight: 500;
-            color: #ECE7F9;
-            cursor: pointer;
-            padding-left: 12px;
-        }
-
-        .menu-item:hover {
-            color: #BA8CFF;
-            font-style: bold;
-        }
-
-        .menu-icon {
-            width: 30px;
-            height: 26px;
-            margin-right: 15px;
-        }
-        /* 검색 바 */
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 100px;
-            margin-bottom: 100px;
-        }
-        .search-box {
-            width: 247px;
-            padding: 6px;
-            background-color: #6f69a5;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-        }
-
-        .search-box input {
-            width: 80%;
-            background: none;
-            border: none;
-            outline: none;
-            color: #ECE7F9;
-            font-size: 15px;
-        }
-
-        .search-box input::placeholder {
-            color: #e0e0e0;
-        }
-
-        /* 햄버거 아이콘 */
-        .hamburger {
-            color: #C0C0C0;
-            font-size: 20px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        /* 돋보기 아이콘 */
-        .search-icon {
-            width: 20px;
-            height: 20px;
-            fill: #C0C0C0;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .search-icon:hover {
-            fill: #372F56;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-        }
-
-        .profile-icon {
-            background-color: #6f5880;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-
-        /* 본문  */
-        main {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            padding: 20px;
-        }
-
-        .left-body {
-            display: flex;
-            align-items: center;
-            width: 60%;
-            margin-right: 30px;
-        }
-
-        .right-body {
-            width: 30%;
-            display: flex;
-            justify-content: flex-start; 
-        }
-
-        .profile-title h2 {
-            color: #DBCDF2; 
-        }
-        
-
-        .profile-container {
-            width: 100%;
-            margin-top: -10px;
-            margin-bottom: 50px;
-            margin-left: 90px;
-            margin-right: 80px;
-        }
-
-        .profile-picture img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 0px solid #ddd;
-        }
-
-        .profile-info label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 5px;
-        }
-
-        .profile-info input,
-        .profile-info textarea {
-            width: 100%;
-            padding: 13px;
-            border: 0.2px solid #5a555f;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            background-color: transparent;
-            color: #e7d8ff;
-            font-style: bold;
-            font-size: 16px;
-        }
-
-        .sns-container {
-            background-color: #1E1E1E;
-            font-family: 'Arial', sans-serif;
-            border: 0.2px solid #5a555f;
-            width: 97%;
-            padding: 20px;
-            border-radius: 10px;
-            color: #e3d6ff;
-            font-style: bold;
-            font-size: 14px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 25px;
-        }
-
-        .sns-category {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .action-button {
-            background-color: #574893;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 11px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-            cursor: pointer;
-            width: 90%;
-        }
-
-        .action-button:hover {
-            color: #fff;
-            background-color: #BA8CFF;
-        }
-
-
-        .account-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            color: #e3d6ff;
-        }
-
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .username {
-            color: #e3d6ff;
-            font-size: 14px;
-            align-items: center;
-        }
-
-        .warning {
-            color: #d32f2f;
-        }
-
-        .rating-container {
-            width: 200%;
-            height: 170px;
-            background-color: transparent;
-            border-radius: 50px;
-            padding: 18px, 20px;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-            color: white;
-            text-align: center;
-            margin-top: 100px;
-        }
-
-        .icon-background {
-            width: 80px;
-            height: 60px;
-            margin: 0 auto;
-            background-color: transparent;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .rating-icon {
-            width: 100px;
-            height: auto;
-        }
-
-        .rating-panel {
-            background-color: transparent;
-            border-radius: 10px;
-            font-family: Arial, sans-serif;
-            color: #fff;
-            text-align: center;
-        }
-
-        .rating-value {
-            font-size: 24px;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-
-        .rating-scale {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .rating-bar {
-            height: 10px;
-            width: 80%;
-            background-color: #4A4F7C;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .rating-fill {
-            height: 100%;
-            background-color: #00FF00;
-            border-radius: 5px;
-        }
-
-        .thumb-up,
-        .thumb-down {
-            font-size: 20px;
-        }
-
-        .custom-button {
-            width: 100%;
-            background-color: #6f69a5;
-            border: none;
-            color: white;
-            padding: 10px 12px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 18px;
-        }
-
-        /* 페이지 하단 화살표 */
-        .back-arrow {
-            position: fixed;
-            bottom: 15px;
-            left: 15px;
-        }
-
-        .back-arrow img {
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
-            margin-left: 10px;
-            margin-bottom: 5px;
-        }
-    </style>
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
 </head>
 
 <body>
@@ -449,19 +32,23 @@
         </div>
 
         <ul class="menu">
-            <li class="menu-item">
+            <li class="menu-item" onclick="location.href='{% url 'article-list' %}';">
                 <img src="{% static 'img/thumbs-up_v2.png' %}" class="menu-icon" alt="User Review Icon">
                 유저 리뷰
             </li>
-            <li class="menu-item">
+            <li class="menu-item" onclick="location.href='{% url 'ranking' %}';">
                 <img src="{% static 'img/rank_v2.png' %}" class="menu-icon" alt="Manner Ranking Icon">
                 매너 랭킹
             </li>
-            <li class="menu-item">
+            <li class="menu-item" onclick="location.href='{% url 'user_matching' %}';">
+                <img src="{% static 'img/thumbs-up_v2.png' %}" class="menu-icon" alt="Team Match Icon">
+                유저 추천
+            </li>
+            <li class="menu-item" onclick="location.href='/api/party';">
                 <img src="{% static 'img/team.png' %}" class="menu-icon" alt="Team Match Icon">
                 팀매칭
             </li>
-            <li class="menu-item">
+            <li class="menu-item" onclick="location.href='{% url 'chat-room-template' %}';">
                 <img src="{% static 'img/chatting.png' %}" class="menu-icon" alt="Chat Icon">
                 채팅
             </li>
@@ -470,6 +57,7 @@
                 크레딧
             </li>
         </ul>
+        
     </div>
     
     <div class="main-content">
@@ -490,6 +78,8 @@
                         <div class="profile-picture">
                             {% if request.user.profile_image %}
                                 <img src="{{ request.user.profile_image.url }}" alt="Profile Picture">
+                            {% elif request.user.riot_profile_image %}
+                                <img src="{{ request.user.riot_profile_image }}" alt="Profile Picture">
                             {% else %}
                                 <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Profile Picture">
                             {% endif %}
@@ -502,7 +92,7 @@
                         <input type="text" id="username" value="{{ request.user.username }}" readonly>
 
                         <label for="riot-nickname">riot nickname</label>
-                        <input type="text" id="riot-nickname" value="{{ request.user.riot_username }}" readonly>
+                        <input type="text" id="riot-username" value="{{ request.user.riot_username }}" readonly>
 
                         <label for="riot-tag">riot tag</label>
                         <input type="text" id="riot-tag" value="{{ request.user.riot_tag }}" readonly>
@@ -517,14 +107,18 @@
                     <div class="sns-category">라이엇 계정</div>
                     <div class="sns-container">
                         <div class="account-info">
-                            {% if request.user.profile_image %}
-                                <img src="{{ request.user.profile_image.url }}" alt="profile" class="profile-img">
+                            {% if request.user.riot_profile_image %}
+                                <img src="{{ request.user.riot_profile_image }}" alt="profile" class="profile-img">
                             {% else %}
                                 <img src="{% static 'img/userprofile_02.png' %}" alt="profile" class="profile-img">
                             {% endif %}
                             <div class="username">{{ request.user.riot_username }}</div>
                         </div>
+                        {% if request.user.riot_username %}
+                        <div class="action-button">라이엇 계정 연결됨</div>
+                        {% else %}
                         <div class="action-button">라이엇 계정 연결하기</div>
+                        {% endif %}
                     </div>
 
                     <div class="sns-category">디스코드 계정</div>
@@ -537,7 +131,11 @@
                             {% endif %}
                             <div class="username">{{ request.user.discord_username }}</div>
                         </div>
+                        {% if request.user.riot_username %}
+                        <div class="action-button">디스코드 계정 연결됨</div>
+                        {% else %}
                         <div class="action-button">디스코드 계정 연결하기</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -552,7 +150,7 @@
                         <div class="rating-scale">
                             <span class="thumb-down">&#128078;</span>
                             <div class="rating-bar">
-                                <div class="rating-fill" style="width: {{ request.user.score }}%;"></div>
+                                <div class="rating-fill" style="width: {{ request.user.score|multiply:10 }}%;"></div>
                             </div>
                             <span class="thumb-up">&#128077;</span>
                         </div>
@@ -572,11 +170,6 @@
     // 홈으로 리다이렉트 (로고 클릭 시)
     document.querySelector('.logo-home').addEventListener('click', function() {
         window.location.href = '/home/';
-    });
-
-    // 마이페이지로 리다이렉트 (프로필 클릭 시)
-    document.querySelector('.mypage-button').addEventListener('click', function() {
-        window.location.href = '/profile/';
     });
 
     // 로그아웃 이벤트 처리

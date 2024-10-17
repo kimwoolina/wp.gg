@@ -107,8 +107,11 @@
             if(data.riot_username && data.riot_tag){
                 resultDiv.innerHTML += `<h2 class="riot_username_tag">${data.riot_username} | #${data.riot_tag}</h2>`;
             }
-            else{
+            else if(data.riot_tag){
                 resultDiv.innerHTML += `<h2 class="riot_username_tag">${data.riot_username || ''}#${data.riot_tag || ''}</h2>`;
+            }
+            else{
+                resultDiv.innerHTML += `<h2 class="riot_username_tag">${data.riot_username || ''}`;
             }
             
             // 라이엇 정보 출력
@@ -138,7 +141,7 @@
                     });
                 }  
             }
-            
+
             // riot_tier/positions 데이터 있을 시 출력
             else{
                 if(data.riot_tier&&data.positions[0].position_name){

@@ -93,7 +93,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             validated_data['reviewer'] = request.user
-    
+
         # img_files를 validated_data에 추가
         img_files = self.context.get('article_images', [])
         

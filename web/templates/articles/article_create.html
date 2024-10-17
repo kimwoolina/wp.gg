@@ -12,7 +12,7 @@
 <form id="articleForm" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
-    <!-- 1. 유저 검색 기능 -->
+    <!-- 유저 검색 기능 -->
     <div class="user-search-container">
         <input type="text" id="user-search" class="search-bar" placeholder="&nbsp;유저 찾기">
         <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="search-btn" fill="white">
@@ -71,12 +71,12 @@
         </label>
     </div>
 
-    <!-- 3. 리뷰 내용 -->
+    <!-- 리뷰 내용 -->
     <input type="text" name="title" class="title" id="title" placeholder="리뷰 제목" required><br>
 
     <textarea id="content" name="content" class="content-box" placeholder="리뷰를 입력하세요..." required></textarea>
 
-    <!-- 5. 평가 항목들 -->
+    <!-- 평가 항목들 -->
     <div class="review-categories">
         <span class="badge" data-category="kindness">💗 상냥함</span>
         <span class="badge" data-category="teamwork">🛠 팀워크</span>
@@ -233,26 +233,16 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ', ' + pair[1]); 
-            }
-            alert("리뷰가 작성되었습니다.");
+            alert(data.message);
             window.location.href = '/article_list/';
         })
         .catch(error => {
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ', ' + pair[1]); 
-            }
-            
             console.error('Error:', error);
-            alert("오류가 발생했습니다.");
+            alert(data.message);
+            window.location.href = '/article_list/';
         });
     });
-    
-    
 
-    
 </script>
 
 {% endblock javascript %}

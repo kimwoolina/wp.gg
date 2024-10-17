@@ -2,8 +2,34 @@
 {% load static %}
 {% block title %}매칭 결과{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/user_detail.css' %}">
+<style>
+.center-container {
+    text-align: center; 
+}
+.profile-image {
+    width: 90px; 
+    height: 90px; 
+    border-radius: 50%; 
+}
+hr.hr-1 {
+    width: 90%;
+    background-color: #ffff;
+    margin-bottom: 40px;
+    border:0; height:1px; background: #bbb;
+    {% comment %} border: 0;
+    border-top: 2px dotted #8c8c8c; {% endcomment %}
+    {% comment %} margin-bottom: 40px;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0)); {% endcomment %}
+}
+</style>
+{% endblock css%}
+
 {% block content %}
-    <h2>나에게 꼭 맞는 유저 찾기 결과</h2>
+    <h2>나와 환상궁합인 유저&nbsp❤️</h2>
 
     <div id="matching-result">
         <!-- 결과 표시할 영역 -->
@@ -25,12 +51,79 @@
                 users.forEach(user => {
                     const userElement = document.createElement('div');
                     userElement.classList.add('user-card');
-                    userElement.innerHTML = `
-                        <h3>${user.username}</h3>
-                        <p>티어: ${user.riot_tier}</p>
-                        <p>포지션: ${user.position}</p>
-                        <!-- 다른 유저 정보도 추가 -->
-                    `;
+
+                    // 가운데 정렬
+                    let resultDiv = '<div class="center-container">';
+
+                    // 프로필 이미지 출력
+                    if (user.profile_image) {
+                        resultDiv += `<img class="profile-image" src="${user.profile_image}" alt="Profile Picture">`;
+                    } else {
+                        resultDiv += `<img class="profile-image" src="{% static 'img/default_profile_image.png' %}" alt="Profile Picture">`;
+                    }
+                    resultDiv += '</div>';
+
+                    // 점수 출력
+                    if (user.score !== undefined) {
+                        let score = Number(user.score.toFixed(2));
+                        resultDiv += `<div class="site-user-info"><h1>${user.username}</h1> <span class="total-score">👍${score}</span></div><br>`;
+                    }
+
+                    // 라이엇 정보 출력
+                    if (user.riot_username && user.riot_tag) {
+                        resultDiv += `<h2 class="riot_username_tag">${user.riot_username || ''}#${user.riot_tag || ''}</h2>`;
+                    } else if (user.riot_username) {
+                        resultDiv += `<h2 class="riot_username_tag">${user.riot_username}</h2>`;
+}
+
+                    // 평가 항목 출력
+                    if (user.evaluations) {
+                        resultDiv += `<div id="evaluation-container"></div>`;
+                        const evaluationDiv = document.createElement('div');
+                        evaluationDiv.classList.add('evaluation-container');
+
+                        const evaluations = user.evaluations;
+                        if (evaluations.kindness) evaluationDiv.innerHTML += `<div class="evaluation-item">💗 상냥함: ${evaluations.kindness}</div>`;
+                        if (evaluations.teamwork) evaluationDiv.innerHTML += `<div class="evaluation-item">🙌 팀워크: ${evaluations.teamwork}</div>`;
+                        if (evaluations.communication) evaluationDiv.innerHTML += `<div class="evaluation-item">🤝 소통: ${evaluations.communication}</div>`;
+                        if (evaluations.mental_strength) evaluationDiv.innerHTML += `<div class="evaluation-item">😇 멘탈 관리: ${evaluations.mental_strength}</div>`;
+                        if (evaluations.punctuality) evaluationDiv.innerHTML += `<div class="evaluation-item">⏱ 시간 약속: ${evaluations.punctuality}</div>`;
+                        if (evaluations.positivity) evaluationDiv.innerHTML += `<div class="evaluation-item">🌈 긍정적: ${evaluations.positivity}</div>`;
+                        if (evaluations.mvp) evaluationDiv.innerHTML += `<div class="evaluation-item">👑 MVP: ${evaluations.mvp}</div>`;
+                        if (evaluations.mechanical_skill) evaluationDiv.innerHTML += `<div class="evaluation-item">💪 피지컬: ${evaluations.mechanical_skill}</div>`;
+                        if (evaluations.operation) evaluationDiv.innerHTML += `<div class="evaluation-item">🧠 운영 능력: ${evaluations.operation}</div>`;
+                        if (evaluations.negativity) evaluationDiv.innerHTML += `<div class="evaluation-item">🙁 부정적 태도: ${evaluations.negativity}</div>`;
+                        if (evaluations.profanity) evaluationDiv.innerHTML += `<div class="evaluation-item">🤬 욕설: ${evaluations.profanity}</div>`;
+                        if (evaluations.afk) evaluationDiv.innerHTML += `<div class="evaluation-item">❓ 탈주/자리비움: ${evaluations.afk}</div>`;
+                        if (evaluations.cheating) evaluationDiv.innerHTML += `<div class="evaluation-item">🥷 부정행위: ${evaluations.cheating}</div>`;
+                        if (evaluations.verbal_abuse) evaluationDiv.innerHTML += `<div class="evaluation-item">😡 공격적인 언행: ${evaluations.verbal_abuse}</div>`;
+                        resultDiv += evaluationDiv.outerHTML;
+                    }
+
+                    // Articles 출력
+                    if (user.articles && user.articles.length > 0) {
+                        resultDiv += `<h2>Articles</h2><div id="articles-container"></div>`;
+                        const articlesDiv = document.createElement('div');
+                        articlesDiv.classList.add('articles-container');
+
+                        user.articles.forEach(article => {
+                            const url = `/article/${encodeURIComponent(article.id)}/`;
+                            articlesDiv.innerHTML += `
+                                <a href="${url}">
+                                    <div class="article">
+                                        <div class="title-score">
+                                            <h3 class="title">${article.title}</h3>
+                                            <span class="article-score">👍${article.article_score}</span>
+                                        </div>
+                                        <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                        resultDiv += articlesDiv.outerHTML;
+                    }
+                    resultDiv += '<hr class="hr-1">';
+                    userElement.innerHTML = resultDiv;
                     matchingResult.appendChild(userElement);
                 });
             } else {

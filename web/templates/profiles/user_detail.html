@@ -91,8 +91,10 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = ''; // 이전 내용 초기화
             
-            let score = Number(data.score.toFixed(2));
-            resultDiv.innerHTML += `<div class="site-user-info"><h1>${data.username}</h1> <span class="total-score">👍${score}</span></div><br>`; // 사이트 유저네임, 점수
+            if(data.score!='undefined'){
+                let score = Number(data.score.toFixed(2));
+                resultDiv.innerHTML += `<div class="site-user-info"><h1>${data.username}</h1> <span class="total-score">👍${score}</span></div><br>`; // 사이트 유저네임, 점수
+            }
 
             // 라이엇 정보 유무에 따른 프로필 교체
             if(data.riot_info){

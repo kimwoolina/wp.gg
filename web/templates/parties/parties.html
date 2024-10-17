@@ -96,7 +96,7 @@
 <div class="vertical-container">
     {% for data in party %}
     {% if data.is_rank %}
-    <!-- 일반 -->
+    <!-- 내전 -->
     <div class="horizontal-container">
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
@@ -105,26 +105,30 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.top1.profile_image}}{{data.top1.username}}
+                {{data.top1.profile_image}}
                 {% endif %}
                 {% if data.top1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div style="gap: 10px;">
+                {{data.top1.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
             <div class="image-container">
                 {% if data.top2 is null %}
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.top2.profile_image}}{{data.top2.username}}
+                {{data.top2.profile_image}}
                 {% endif %}
                 {% if data.top2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.top2.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
@@ -132,26 +136,30 @@
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
-                {% else %}{{data.mid1.profile_image}}{{data.mid1.username}}
+                {% else %}{{data.mid1.profile_image}}
                 {% endif %}
                 {% if data.mid1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.mid1.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
             <div class="image-container">
                 {% if data.mid2 is null %}
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.mid2.profile_image}}{{data.mid2.username}}
+                {{data.mid2.profile_image}}
                 {% endif %}
                 {% if data.mid2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.mid2.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
@@ -160,26 +168,30 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.jungle1.profile_image}}{{data.jungle1.username}}
+                {{data.jungle1.profile_image}}
                 {% endif %}
                 {% if data.jungle1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.jungle1.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
             <div class="image-container">
                 {% if data.jungle2 is null %}
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.jungle2.profile_image}}{{data.jungle2.username}}
+                {{data.jungle2.profile_image}}
                 {% endif %}
                 {% if data.jungle2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.jungle2.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
@@ -188,26 +200,30 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.adc1.profile_image}}{{data.adc1.username}}
+                {{data.adc1.profile_image}}
                 {% endif %}
                 {% if data.adc1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.adc1.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
             <div class="image-container">
                 {% if data.adc2 is null %}
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.adc2.profile_image}}{{data.adc2.username}}
+                {{data.adc2.profile_image}}
                 {% endif %}
                 {% if data.adc2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.adc2.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
@@ -216,13 +232,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.support1.profile_image}}{{data.support1.username}}
+                <button type="button" class="no-style-button" onclick="positionprint()">
+                    <img src="{% static 'party/profileIcon6631.webp' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
                 {% endif %}
                 {% if data.support1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.support1.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
             <div class="image-container">
                 {% if data.support2 is null %}
                 <button type="button" class="no-style-button" onclick="positionprint()">
@@ -230,26 +250,27 @@
                 </button>
                 {% else %}
                 <img src="{{data.support2.profile_image}}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
-                {{data.support2.username}}
                 {% endif %}
                 {% if data.support2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.support2.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
-        <div class="image-container">
-            <div class="button-container horizontal-container-set-civilwar chat-icon">
+        <div class="option-container horizontal-container-set-civilwar">
+            <div class="button-container horizontal-container-set-civilwar chat-icon-civilwar">
                 <button type="button" class="exit-button"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 20px;"></button>
             </div>
-            <div class="button-container horizontal-container-set-civilwar get-out-icon">
+            <div class="button-container horizontal-container-set-civilwar get-out-icon-civilwar">
                 <button type="button" class="exit-button"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 20px;"></button>
             </div>
         </div>
     </div>
 
     {% else %}
-    <!-- 내전 -->
+    <!-- 일반 -->
     <div class="horizontal-container">
         <div class="horizontal-container-div">
             <div class="image-container">
@@ -258,13 +279,15 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.top1.profile_image}}{{data.top1.username}}
+                {{data.top1.profile_image}}
                 {% endif %}
                 {% if data.top1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.top1.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div">
             <div class="image-container">
@@ -272,13 +295,15 @@
                 <button type="button" class="no-style-button" onclick="positionprint()">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
-                {% else %}{{data.mid1.profile_image}}{{data.mid1.username}}
+                {% else %}{{data.mid1.profile_image}}
                 {% endif %}
                 {% if data.mid1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.mid1.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div">
             <div class="image-container">
@@ -287,13 +312,15 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.jungle1.profile_image}}{{data.jungle1.username}}
+                {{data.jungle1.profile_image}}
                 {% endif %}
                 {% if data.jungle1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.jungle1.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div">
             <div class="image-container">
@@ -302,13 +329,15 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.adc1.profile_image}}{{data.adc1.username}}
+                {{data.adc1.profile_image}}
                 {% endif %}
                 {% if data.adc1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.adc1.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
         <div class="horizontal-container-div">
             <div class="image-container">
@@ -317,16 +346,25 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                {{data.support1.profile_image}}{{data.support1.username}}
+                <button type="button" class="no-style-button" onclick="positionprint()">
+                    <img src="{% static 'party/profileIcon6631.webp' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
                 {% endif %}
                 {% if data.support1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
                 {% endif %}
-                <img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"><!--라인-->
             </div>
+            <div>
+                {{data.support1.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
         </div>
-        <div class="button-container horizontal-container-set">
-            <button type="button" class="exit-button">나가기</button>
+        <div class="option-container">
+            <div class="button-container horizontal-container-set chat-icon">
+                <button type="button" class="exit-button"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 20px;"></button>
+            </div>
+            <div class="button-container horizontal-container-set get-out-icon">
+                <button type="button" class="exit-button"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 20px;"></button>
+            </div>
         </div>
     </div>
     

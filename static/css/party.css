@@ -48,40 +48,19 @@
 .horizontal-container-div-civilwar {
     flex: 1;
     height: 200px;
-    background-color: rgb(39, 54, 59);
     border: none;
-    display: flex;                  /* 세로 정렬을 위해 Flex 사용 */
-    flex-direction: column;         /* 세로 정렬 */
-    align-items: center;            /* 세로 정렬: 중앙 정렬 */
-    justify-content: center;        /* 가로 정렬: 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    gap: 25px;
-}
-.horizontal-container-set {
-    flex: 1;
-    height: 120px;
-    background-color: rgb(39, 54, 59);
-    border: none;
-    display: flex;                  /* 세로 정렬을 위해 Flex 사용 */
-    flex-direction: column;         /* 세로 정렬 */
-    align-items: center;            /* 세로 정렬: 중앙 정렬 */
-    justify-content: center;        /* 가로 정렬: 중앙 정렬 */
-    text-align: center;
-}
-
-
-.horizontal-container-div-civilwar > div {
-    display: flex;              /* Flexbox 활성화 */
-    flex-direction: column;     /* 세로 방향으로 정렬 */
-    align-items: center;        /* 가로 중앙 정렬 */
-    justify-content: center;     /* 세로 중앙 정렬 */
-    gap: 5px;                  /* 아이템 간의 간격 조정 */
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .horizontal-container-set-civilwar {
     flex: 1;
     height: 200px;
-    background-color: rgb(39, 54, 59);
     border: none;
     display: flex;                  /* 세로 정렬을 위해 Flex 사용 */
     flex-direction: column;         /* 세로 정렬 */
@@ -150,9 +129,19 @@ select {
 .image-container {
     position: relative;
     display: inline-block;
+    width: 150px; /* 컨테이너 크기 설정 */
+    height: 150px;
     width: 40px;
     height: 40px;
     margin: 10px 0px 10px 0px;
+}
+
+.option-container {
+    flex: 1;
+    position: relative;
+    display: inline-block;
+    margin: 10px 0px 10px 0px;
+    border: none;
 }
 
 .profile-image {
@@ -163,7 +152,7 @@ select {
 
 .overlay-icon {
     position: absolute;
-    bottom: 4px;
+    bottom: -8px;
     right: -5px;
     width: 25px;
     height: 25px;
@@ -171,16 +160,28 @@ select {
 
 .get-out-icon {
     position: absolute;
-    bottom: -130px;
-    right: -10px;
+    bottom: -20%;
+    right: 10px;
     width: 25px;
     height: 25px;
 }
 
+.get-out-icon-civilwar {
+    position: absolute;
+    bottom: -55%;
+    right: 15px;
+}
+
 .chat-icon {
     position: absolute;
-    bottom: -60px;
-    right: 0px;
-    width: 25px;
-    height: 25px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+}
+
+.chat-icon-civilwar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
 }

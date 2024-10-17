@@ -92,23 +92,23 @@
             resultDiv.innerHTML = ''; // 이전 내용 초기화
             
             let score = Number(data.score.toFixed(2));
-            resultDiv.innerHTML += `<div class="site-user-info"><h1>${data.username}</h1> <span class="score">👍${score}</span><br>`; // 사이트 유저네임, 점수
+            resultDiv.innerHTML += `<div class="site-user-info"><h1>${data.username}</h1> <span class="total-score">👍${score}</span></div><br>`; // 사이트 유저네임, 점수
 
             // 라이엇 정보 유무에 따른 프로필 교체
             if(data.riot_info){
-                resultDiv.innerHTML += `<img id="profile-icon" src="${data.riot_info.profileIconLink}" alt="Profile Icon" style="width: 100px; " /><br>`;
-                resultDiv.innerHTML += `<span id="summoner-level">${data.riot_info.summonerLevel}</span>`
+                resultDiv.innerHTML += `<div class="profile-level"><img id="profile-icon" src="${data.riot_info.profileIconLink}" alt="Profile Icon"/><span id="summoner-level">${data.riot_info.summonerLevel}</span><br>`;
+                // resultDiv.innerHTML += `<span id="summoner-level">${data.riot_info.summonerLevel}</span>`
             }
             else {
-                resultDiv.innerHTML += `<img id="profile-icon" src="${data.profile_image}" alt="Profile Icon" style="width: 100px; " />`;
+                resultDiv.innerHTML += `<img id="profile-icon" src="${data.profile_image}" alt="Profile Icon"/>`;
             }
             
             // 유저 기본 정보
             if(data.riot_username && data.riot_tag){
-                resultDiv.innerHTML += `<p class="riot_username_tag">${data.riot_username} | #${data.riot_tag}</p>`;
+                resultDiv.innerHTML += `<h2 class="riot_username_tag">${data.riot_username} | #${data.riot_tag}</h2>`;
             }
             else{
-                resultDiv.innerHTML += `<p class="riot_username_tag">${data.riot_username || ''}#${data.riot_tag || ''}</p>`;
+                resultDiv.innerHTML += `<h2 class="riot_username_tag">${data.riot_username || ''}#${data.riot_tag || ''}</h2>`;
             }
             
             // 라이엇 정보 출력
@@ -158,14 +158,16 @@
             `;
 
             // Articles 출력
-            resultDiv.innerHTML += `<h2>Articles</h2>`;
-            const articlesDiv = document.createElement('div');
+            resultDiv.innerHTML += `<h2>Articles</h2><div id="articles"></div>`;
+            const articlesDiv = document.getElementById('articles');
             data.articles.forEach(article => {
                 articlesDiv.innerHTML += `
-                    <div>
-                        <h3>${article.title}</h3>
-                        <p>Score: ${article.article_score}</p>
-                        <p>Created At: ${new Date(article.created_at).toLocaleString()}</p>
+                    <div class="article">
+                        <div class="title-score">
+                            <h3 class="title">${article.title}</h3>
+                            <span class="article-score">👍${article.article_score}</span>
+                        </div>
+                        <div class="created-at">${new Date(article.created_at).toLocaleString()}</div>
                     </div>
                 `;
             });

@@ -81,7 +81,7 @@ class ArticleAPIView(APIView):
             print("Error occurred:", str(e))  # 추가된 로깅
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(article, status=status.HTTP_201_CREATED)
+        return Response({"message": "소중한 리뷰가 작성 되었습니다."}, status=status.HTTP_200_OK)
 
     def _is_invalid_review(self, reviewer_id, reviewee_id):
         # 같은 유저에 대한 리뷰는 금지
@@ -105,9 +105,9 @@ class ArticleAPIView(APIView):
         if not serializer.is_valid():
             raise ValueError(serializer.errors)  # 유효하지 않은 경우 예외 발생
         
-        serializer.save(reviewee=reviewee, reviewer=reviewer)
+        article = serializer.save(reviewee=reviewee, reviewer=reviewer)
         
-        return Response({"message": "소중한 리뷰가 작성 되었습니다."}, status=status.HTTP_200_OK)
+        return article
 
 
 class CommentAPIView(APIView):

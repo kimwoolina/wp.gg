@@ -382,14 +382,20 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ user2: user2Id }),
                     success: function(room) {
-                        loadChatRooms();
+                        loadChatRooms(); // 성공 시 채팅방 목록 로드
                     },
                     error: function(xhr) {
-                        alert("로그인이 필요한 서비스 입니다.");
-                        //alert("Failed to create chat room. Error: " + xhr.responseText);
+                        if (xhr.status === 401) {
+                            // 로그인 안했을 때
+                            alert("로그인이 필요한 서비스 입니다.");
+                        } else {
+                            // 실패했을 때 에러 메시지 alert
+                            alert(xhr.responseJSON.error || "알 수 없는 오류 발생");
+                        }
                     }
                 });
             }
+            
         });
 
         // 로그아웃 이벤트 처리

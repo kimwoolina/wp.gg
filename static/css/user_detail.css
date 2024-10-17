@@ -80,7 +80,7 @@ body #result {
     flex-direction: column;
 }
 
-.evaluation-container {
+#evaluation-container {
     width: 50%;
     margin: 0 auto;
 }

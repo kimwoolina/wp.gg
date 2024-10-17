@@ -51,8 +51,6 @@ class UserDetailView(generics.GenericAPIView):
                 if 'error' in user_info:
                     return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-                print(">>>user_info >>>>>" , user_info)
-                
                 # 라이엇 프로필 이미지 저장
                 profile_icon_link = user_info.get('profileIconLink')
                 if profile_icon_link:
@@ -86,6 +84,33 @@ class UserDetailView(generics.GenericAPIView):
                 serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
             except Evaluations.DoesNotExist:
                 serializer_data['evaluations'] = None
+            
+            # Evaluations가 None일 때 처리 (모든 필드를 기본값 0으로 설정)
+            if serializer_data.get('evaluations') is None:
+                serializer_data['evaluations'] = {
+                    'kindness': 0,
+                    'teamwork': 0,
+                    'communication': 0,
+                    'mental_strength': 0,
+                    'punctuality': 0,
+                    'positivity': 0,
+                    'mvp': 0,
+                    'mechanical_skill': 0,
+                    'operation': 0,
+                    'negativity': 0,
+                    'profanity': 0,
+                    'afk': 0,
+                    'cheating': 0,
+                    'verbal_abuse': 0,
+                }
+            else:
+                # 각 필드에 대해 None이면 기본값 0으로 설정
+                evaluations_data = serializer_data['evaluations']
+                for field in ['kindness', 'teamwork', 'communication', 'mental_strength', 
+                        'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
+                        'operation', 'negativity', 'profanity', 'afk', 
+                        'cheating', 'verbal_abuse']:
+                    evaluations_data[field] = evaluations_data.get(field, 0)
                 
             # articles를 serializer_data에 추가
             article_serializer = ArticleSerializer(articles, many=True)
@@ -94,7 +119,7 @@ class UserDetailView(generics.GenericAPIView):
             # 라이엇 정보 추가
             if riot_tag:
                 serializer_data['riot_info'] = user_info
-
+                
             return Response(serializer_data)
 
         return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})

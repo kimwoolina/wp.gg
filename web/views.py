@@ -52,7 +52,7 @@ def matching_result(request):
     return render(request, 'profiles/matching_result.html')
 
 class UserRecommendationView(TemplateView):
-     template_name = 'profiles/matching_result.html'
+    template_name = 'profiles/matching_result.html'
 
 class UserDetailPageView(TemplateView):
     template_name = 'profiles/user_detail.html'

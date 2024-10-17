@@ -3,196 +3,141 @@
 
 {% block title %}party{% endblock title %}
 {% block css %}
-    <link rel="stylesheet" href="{% static '/css/party.css' %}">
+<link rel="stylesheet" href="{% static '/css/party.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock css %}
 {% block content %}
 <div class="left-container"></div>
-    {% if request.user %}
-    <label style="padding: 20px;">파티 생성하기</label><br/>
-    <form action="{% url 'party' %}" method="POST">
-        {% csrf_token %}
-        <div class="grid-container">
-            <!-- 헤더 -->
-            <div class="grid-header">랭크</div>
-            <div class="grid-header">서버</div>
-            <div class="grid-header">성별</div>
-            <div class="grid-header">나이</div>
-            <div class="grid-header">언어</div>
-            <div class="grid-header">포지션</div>
-            <!-- 추가된 칸에 대한 2줄 병합 -->
-            <div class="grid-item grid-item-merged submit-div">
-                <div class="mar-bot-20">
-                    <input type="checkbox" id="is_rank" name="is_rank" />
-                    <label for="is_rank">내전</label>
-                </div>
-                <button type="submit">제출</button>
+{% if request.user %}
+<label style="padding: 20px;">파티 생성하기</label><br />
+<form action="{% url 'party' %}" method="POST">
+    {% csrf_token %}
+    <div class="grid-container">
+        <div class="grid-header">랭크</div>
+        <div class="grid-header">서버</div>
+        <div class="grid-header">성별</div>
+        <div class="grid-header">나이</div>
+        <div class="grid-header">언어</div>
+        <div class="grid-header">포지션</div>
+        <!-- 추가된 칸에 대한 2줄 병합 -->
+        <div class="grid-item grid-item-merged submit-div">
+            <div class="mar-bot-20">
+                <input type="checkbox" id="is_rank" name="is_rank" />
+                <label for="is_rank">내전</label>
             </div>
-    
-            <!-- 첫 번째 행 -->
-            <div class="grid-item">
-                <select name="rank" id="rank">
-                    <option value="0">Unrank</option>
-                    <option value="1">Iron</option>
-                    <option value="2">Bronze</option>
-                    <option value="3">Silver</option>
-                    <option value="4">Gold</option>
-                    <option value="5">Platinum</option>
-                    <option value="6">Amarald</option>
-                    <option value="7">Diamond</option>
-                    <option value="8">Master</option>
-                    <option value="9">Grand Master</option>
-                    <option value="10">Challenger</option>
-                </select>
-            </div>
-    
-            <div class="grid-item">
-                <select name="server" id="server">
-                    <option value="KR">Korean</option>
-                    <option value="EN">English</option>
-                    <option value="JP">Japanese</option>
-                </select>
-            </div>
-    
-            <div class="grid-item">
-                <select name="gender" id="gender">
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
-                    <option value="O">Other</option>
-                </select>
-            </div>
-    
-            <div class="grid-item">
-                <select name="age" id="age">
-                    <option value="10">청소년</option>
-                    <option value="20">청년</option>
-                    <option value="30">중년</option>
-                    <option value="40">중장년</option>
-                </select>
-            </div>
-    
-            <div class="grid-item">
-                <select name="language" id="language">
-                    <option value="KR">Korean</option>
-                    <option value="EN">English</option>
-                    <option value="JP">Japanese</option>
-                </select>
-            </div>
-    
-            <div class="grid-item">
-                <select name="position" id="position">
-                    <option value="top">Top</option>
-                    <option value="mid">Mid</option>
-                    <option value="jun">Jungle</option>
-                    <option value="adc">ADC</option>
-                    <option value="sup">Support</option>
-                </select>
-            </div>
-    
-            
-    
-            
-    
+            <button type="submit">제출</button>
         </div>
         
-    </form>
-    {% else %}
-    로그인이 필요합니다.
-    {% endif %}
-    
-    <table>
-        <tr>
-            <th scope="col">랭크</th>
-            <th scope="col">서버</td>
-            <th scope="col">성별</td>
-            <th scope="col">나이</td>
-            <th scope="col">언어</td>
-            <th scope="col">---</td>
-            <th scope="col">탑1</td>
-            <th scope="col">미드1</td>
-            <th scope="col">정글1</td>
-            <th scope="col">원딜1</td>
-            <th scope="col">서포터1</td>
-            <th scope="col">탑2</td>
-            <th scope="col">미드2</td>
-            <th scope="col">정글2</td>
-            <th scope="col">원딜2</td>
-            <th scope="col">서포터2</td>
-            <th scope="col">삭제</td>
-        </tr>
-        {% for data in party %}
-        <tr>
-            {% if data.rank == "0" %}
-            <td>Unranked</td>
-            {% elif data.rank == "1" %}
-            <td>Iron</td>
-            {% elif data.rank == "2" %}
-            <td>Bronze</td>
-            {% elif data.rank == "3" %}
-            <td>Silver</td>
-            {% elif data.rank == "4" %}
-            <td>Gold</td>
-            {% elif data.rank == "5" %}
-            <td>Platinum</td>
-            {% elif data.rank == "6" %}
-            <td>Amarald</td>
-            {% elif data.rank == "7" %}
-            <td>Diamond</td>
-            {% elif data.rank == "8" %}
-            <td>Master</td>
-            {% elif data.rank == "9" %}
-            <td>Grand Master</td>
-            {% elif data.rank == "10" %}
-            <td>Challenger</td>
-            {% endif %}
-            <td>{{ data.server }}</td>
-            <td>{{ data.gender }}</td>
-            <td>{{ data.age }}</td>
-            <td>{{ data.language }}</td>
-            <td>|</td>
-            <td>{{ data.top1 }}</td>
-            <td>{{ data.mid1 }}</td>
-            <td>{{ data.jungle1 }}</td>
-            <td>{{ data.adc1 }}</td>
-            <td>{{ data.support1 }}</td>
-            <td>{{ data.top2 }}</td>
-            <td>{{ data.mid2 }}</td>
-            <td>{{ data.jungle2 }}</td>
-            <td>{{ data.adc2 }}</td>
-            <td>{{ data.support2 }}</td>
-            <td><button type="submit" id="delbtn" onclick="deletemethod({{data.id}})">방 닫기</button></td>
-            
-        </tr>
-        
-        {% endfor %}
-    </table>
-    <div class="vertical-container">
-        <!-- 첫 번째 가로 5칸 컨테이너 -->
-        <div class="horizontal-container">
-            <div>Item 1</div>
-            <div>Item 2</div>
-            <div>Item 3</div>
-            <div>Item 4</div>
-            <div>Item 5</div>
+        <div class="grid-item">
+            <select name="rank" id="rank">
+                <option value="0">Unrank</option>
+                <option value="1">Iron</option>
+                <option value="2">Bronze</option>
+                <option value="3">Silver</option>
+                <option value="4">Gold</option>
+                <option value="5">Platinum</option>
+                <option value="6">Amarald</option>
+                <option value="7">Diamond</option>
+                <option value="8">Master</option>
+                <option value="9">Grand Master</option>
+                <option value="10">Challenger</option>
+            </select>
         </div>
 
-        <!-- 두 번째 가로 5칸 컨테이너 -->
-        <div class="horizontal-container">
-            <div>Item 6</div>
-            <div>Item 7</div>
-            <div>Item 8</div>
-            <div>Item 9</div>
-            <div>Item 10</div>
+        <div class="grid-item">
+            <select name="server" id="server">
+                <option value="KR">Korean</option>
+                <option value="EN">English</option>
+                <option value="JP">Japanese</option>
+            </select>
         </div>
 
-        <!-- 세 번째 가로 5칸 컨테이너 -->
-        <div class="horizontal-container">
-            <div>Item 11</div>
-            <div>Item 12</div>
-            <div>Item 13</div>
-            <div>Item 14</div>
-            <div>Item 15</div>
+        <div class="grid-item">
+            <select name="gender" id="gender">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="age" id="age">
+                <option value="10">청소년</option>
+                <option value="20">청년</option>
+                <option value="30">중년</option>
+                <option value="40">중장년</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="language" id="language">
+                <option value="KR">Korean</option>
+                <option value="EN">English</option>
+                <option value="JP">Japanese</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="position" id="position">
+                <option value="top">Top</option>
+                <option value="mid">Mid</option>
+                <option value="jun">Jungle</option>
+                <option value="adc">ADC</option>
+                <option value="sup">Support</option>
+            </select>
         </div>
     </div>
+</form>
+{% else %}
+로그인이 필요합니다.
+{% endif %}
+
+
+<div class="vertical-container">
+    {% for data in party %}
+    {% if data.is_rank %}
+    <!-- 경쟁/일반/ -->
+    <div class="horizontal-container">
+        <div>{% if data.top1 is none %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.top1.profile_image}}{{data.top1.username}}{% endif %}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.mid1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.mid1.profile_image}}{{data.mid1.username}}{% endif %}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.jungle1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.jungle1.profile_image}}{{data.jungle1.username}}{% endif %}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.adc1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.adc1.profile_image}}{{data.adc1.username}}{% endif %}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.support1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;">
+            {% else %}{{data.support1.profile_image}}{{data.support1.username}}{% endif %}</button><img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"></div>
+    </div><br/><br/>
+    {% else %}
+    <!-- 두 번째 가로 5칸 컨테이너 -->
+    <div class="horizontal-container">
+        <div>{% if data.top1 is none %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.top1.profile_image}}{{data.top1.username}}{% endif %}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.mid1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.mid1.profile_image}}{{data.mid1.username}}{% endif %}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.jungle1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.jungle1.profile_image}}{{data.jungle1.username}}{% endif %}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.adc1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.adc1.profile_image}}{{data.adc1.username}}{% endif %}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.support1 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;">
+            {% else %}{{data.support1.profile_image}}{{data.support1.username}}{% endif %}</button><img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"></div>
+    </div>
+    <div class="horizontal-container">
+        <div>{% if data.top2 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.top2.profile_image}}{{data.top2.username}}{% endif %}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.mid2 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.mid2.profile_image}}{{data.mid2.username}}{% endif %}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.jungle2 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.jungle2.profile_image}}{{data.jungle2.username}}{% endif %}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.adc2 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.adc2.profile_image}}{{data.adc2.username}}{% endif %}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;"></div>
+        <div>{% if data.support2 is null %}<button type="button" class="no-style-button" onclick="consoleprint()"><img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px;"></button>
+            {% else %}{{data.support2.profile_image}}{{data.support2.username}}{% endif %}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;"></div>
+    </div><br/><br/>
+    {% endif %}
+    {% endfor %}
+</div>
 {% endblock content %}
 
 {% block javascript%}
@@ -204,13 +149,13 @@
         return rankText;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Django에서 받은 data.rank 값을 HTML에 출력
         const rankValue = document.getElementById("rankInput").innerText;
         const rankLabel = document.getElementById("rankLabel");
         rankLabel.innerText = getRank(rankValue);  // 함수 호출 결과를 label에 출력
     });
-    
+
 
     function deletemethod(itemId) {
         console.log('삭제할 itemId:', itemId);  // itemId를 콘솔에 출력
@@ -221,16 +166,16 @@
         fetch(url, {
             method: 'DELETE',
         })
-        .then(response => {
-            if (response.ok) {
-                alert('삭제 성공');
-            } else {
-                alert('삭제 실패');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => {
+                if (response.ok) {
+                    alert('삭제 성공');
+                } else {
+                    alert('삭제 실패');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         // fetch('/parties/' + itemId + '/', {
         //     method: 'DELETE',
         //     headers: {
@@ -239,5 +184,9 @@
         // })
         // .then(response => response.json())
     };
+
+    function consoleprint(){
+        console.log('console print');
+    }
 </script>
 {% endblock javascript%}

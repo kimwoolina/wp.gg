@@ -1,55 +1,44 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}나에게 꼭 맞는 유저찾기❤️{% endblock title %}
-
-{% block css %}
-<link rel="stylesheet" href="{% static '/css/matching.css' %}">
-{% endblock css %}
+{% block title %}매칭 결과{% endblock title %}
 
 {% block content %}
+    <h2>나에게 꼭 맞는 유저 찾기 결과</h2>
 
-<h2>추천된 유저 리스트</h2>
-
-<div class="user-list">
-    {% for user in users %}
-        <div class="user-card">
-            <h3>{{ user.username }}</h3>
-            <img src="{{ user.profile_image.url }}" alt="프로필 이미지" class="profile-image">
-            
-            <ul>
-                <li>티어: {{ user.riot_tier }}</li>
-                <li>포지션: 
-                    {% for position in user.positions %}
-                        {{ position.position_name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </li>
-                <li>평가 점수: {{ user.score }}</li>
-            </ul>
-
-            {% if user.evaluations %}
-                <div class="evaluations">
-                    <h4>평가 항목</h4>
-                    <ul>
-                        <li>상냥함: {{ user.evaluations.kindness }}</li>
-                        <li>팀워크: {{ user.evaluations.teamwork }}</li>
-                        <li>커뮤니케이션: {{ user.evaluations.communication }}</li>
-                        <li>멘탈: {{ user.evaluations.mental_strength }}</li>
-                        <li>시간약속: {{ user.evaluations.punctuality }}</li>
-                        <li>긍정적: {{ user.evaluations.positivity }}</li>
-                        <li>MVP: {{ user.evaluations.mvp }}</li>
-                        <li>기계적 기술: {{ user.evaluations.mechanical_skill }}</li>
-                        <li>운영: {{ user.evaluations.operation }}</li>
-                        <li>부정적 태도: {{ user.evaluations.negativity }}</li>
-                        <li>욕설: {{ user.evaluations.profanity }}</li>
-                    </ul>
-                </div>
-            {% else %}
-                <p>평가 정보가 없습니다.</p>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>추천된 유저가 없습니다.</p>
-    {% endfor %}
-</div>
+    <div id="matching-result">
+        <!-- 결과 표시할 영역 -->
+    </div>
 
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // URL에서 결과 데이터 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const result = urlParams.get('result');
+        const matchingResult = document.getElementById('matching-result');
+
+        if (result) {
+            const users = JSON.parse(result);
+            if (users.length > 0) {
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.classList.add('user-card');
+                    userElement.innerHTML = `
+                        <h3>${user.username}</h3>
+                        <p>티어: ${user.riot_tier}</p>
+                        <p>포지션: ${user.position}</p>
+                        <!-- 다른 유저 정보도 추가 -->
+                    `;
+                    matchingResult.appendChild(userElement);
+                });
+            } else {
+                matchingResult.innerHTML = '<p>매칭된 유저가 없습니다.</p>';
+            }
+        } else {
+            matchingResult.innerHTML = '<p>매칭 결과를 불러오지 못했습니다.</p>';
+        }
+    });
+</script>
+{% endblock javascript %}

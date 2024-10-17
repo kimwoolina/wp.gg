@@ -193,7 +193,7 @@ class UserRecommendationView(APIView):
     작성 날짜: 2024.10.09
     """
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # 초기화
         matching_reviewee_id = None
 
@@ -275,8 +275,6 @@ class UserRecommendationView(APIView):
         
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)
-        print("Serializer: ", serializer)
-        print("Serializer.data : ", serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
         # return render(request, 'profiles/matching_result.html', {'users': serializer.data})
 

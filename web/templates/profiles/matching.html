@@ -8,11 +8,7 @@
 
 {% block content %}
 
-<form id="recommendation-form" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
-
-    {% csrf_token %}
-
-    <form id="recommendation-form">
+    <form id="recommendation-form" onsubmit="getUserRecommendations(event)">
         {% csrf_token %}
 
         <div class="form-group">
@@ -45,29 +41,21 @@
 
     <!-- 선호도 항목들 -->
     <div class="review-categories">
-        <span class="badge" data-value="kindness">💗 상냥함</span>
-        <span class="badge" data-value="teamwork">🛠 팀워크</span>
-        <span class="badge" data-value="communication">📢 커뮤니케이션</span>
-        <span class="badge" data-value="mental_strength">🧠 멘탈</span>
-        <span class="badge" data-value="punctuality">⏰ 시간약속</span>
-        <span class="badge" data-value="positivity">💪 긍정적</span>
-        <span class="badge" data-value="mvp">⭐ MVP</span>
-        <span class="badge" data-value="mechanical_skill">⚙️ 기계적</span>
-        <span class="badge" data-value="operation">🎮 운영</span>
-        <span class="badge" data-value="negativity">☹️ 부정적태도</span>
-        <span class="badge" data-value="profanity">🤬 욕설</span>
-        <span class="badge" data-value="afk">💤 탈주/자리비움</span>
-        <span class="badge" data-value="cheating">🎮 치트</span>
-        <span class="badge" data-value="verbal_abuse">😡 언어적폭력</span>
-        <span class="badge" data-value="verbal_abuse">📌 기술</span>
-        <span class="badge" data-value="verbal_abuse">🙈 피지컬</span>
-        <span class="badge" data-value="verbal_abuse">🧍🏻 아들래미</span>
-        <span class="badge" data-value="verbal_abuse">🧨 폭탄처리반</span>
+        <span class="badge" data-category="kindness">💗 상냥함</span>
+        <span class="badge" data-category="teamwork">🛠 팀워크</span>
+        <span class="badge" data-category="communication">📢 소통왕</span>
+        <span class="badge" data-category="mental_strength">🧠 멘탈</span>
+        <span class="badge" data-category="punctuality">⏰ 시간약속</span>
+        <span class="badge" data-category="positivity">💪 긍정적</span>
+        <span class="badge" data-category="mvp">⭐ MVP</span>
+        <span class="badge" data-category="mechanical_skill">⚙️ 피지컬</span>
+        <span class="badge" data-category="operation">🎮 운영</span>
+        {% comment %} <span class="badge" data-value="verbal_abuse">🧨 폭탄처리반</span>
         <span class="badge" data-value="verbal_abuse">🥰 목소리예쁨</span>
         <span class="badge" data-value="verbal_abuse">😂 웃김</span>
         <span class="badge" data-value="verbal_abuse">⛑️ 위기대처</span>
         <span class="badge" data-value="verbal_abuse">🤷🏻‍♂️ 목소리잘생김</span>
-        <span class="badge" data-value="verbal_abuse">🙅‍♀️ 말예쁘게함</span>
+        <span class="badge" data-value="verbal_abuse">🙅‍♀️ 말예쁘게함</span> {% endcomment %}
     </div>
 
     <!-- 선호 스타일 -->
@@ -86,12 +74,54 @@
 {% block javascript%}
 
 <script>
-    // Bearer 토큰 가져오는 함수
-    function getAccessToken() {
-        return localStorage.getItem('access_token');
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('recommendation-form');
+        const badges = document.querySelectorAll('.badge');
+        const selectedCategoriesInput = document.getElementById('selected_categories');
 
-    // CSRF 토큰을 가져오는 함수
+        // 뱃지 선택 이벤트 처리
+        badges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                const selectedCategories = Array.from(badges)
+                    .filter(badge => badge.classList.contains('selected'))
+                    .map(badge => badge.dataset.value);
+                selectedCategoriesInput.value = selectedCategories.join(',');
+            });
+        });
+
+        // 폼 제출 시 데이터 전송 및 결과 페이지로 이동
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {
+                riot_tier: formData.get('riot_tier'),
+                riot_position: formData.get('riot_position'),
+                selected_categories: formData.get('selected_categories'),
+                content: formData.get('content'),
+            };
+
+            fetch('/api/profile/recommendation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 결과 데이터를 /matching_result/ 페이지로 전달
+                window.location.href = `/matching_result/?result=${encodeURIComponent(JSON.stringify(data))}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+
+    // CSRF 토큰 함수
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -106,66 +136,7 @@
         }
         return cookieValue;
     }
-    
+
     const csrftoken = getCookie('csrftoken');
-
-    // 선호하는 스타일 체크하기 기능
-    document.addEventListener('DOMContentLoaded', function() {
-        const badges = document.querySelectorAll('.badge');
-        const selectedCategoriesInput = document.getElementById('selected_categories');
-
-        badges.forEach(badge => {
-            badge.addEventListener('click', function() {
-                // 선택된 뱃지에 'selected' 클래스 추가/제거
-                this.classList.toggle('selected');
-    
-                // 선택된 카테고리를 hidden input에 업데이트
-                const selectedCategories = Array.from(badges)
-                    .filter(badge => badge.classList.contains('selected'))
-                    .map(badge => badge.dataset.value);
-                selectedCategoriesInput.value = selectedCategories.join(',');
-            });
-        });
-    });
-
-    document.getElementById('recommendation-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // 폼 제출 기본 동작 방지
-
-        // FormData 객체를 통해 폼 데이터를 수집
-        const formData = new FormData(event.target);
-        const params = new URLSearchParams(formData).toString(); // 쿼리 문자열로 변환
-
-        // Fetch API로 GET 요청 보내기
-        fetch('/api/profile/recommendation?' + params)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // 결과 표시
-                const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = ''; // 이전 결과 초기화
-                if (data.length > 0) {
-                    const list = document.createElement('ul');
-                    data.forEach(user => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `${user.username} (티어: ${user.riot_tier}, 포지션: ${user.positions.join(', ')})`;
-                        list.appendChild(listItem);
-                    });
-                    resultDiv.appendChild(list);
-                    // 매칭 결과 페이지로 리다이렉트
-                    window.location.href = '/matching_result/';
-                } else {
-                    resultDiv.textContent = '추천된 유저가 없습니다.';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching recommendations:', error);
-            });
-    });
-
 </script>
-
 {% endblock javascript %}

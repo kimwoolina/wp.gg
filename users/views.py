@@ -62,7 +62,7 @@ class CustomRegisterView(RegisterView):
 
         # 회원가입 성공 시 로그인 페이지로 리다이렉트
         if response.status_code == status.HTTP_201_CREATED:
-            return redirect('login_page')
+            return redirect('home')
 
         return response
 

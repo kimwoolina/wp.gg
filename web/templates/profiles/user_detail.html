@@ -138,9 +138,20 @@
                     });
                 }  
             }
-                else{
-                    resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier || '정보 없음'} • 포지션 넣을예정</p>`;
+            else{
+                if(data.riot_tier&&data.positions[0].position_name){
+                    resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier} • 포지션: ${data.positions[0].position_name}</p>`;
                 }
+                else if(data.riot_tier){
+                    resultDiv.innerHTML += `<p>Riot Tier: ${data.riot_tier}</p>`;
+                }
+                else if(data.positions[0].position_name){
+                    resultDiv.innerHTML += `<p>포지션: ${data.positions[0].position_name}</p>`;
+                }
+                else{
+                    resultDiv.innerHTML += ``;
+                }
+            }
 
             // Evaluations 출력
             if(data.articles != false){

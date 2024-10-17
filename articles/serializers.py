@@ -93,11 +93,14 @@ class ArticleSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             validated_data['reviewer'] = request.user
-    
-        article = Articles.objects.create(**validated_data)
 
+        # img_files를 validated_data에 추가
+        img_files = self.context.get('article_images', [])
+        
+        article = Articles.objects.create(**validated_data)
+        
         # 이미지 파일 처리
-        self._handle_image_files(article)
+        self._handle_image_files(article, img_files)
 
         # 평가 데이터 처리
         self._handle_evaluation_data(article)
@@ -107,14 +110,14 @@ class ArticleSerializer(serializers.ModelSerializer):
 
         return article
 
-    def _handle_image_files(self, article):
+    def _handle_image_files(self, article, img_files):
         """
         이미지 파일을 처리하여 ArticleImages를 생성합니다.
         """
-        img_files = self.context['request'].FILES.getlist('img')
+        # img_files가 비어있지 않은 경우에만 처리
         for img_file in img_files:
             ArticleImages.objects.create(article=article, img=img_file)
-
+                
     def _handle_evaluation_data(self, article):
         """
         평가 데이터를 처리하여 Evaluations 객체를 생성 또는 업데이트합니다.

@@ -12,6 +12,7 @@ urlpatterns = [
     path('ranking/', views.ranking, name='ranking'), # 유저랭킹화면
     path('riotPage/', views.RiotPageView.as_view(), name='user-index'),
     path('matching/', views.MatchingPageView.as_view(), name='user_matching'), 
+    path('matching_result/', views.UserRecommendationView.as_view(), name='matching_result'),
     path('chat/', views.ChatRoomTemplateView.as_view(), name='chat-room-template'),  # 채팅방 템플릿 추가
     path('article_list/', views.article_list_page, name='article-list'), #리스트
     path('article_create/', views.article_create_page, name='article-create'), #생성

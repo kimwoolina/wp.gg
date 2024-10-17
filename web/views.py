@@ -46,8 +46,14 @@ class SearchPageView(TemplateView):
 def ranking(request):
     return render(request, 'profiles/rankings.html')
 
-def matching_result(request):
+def matching(request):
     return render(request, 'profiles/matching.html')
+
+def matching_result(request):
+    return render(request, 'profiles/matching_result.html')
+
+class UserRecommendationView(TemplateView):
+    template_name = 'profiles/matching_result.html'
 
 class UserDetailPageView(TemplateView):
     template_name = 'profiles/user_detail.html'

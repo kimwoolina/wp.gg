@@ -237,7 +237,6 @@
             // Articles 출력
             resultDiv.innerHTML += `<h2>Articles</h2><div id="articles"></div>`;
             if(data.articles != false){
-                console.log(data.articles)
                 const articlesDiv = document.getElementById('articles');
                 data.articles.forEach(article => {
                     articlesDiv.innerHTML += `

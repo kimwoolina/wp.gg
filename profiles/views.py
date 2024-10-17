@@ -208,10 +208,10 @@ class UserRecommendationView(APIView):
         filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
         user_preference = request.data.get('user_preference', '')
 
-        print("riot_tiers >>>>>", riot_tiers)
-        print("positions >>>>>", positions)
-        print("filter_fields >>>>>", filter_fields)
-        print("user_preference >>>>>", user_preference)
+        # print("riot_tiers >>>>>", riot_tiers)
+        # print("positions >>>>>", positions)
+        # print("filter_fields >>>>>", filter_fields)
+        # print("user_preference >>>>>", user_preference)
         
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
@@ -246,18 +246,20 @@ class UserRecommendationView(APIView):
         all_reviews = Articles.objects.all().values('content', 'reviewee')
         reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
 
-        print("reviews_test >>>>>", reviews_text)
+        # print("reviews_test >>>>>", reviews_text)
         
         # 3. 사용자 입력 텍스트 처리
         if user_preference:
             # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
-            system_instructions = """
-            You are tasked with finding the most relevant review for a user based on their preferences.
-            Based on the user's preference, identify the review that best matches the following description: {user_preference}.
-            Here are all the reviews:
-            {reviews_text}.
-            Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
-            """
+            system_instructions = """ 당신은 사용자의 선호에 따라 관련성 높은 리뷰를 찾는 임무를 맡고 있습니다. 사용자의 선호를 기반으로 다음 설명과 잘 일치하는 리뷰를 모두 찾으세요: {user_preference}. 여기 모든 리뷰가 있습니다: {reviews_text}.일치하는 리뷰어의 ID 또는 IDs를 쉼표로 구분하여 제공합니다 (예: 1 또는 1, 2) 추가 텍스트 없이.
+                                """
+            # system_instructions = """
+            # You are tasked with finding the most relevant review for a user based on their preferences.
+            # Based on the user's preference, identify the review that best matches the following description: {user_preference}.
+            # Here are all the reviews:
+            # {reviews_text}.
+            # Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
+            # """
 
             prompt = system_instructions.format(
                 user_preference=user_preference,
@@ -265,12 +267,12 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-            print('user_preference_analysis>>>>>>>>', user_preference_analysis)
+            # print('user_preference_analysis>>>>>>>>', user_preference_analysis)
 
             # 정규 표현식을 사용하여 숫자 추출
             matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
             
-            print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
+            # print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
 
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
@@ -278,7 +280,7 @@ class UserRecommendationView(APIView):
             else:
                 return Response({"message": "매칭되는 유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)   
             
-            print("users>>>>>", users)
+            # print("users>>>>>", users)
 
         # 상위 3명만 선택
         users = users[:3]

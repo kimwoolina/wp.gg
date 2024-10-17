@@ -50,6 +50,17 @@ body {
     margin-bottom: 30px;
 }
 
+.title {
+    width: 91%;
+    border-radius: 15px;
+    background-color: #333;
+    color: #dbe1ff;
+    border: none;
+    padding: 16px;
+    font-size: 16px;
+    margin-top: 29px;
+}
+
 /* 리뷰 내용 */
 .content-box {
     width: 91%;
@@ -58,7 +69,6 @@ body {
     background-color: #333;
     color: #dbe1ff;
     border: none;
-    padding: 10px;
     padding: 16px;
     font-size: 16px;
     margin-top: 29px;

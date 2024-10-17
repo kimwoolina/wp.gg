@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <form id="recommendation-form" onsubmit="getUserRecommendations(event)">
+    <form id="recommendation-form">
         {% csrf_token %}
 
         <div class="form-group">
@@ -38,34 +38,27 @@
             </div>
         </div>
 
+        <!-- 선호도 항목들 -->
+        <div class="review-categories">
+            <span class="badge" data-value="kindness">💗 상냥함</span>
+            <span class="badge" data-value="teamwork">🛠 팀워크</span>
+            <span class="badge" data-value="communication">📢 소통왕</span>
+            <span class="badge" data-value="mental_strength">🧠 멘탈</span>
+            <span class="badge" data-value="punctuality">⏰ 시간약속</span>
+            <span class="badge" data-value="positivity">💪 긍정적</span>
+            <span class="badge" data-value="mvp">⭐ MVP</span>
+            <span class="badge" data-value="mechanical_skill">⚙️ 피지컬</span>
+            <span class="badge" data-value="operation">🎮 운영</span>
+        </div>
 
-    <!-- 선호도 항목들 -->
-    <div class="review-categories">
-        <span class="badge" data-category="kindness">💗 상냥함</span>
-        <span class="badge" data-category="teamwork">🛠 팀워크</span>
-        <span class="badge" data-category="communication">📢 소통왕</span>
-        <span class="badge" data-category="mental_strength">🧠 멘탈</span>
-        <span class="badge" data-category="punctuality">⏰ 시간약속</span>
-        <span class="badge" data-category="positivity">💪 긍정적</span>
-        <span class="badge" data-category="mvp">⭐ MVP</span>
-        <span class="badge" data-category="mechanical_skill">⚙️ 피지컬</span>
-        <span class="badge" data-category="operation">🎮 운영</span>
-        {% comment %} <span class="badge" data-value="verbal_abuse">🧨 폭탄처리반</span>
-        <span class="badge" data-value="verbal_abuse">🥰 목소리예쁨</span>
-        <span class="badge" data-value="verbal_abuse">😂 웃김</span>
-        <span class="badge" data-value="verbal_abuse">⛑️ 위기대처</span>
-        <span class="badge" data-value="verbal_abuse">🤷🏻‍♂️ 목소리잘생김</span>
-        <span class="badge" data-value="verbal_abuse">🙅‍♀️ 말예쁘게함</span> {% endcomment %}
-    </div>
+        <!-- 선호 스타일 -->
+        <div class="form-group preference-group">
+            <label for="user_preference" class="preference-label">선호하는 스타일 입력하기</label>
+            <textarea id="user_preference" name="user_preference" class="content-box" placeholder="예: 목소리 예쁜 유저를 선호합니다.." required></textarea>
+        </div>
 
-    <!-- 선호 스타일 -->
-    <div class="form-group preference-group">
-        <label for="user_preference" class="preference-label">선호하는 스타일 입력하기</label>
-        <textarea id="content" name="content" class="content-box" placeholder="예: 목소리 예쁜 유저를 선호합니다.." required></textarea>
-    </div>
-
-    <input type="hidden" name="selected_categories" id="selected_categories">
-    <input type="submit" value="❤️&nbsp나랑 맞는 유저 찾아줘&nbsp❤️" class="submit-btn">
+        <input type="hidden" name="selected_categories" id="selected_categories">
+        <input type="submit" value="❤️&nbsp나랑 맞는 유저 찾아줘&nbsp❤️" class="submit-btn">
 
     </form>
 
@@ -99,7 +92,7 @@
                 riot_tier: formData.get('riot_tier'),
                 riot_position: formData.get('riot_position'),
                 selected_categories: formData.get('selected_categories'),
-                content: formData.get('content'),
+                user_preference: formData.get('user_preference')  // content 대신 user_preference 사용
             };
 
             fetch('/api/profile/recommendation/', {
@@ -110,13 +103,19 @@
                 },
                 body: JSON.stringify(data),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 // 결과 데이터를 /matching_result/ 페이지로 전달
                 window.location.href = `/matching_result/?result=${encodeURIComponent(JSON.stringify(data))}`;
             })
             .catch(error => {
                 console.error('Error:', error);
+                alert("유저 추천 과정에서 오류가 발생했습니다. 다시 시도해 주세요.");
             });
         });
     });

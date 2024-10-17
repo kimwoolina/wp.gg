@@ -67,9 +67,10 @@ class ArticleAPIView(APIView):
         reviewer = request.user
         reviewee_id = req_data.get('reviewee')
         
-        # 유효성 검사
-        if self._is_invalid_review(reviewer.pk, reviewee_id):
-            return Response({"message": "평가가 불가능한 유저입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        # 유효성 검사 - 리뷰 가능 여부 확인
+        error_message = self._is_invalid_review(reviewer.pk, reviewee_id)
+        if error_message:
+            return Response({"message": error_message}, status=status.HTTP_400_BAD_REQUEST)
     
         try:
             img_files = req_files.getlist('img')
@@ -83,13 +84,19 @@ class ArticleAPIView(APIView):
         return Response(article, status=status.HTTP_201_CREATED)
 
     def _is_invalid_review(self, reviewer_id, reviewee_id):
+        # 같은 유저에 대한 리뷰는 금지
         if reviewer_id == reviewee_id:
-            return True
+            return "자기 자신에 대한 리뷰는 작성할 수 없습니다."
+        
+        # 리뷰 대상 유저가 존재하지 않을 경우
         if not User.objects.filter(id=reviewee_id).exists():
-            return True
+            return "존재하지 않는 유저입니다."
+        
+        # 이미 해당 유저에 대한 리뷰를 작성한 경우
         if Articles.objects.filter(reviewee_id=reviewee_id, reviewer_id=reviewer_id).exists():
-            return True
-        return False
+            return "이미 이 유저에 대한 리뷰를 작성했습니다."
+        
+        return None
 
     def _create_article(self, req_data, img_files, reviewer, reviewee_id, request):
         reviewee = get_object_or_404(User, id=reviewee_id)  # 유저가 존재하지 않으면 404 에러 발생
@@ -100,7 +107,7 @@ class ArticleAPIView(APIView):
         
         serializer.save(reviewee=reviewee, reviewer=reviewer)
         
-        return serializer.data
+        return Response({"message": "소중한 리뷰가 작성 되었습니다."}, status=status.HTTP_200_OK)
 
 
 class CommentAPIView(APIView):

@@ -79,3 +79,12 @@ body #result {
     align-items: center;
     flex-direction: column;
 }
+
+.evaluation-container {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.evaluation-item {
+    display: inline;
+}

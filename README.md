@@ -13,7 +13,6 @@
 [![OpenAI Python Client](https://img.shields.io/badge/OpenAI%20Python%20Client-0.28.0-4B92DB)](https://github.com/openai/openai-python)
 [![RIOT API](https://img.shields.io/badge/RIOT_API-red)](https://developer.riotgames.com/)
 [![Discord API](https://img.shields.io/badge/Discord_API-7289da)](https://discord.com/developers/docs/intro)
-[![WebSocket](https://img.shields.io/badge/WebSocket-000000)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
 <br>
 

@@ -1,9 +1,10 @@
-from rest_framework.generics import ListAPIView
-from rest_framework import viewsets
-from .models import Notification, Reports
+# from rest_framework.generics import ListAPIView
+# from rest_framework import viewsets
+# from .models import Notification, Reports
 # from .serializers import NotificationSerializer, ReportsSerializer
+# import textwrap
+from django.db import models
 from rest_framework.permissions import IsAuthenticated
-import textwrap
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Q
@@ -29,6 +30,20 @@ class PrivateChatRoomCreateView(APIView):
         user2_id = request.data.get('user2')  # user2 ID를 가져옴
         if not user2_id:
             return Response({"error": "user2 ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # user1과 user2의 아이디를 정렬하여 일관성 있게 비교
+        user1 = request.user
+        user2 = User.objects.get(id=user2_id)
+
+        # 이미 존재하는 개인 채팅방인지 확인
+        existing_room = PrivateChatRoom.objects.filter(
+            models.Q(user1=user1, user2=user2) | 
+            models.Q(user1=user2, user2=user1)
+        ).first()
+
+        if existing_room:
+            return Response({"error": "이미 존재하는 채팅방입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
 
         # 개인 채팅방 생성
         private_chat_room = PrivateChatRoom(user1=request.user, user2_id=user2_id)

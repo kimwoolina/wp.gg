@@ -60,7 +60,7 @@ class ArticleAPIView(APIView):
     def post(self, request):
         if not request.user.is_authenticated:
             return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         req_data = request.data
         req_files = request.FILES
 
@@ -70,15 +70,17 @@ class ArticleAPIView(APIView):
         # 유효성 검사
         if self._is_invalid_review(reviewer.pk, reviewee_id):
             return Response({"message": "평가가 불가능한 유저입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
+    
         try:
-            article = self._create_article(req_data, req_files, reviewer, reviewee_id, request)
+            img_files = req_files.getlist('img')
+            if not img_files or (len(img_files) == 1 and img_files[0] == ''):
+                img_files = []
+            article = self._create_article(req_data, img_files, reviewer, reviewee_id, request)
         except Exception as e:
+            print("Error occurred:", str(e))  # 추가된 로깅
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 최종적으로 생성된 아티클 데이터 반환
-        article_serializer = ArticleSerializer(article)
-        return Response(article_serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(article, status=status.HTTP_201_CREATED)
 
     def _is_invalid_review(self, reviewer_id, reviewee_id):
         if reviewer_id == reviewee_id:
@@ -89,14 +91,16 @@ class ArticleAPIView(APIView):
             return True
         return False
 
-    def _create_article(self, req_data, req_files, reviewer, reviewee_id, request):
+    def _create_article(self, req_data, img_files, reviewer, reviewee_id, request):
         reviewee = get_object_or_404(User, id=reviewee_id)  # 유저가 존재하지 않으면 404 에러 발생
-        serializer = ArticleSerializer(data=req_data, context={'request': request, 'img': req_files.getlist('img')})
+        serializer = ArticleSerializer(data=req_data, context={'request': request, 'article_images': img_files})
 
         if not serializer.is_valid():
             raise ValueError(serializer.errors)  # 유효하지 않은 경우 예외 발생
-
-        return serializer.save(reviewee=reviewee, reviewer=reviewer)
+        
+        serializer.save(reviewee=reviewee, reviewer=reviewer)
+        
+        return serializer.data
 
 
 class CommentAPIView(APIView):
@@ -122,12 +126,3 @@ class CommentAPIView(APIView):
             return Response(data, status=status.HTTP_200_OK)
         return Response({"message": "로그인 이후 이용 가능합니다"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['GET'])
-def search_user(request):
-    query = request.GET.get('q', None)
-    if query:
-        users = User.objects.filter(username__icontains=query) | User.objects.filter(riot_username__icontains=query)
-        user_data = [{"id": user.id, "username": user.username, "riot_username": user.profile.riot_username} for user in users]
-        return Response({"users": user_data})
-    return Response({"users": []})

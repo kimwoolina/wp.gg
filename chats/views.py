@@ -16,7 +16,7 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.db.models import OuterRef, Subquery
 
 User = get_user_model()
 
@@ -58,11 +58,20 @@ class PrivateChatRoomListView(APIView):
 
     def get(self, request):
         user = request.user
-        # 현재 사용자가 참여한 개인 채팅방 필터링 및 생성일 기준으로 내림차순 정렬
-        chat_rooms = PrivateChatRoom.objects.filter(user1=user) | PrivateChatRoom.objects.filter(user2=user)
-        chat_rooms = chat_rooms.order_by('-created_at')  # 생성일 기준 내림차순 정렬
-        serializer = PrivateChatRoomSerializer(chat_rooms, many=True)  # 직렬화
-        return Response(serializer.data)  
+
+        # 하위 쿼리를 사용하여 각 채팅방의 가장 최근 메시지의 created_at 값을 가져옴
+        latest_message_date = ChatMessage.objects.filter(
+            room=OuterRef('pk')  # 현재 채팅방의 ID를 사용하여 필터링
+        ).order_by('-created_at').values('created_at')[:1]
+
+        # 현재 사용자가 참여한 채팅방을 필터링하고, 가장 최근 메시지 날짜 기준으로 내림차순 정렬
+        chat_rooms = PrivateChatRoom.objects.filter(
+            models.Q(user1=user) | models.Q(user2=user)
+        ).annotate(latest_message_date=Subquery(latest_message_date)).order_by('-latest_message_date')
+
+        # 직렬화
+        serializer = PrivateChatRoomSerializer(chat_rooms, many=True)
+        return Response(serializer.data)
 
 
 # 개인 메시지 리스트 / 전송

@@ -1,24 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}나에게 꼭 맞는 유저찾기❤️{% endblock title %}
 
-{% block title %}유저 추천{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/matching.css' %}">
+{% endblock css %}
 
 {% block content %}
-    <h1>추천된 유저 목록</h1>
-    
-    {% if users %}
-        <ul>
-            {% for user in users %}
-                <li>{{ user.username }} (티어: {{ user.riot_tier }}, 포지션: {{ user.positions|join:", " }})</li>
-            {% endfor %}
-        </ul>
-    {% else %}
+
+<h2>추천된 유저 리스트</h2>
+
+<div class="user-list">
+    {% for user in users %}
+        <div class="user-card">
+            <h3>{{ user.username }}</h3>
+            <img src="{{ user.profile_image.url }}" alt="프로필 이미지" class="profile-image">
+            
+            <ul>
+                <li>티어: {{ user.riot_tier }}</li>
+                <li>포지션: 
+                    {% for position in user.positions %}
+                        {{ position.position_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </li>
+                <li>평가 점수: {{ user.score }}</li>
+            </ul>
+
+            {% if user.evaluations %}
+                <div class="evaluations">
+                    <h4>평가 항목</h4>
+                    <ul>
+                        <li>상냥함: {{ user.evaluations.kindness }}</li>
+                        <li>팀워크: {{ user.evaluations.teamwork }}</li>
+                        <li>커뮤니케이션: {{ user.evaluations.communication }}</li>
+                        <li>멘탈: {{ user.evaluations.mental_strength }}</li>
+                        <li>시간약속: {{ user.evaluations.punctuality }}</li>
+                        <li>긍정적: {{ user.evaluations.positivity }}</li>
+                        <li>MVP: {{ user.evaluations.mvp }}</li>
+                        <li>기계적 기술: {{ user.evaluations.mechanical_skill }}</li>
+                        <li>운영: {{ user.evaluations.operation }}</li>
+                        <li>부정적 태도: {{ user.evaluations.negativity }}</li>
+                        <li>욕설: {{ user.evaluations.profanity }}</li>
+                    </ul>
+                </div>
+            {% else %}
+                <p>평가 정보가 없습니다.</p>
+            {% endif %}
+        </div>
+    {% empty %}
         <p>추천된 유저가 없습니다.</p>
-    {% endif %}
-    
-    <a href="{% url 'user_matching' %}">다시 찾기</a>
+    {% endfor %}
+</div>
 
-    {% endblock content %}
-
-    {% block javascript%}
-
-    {% endblock javascript %}
+{% endblock content %}

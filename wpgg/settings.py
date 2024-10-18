@@ -165,7 +165,6 @@ if DEBUG == True:
         }
     }
 else:
-    OPEN_API_KEY = config.OPEN_API_KEY
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

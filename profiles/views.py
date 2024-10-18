@@ -14,6 +14,7 @@ from .riot import get_user_info
 from django.db import models
 from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
+import re
 
 
 class UserDetailView(generics.GenericAPIView):
@@ -193,16 +194,25 @@ class UserRecommendationView(APIView):
     작성 날짜: 2024.10.09
     """
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # 초기화
         matching_reviewee_id = None
 
         # 요청에서 필터링 값 가져오기
-        riot_tiers = request.GET.getlist('riot_tier', [])
-        positions = request.GET.getlist('positions', [])
-        filter_fields = request.GET.getlist('filter_fields', [])
-        user_preference = request.GET.get('user_preference', '')
+        # riot_tiers = request.POST.getlist('riot_tier', [])
+        # positions = request.POST.getlist('positions', [])
+        # filter_fields = request.POST.getlist('filter_fields', [])
+        # user_preference = request.POST.get('user_preference', '')
+        riot_tiers = request.data.get('riot_tier', [])
+        positions = request.data.get('riot_position', [])
+        filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
+        user_preference = request.data.get('user_preference', '')
 
+        # print("riot_tiers >>>>>", riot_tiers)
+        # print("positions >>>>>", positions)
+        # print("filter_fields >>>>>", filter_fields)
+        # print("user_preference >>>>>", user_preference)
+        
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
 
@@ -236,16 +246,20 @@ class UserRecommendationView(APIView):
         all_reviews = Articles.objects.all().values('content', 'reviewee')
         reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
 
+        # print("reviews_test >>>>>", reviews_text)
+        
         # 3. 사용자 입력 텍스트 처리
         if user_preference:
             # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
-            system_instructions = """
-            You are tasked with finding the most relevant review for a user based on their preferences.
-            Based on the user's preference, identify the review that best matches the following description: {user_preference}.
-            Here are all the reviews:
-            {reviews_text}.
-            Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
-            """
+            system_instructions = """ 당신은 사용자의 선호에 따라 관련성 높은 리뷰를 찾는 임무를 맡고 있습니다. 사용자의 선호를 기반으로 다음 설명과 잘 일치하는 리뷰를 모두 찾으세요: {user_preference}. 여기 모든 리뷰가 있습니다: {reviews_text}.일치하는 리뷰어의 ID 또는 IDs를 쉼표로 구분하여 제공합니다 (예: 1 또는 1, 2) 추가 텍스트 없이.
+                                """
+            # system_instructions = """
+            # You are tasked with finding the most relevant review for a user based on their preferences.
+            # Based on the user's preference, identify the review that best matches the following description: {user_preference}.
+            # Here are all the reviews:
+            # {reviews_text}.
+            # Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
+            # """
 
             prompt = system_instructions.format(
                 user_preference=user_preference,
@@ -253,22 +267,20 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-            print('user_preference_analysis:', user_preference_analysis)
+            # print('user_preference_analysis>>>>>>>>', user_preference_analysis)
 
-            # 응답 포맷 확인 및 처리
-            try:
-                if "Review ID:" in user_preference_analysis:
-                    # "Review ID: 1, 2" 형식 처리
-                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(":")[1].split(",")]
-                else:
-                    # "1, 2" 형식 처리
-                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(",")]
-            except (ValueError, IndexError) as e:
-                raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
+            # 정규 표현식을 사용하여 숫자 추출
+            matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
+            
+            # print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
 
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
+            else:
+                return Response({"message": "매칭되는 유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)   
+            
+            # print("users>>>>>", users)
 
         # 상위 3명만 선택
         users = users[:3]
@@ -276,89 +288,7 @@ class UserRecommendationView(APIView):
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return render(request, 'users/matching_result.html', {'users': serializer.data})
-
-    # def post(self, request, *args, **kwargs):
-    #     # 초기화
-    #     matching_reviewee_id = None
-
-    #     # 요청에서 필터링 값 가져오기
-    #     riot_tiers = request.data.getlist('riot_tier', [])
-    #     positions = request.data.getlist('positions', [])
-    #     filter_fields = request.data.getlist('filter_fields', [])
-    #     user_preference = request.data.get('user_preference', '')
-
-    #     # 기본 유저 리스트 가져오기
-    #     users = User.objects.all()
-
-    #     # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
-    #     if riot_tiers:
-    #         users = users.filter(riot_tier__in=riot_tiers)
-
-    #     if positions:
-    #         users = users.filter(positions__position_name__in=positions)
-
-    #     # 2. 평가 필드 필터링
-    #     if filter_fields:
-    #         # 필터링 조건 추가
-    #         filter_conditions = {}
-    #         for field in filter_fields:
-    #             if hasattr(Evaluations, field):
-    #                 filter_conditions[f'evaluations__{field}__gte'] = 1  # 필드 값이 1 이상인 경우
-
-    #         # 유저 필터링
-    #         users = users.filter(**filter_conditions)
-
-    #         # 평가 항목이 있는 유저만 필터링 후 정렬
-    #         users = users.filter(evaluations__isnull=False).annotate(
-    #             evaluations_count=models.Count('evaluations')
-    #         ).order_by(*[f'-evaluations__{field}' for field in filter_fields]).distinct()
-
-    #     # 리뷰 데이터 가져오기
-    #     all_reviews = Articles.objects.all().values('content', 'reviewee')
-    #     reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
-
-    #     # 3. 사용자 입력 텍스트 처리
-    #     if user_preference:
-    #         # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
-    #         system_instructions = """
-    #         You are tasked with finding the most relevant review for a user based on their preferences.
-    #         Based on the user's preference, identify the review that best matches the following description: {user_preference}.
-    #         Here are all the reviews:
-    #         {reviews_text}.
-    #         Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
-    #         """
-
-    #         prompt = system_instructions.format(
-    #             user_preference=user_preference,
-    #             reviews_text=reviews_text
-    #         )
-
-    #         user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-    #         print('user_preference_analysis:', user_preference_analysis)
-
-    #         # 응답 포맷 확인 및 처리
-    #         try:
-    #             if "Review ID:" in user_preference_analysis:
-    #                 # "Review ID: 1, 2" 형식 처리
-    #                 matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(":")[1].split(",")]
-    #             else:
-    #                 # "1, 2" 형식 처리
-    #                 matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(",")]
-    #         except (ValueError, IndexError) as e:
-    #             raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
-
-    #         # 유저 필터링
-    #         if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
-    #             users = users.filter(id__in=matching_reviewee_ids)
-
-        # 상위 3명만 선택
-        users = users[:3]
-        
-        # 직렬화하여 응답
-        serializer = UserSerializer(users, many=True)
-        # return render(request, 'users/matching_result.html', {'users': serializer.data})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return render(request, 'profiles/matching_result.html', {'users': serializer.data})
 
 
 class GetRiotInfoView(APIView):

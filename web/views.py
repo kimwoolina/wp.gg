@@ -5,7 +5,6 @@ from django.views.generic import TemplateView
 import requests
 from django.http import Http404
 
-
 # user 앱 관련
 
 """홈 화면 페이지 렌더링"""
@@ -61,9 +60,9 @@ class UserDetailPageView(TemplateView):
 
 # chats 앱 관련
 """ 채팅방 템플릿 뷰 """
-class ChatRoomTemplateView(generic.TemplateView):
-    template_name = 'chats/chat.html'
-    
+def chat_room_template(request):
+    return render(request, 'chats/chat.html')
+
 # class ChatRoomTemplateView(APIView):
 #     def get(self, request):
 #         return render(request, 'chats/chat.html', {'user': request.user})

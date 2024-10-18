@@ -13,7 +13,6 @@
 [![OpenAI Python Client](https://img.shields.io/badge/OpenAI%20Python%20Client-0.28.0-4B92DB)](https://github.com/openai/openai-python)
 [![RIOT API](https://img.shields.io/badge/RIOT_API-red)](https://developer.riotgames.com/)
 [![Discord API](https://img.shields.io/badge/Discord_API-7289da)](https://discord.com/developers/docs/intro)
-[![WebSocket](https://img.shields.io/badge/WebSocket-000000)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
 <br>
 
@@ -23,14 +22,18 @@
 2. [Setup](#setup)
 3. [핵심기능](#features)
 4. [적용기술](#techstack)
-5. [ERD](#erd)
-6. [Team](#team)
+5. [Architecture](#architecture)
+6. [ERD](#erd)
+7. [Team](#team)
 
 <br>
 
 <a name="introduction"></a>
 ## 👀 Introduction
-리그오브레전드 유저 평판 관리 웹앱
+![image](https://github.com/user-attachments/assets/6bfa6e6d-d382-48a2-bc65-d6bd94e5be0f)
+
+
+WP.GG는 리그 오브 레전드 유저들의 리뷰와 매칭 시스템을 통해, 긍정적인 팀 문화를 구축하고 즐거운 게임 경험을 만들어가는 공간입니다.
 
 ### 🗓 Duration
 24.09.30  ~ing
@@ -219,6 +222,12 @@ To set up and run the project, follow these steps:
 
 <a name="techstack"></a>
 
+<a name="architecture"></a>
+## 🌐 Architecture
+![image](https://github.com/user-attachments/assets/7117e8ac-c231-4403-8023-57de20cbf2cf)
+
+<br>
+
 <a name="erd"></a>
 ## 🗂 ERD
 <img width="822" alt="스크린샷 2024-10-08 오후 12 56 04" src="https://github.com/user-attachments/assets/168bb3a7-d400-4570-813e-f64298595284">
@@ -230,10 +239,10 @@ To set up and run the project, follow these steps:
 
 | **Name**         | **GitHub Handle**                          | **Responsibilities**                                                                                           |
 |------------------|------------------------------------------------|-------------------------------------------------------------------------------------------|
-| **Woolin Kim**👑  | [@kimwoolina](https://github.com/kimwoolina)   | 소셜 로그인 연동, 라이엇 API 사용, 유저 추천 기능(LLM 활용), 유저 검색 기능 등 |
-| **Saeye Lee**    | [@saeye](https://github.com/saeye)             | 회원, 채팅, 신고 관련 기능 , 비하발언 감지 기능(LLM) 등 |
-| **Nahee Kim**    | [@sptcnl](https://github.com/sptcnl)           | 리뷰, 댓글, 크레딧(결제) 관련 기능 등 |
-| **Minseong Jeon**  | [@Oztalun](https://github.com/Oztalun)       | 파티 관련 기능 (팀 생성, 방장 교체, 팀원 내보내기, 팀 삭제 등) |
+| **Woolin Kim**👑  | [@kimwoolina](https://github.com/kimwoolina)   | 소셜 로그인 연동, 라이엇 API 사용, 유저 추천 기능(LLM 활용), 채팅 기능, 유저 검색 기능 등 |
+| **Saeye Lee**    | [@saeye](https://github.com/saeye)             | 회원가입, 로그인 등 인증 기능, 신고 관련 기능 , 비하발언 감지 기능(LLM), UI/UX 등 |
+| **Nahee Kim**    | [@sptcnl](https://github.com/sptcnl)           | 리뷰, 댓글, 크레딧(결제) 관련 기능, UI/UX 등 |
+| **Minseong Jeon**  | [@Oztalun](https://github.com/Oztalun)       | 배포, 파티 관련 기능 (팀 생성, 방장 교체, 팀원 내보내기, 팀 삭제 등) |
 
 #### [📝 SA 문서 바로가기](https://www.notion.so/teamsparta/SA-97b05811e819459db6bfd1cd79ae6c1a)
 #### [👊 팀 노션 바로가기](https://www.notion.so/teamsparta/fff2dc3ef5148112a832fd4cdd59b2c1)

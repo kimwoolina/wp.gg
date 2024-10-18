@@ -52,12 +52,14 @@
     </div>
 
     <!-- 댓글 작성 (댓글 목록 위로 이동) -->
+    {% if request.user.is_authenticated %}
     <div class="comment-form">
         <textarea id="comment-content" placeholder="댓글을 작성하세요..."></textarea>
         <div class="button-container">
             <button id="submit-comment" class="button-81" role="button">댓글 작성하기</button>
         </div>
     </div>
+    {% endif %}
 
     <!-- 댓글 섹션 (댓글 작성 칸 아래로 이동) -->
     <div style="margin-left: 5px; margin-bottom: 10px;">댓글 {{ article.comments|length }} 개 </div>

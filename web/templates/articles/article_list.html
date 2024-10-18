@@ -8,9 +8,12 @@
 {% endblock css %}
 
 {% block content %}
+
+{% if request.user.is_authenticated %}  
 <div class="button-container">
     <button class="button-81" role="button" onclick="window.location.href='{% url 'article-create' %}'">리뷰 작성하기</button>
 </div>
+{% endif %}
 
 <div id="article-list"></div>
 {% endblock content %}

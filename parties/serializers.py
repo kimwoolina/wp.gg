@@ -6,7 +6,8 @@ class PartiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parties
         fields = [
-            # "user_id",# 방장
+            "id",
+            "user",
             "rank",
             "server",
             "language",
@@ -24,5 +25,4 @@ class PartiesSerializer(serializers.ModelSerializer):
             "mid2",
             "support2",
             "adc2",
-            "user",
         ]

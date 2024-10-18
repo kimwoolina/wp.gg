@@ -21,6 +21,7 @@ urlpatterns = [
     path('', views.home, name='home'), # 기본 홈 화면
     path('base/', views.base, name='base'),
     path('discord/', views.indexView.as_view(), name='user_index'),
+    path('party/', views.party, name='party'),
     path('search/', views.SearchPageView.as_view(), name='user-search'), # 유저 검색
     path('<str:username>', views.UserDetailPageView.as_view(), name='user-detail'), # 유저 검색
 ]

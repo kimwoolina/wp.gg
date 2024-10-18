@@ -281,8 +281,8 @@ To set up and run the project, follow these steps:
 <summary>미리보기</summary>
 <div markdown="1">
   
-<img width="1300" alt="스크린샷 2024-10-08 오전 3 35 45" src="https://github.com/user-attachments/assets/cc4c3e50-eaa3-4814-be71-502d383b90bf">
-<img width="1300" alt="스크린샷 2024-10-08 오전 3 34 39" src="https://github.com/user-attachments/assets/a820a585-b20b-48df-be5a-189f115ab235">
+<img width="780" alt="스크린샷 2024-10-08 오전 3 35 45" src="https://github.com/user-attachments/assets/cc4c3e50-eaa3-4814-be71-502d383b90bf">
+<img width="360" alt="스크린샷 2024-10-08 오전 3 34 39" src="https://github.com/user-attachments/assets/a820a585-b20b-48df-be5a-189f115ab235">
 
  <br>
 </div>

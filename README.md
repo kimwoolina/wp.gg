@@ -22,14 +22,16 @@
 2. [Setup](#setup)
 3. [핵심기능](#features)
 4. [적용기술](#techstack)
-5. [ERD](#erd)
-6. [Team](#team)
+5. [Architecture](#architecture)
+6. [ERD](#erd)
+7. [Team](#team)
 
 <br>
 
 <a name="introduction"></a>
 ## 👀 Introduction
-![image](https://github.com/user-attachments/assets/9802e38f-7d62-4ea1-92ab-ff5cdde9ea91)
+![image](https://github.com/user-attachments/assets/6bfa6e6d-d382-48a2-bc65-d6bd94e5be0f)
+
 
 WP.GG는 리그 오브 레전드 유저들의 리뷰와 매칭 시스템을 통해, 긍정적인 팀 문화를 구축하고 즐거운 게임 경험을 만들어가는 공간입니다.
 
@@ -219,6 +221,12 @@ To set up and run the project, follow these steps:
 <br><br>
 
 <a name="techstack"></a>
+
+<a name="architecture"></a>
+## 🌐 Architecture
+![image](https://github.com/user-attachments/assets/7117e8ac-c231-4403-8023-57de20cbf2cf)
+
+<br>
 
 <a name="erd"></a>
 ## 🗂 ERD

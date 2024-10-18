@@ -21,7 +21,7 @@ from wpgg.settings import DiscordOAuth2
 from django.shortcuts import redirect
 import requests
 from django.views import generic
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth import get_backends
 from django.http import JsonResponse
 
@@ -53,45 +53,116 @@ class CustomRegisterView(RegisterView):
         password1 = request.data.get('password1')
         password2 = request.data.get('password2')
 
-        # 필수 필드가 비어있을 경우 에러 처리
-        if not email or not username or not password1:
-            return Response({'error': '이메일, 유저네임, 비밀번호를 모두 입력해주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+        # 오류 메시지 모음
+        errors ={}
 
-        # 기본 회원가입 로직 수행
-        response = super().create(request, *args, **kwargs)
 
-        # 회원가입 성공 시 로그인 페이지로 리다이렉트
-        if response.status_code == status.HTTP_201_CREATED:
-            return redirect('login_page')
+        # 이메일 유효성 검사 및 오류 처리
+        if not email:
+            errors['email'] = "이메일을 입력해주세요."
+        else:
+            try:
+                validate_email(email)
+            except ValidationError as e:
+                errors['email'] = f"유효하지 않은 이메일 형식입니다: {str(e)}"
 
-        return response
+        # 유저네임 유효성 검사 및 오류 처리
+        if not username:
+            errors['username'] = "유저네임을 입력해주세요."
+        else:
+            try:
+                validate_username_length(username)
+            except ValidationError as e:
+                errors['username'] = f"유저네임 오류: {str(e)}"
+
+        # 비밀번호 유효성 검사 및 일치 여부 확인
+        if not password1 or not password2:
+            errors['password'] = "비밀번호를 모두 입력해주세요."
+        elif password1 != password2:
+            errors['password'] = "비밀번호가 일치하지 않습니다."
+
+        # 중복 이메일 및 유저네임 확인
+        if User.objects.filter(email=email).exists():
+            errors['email'] = "이미 사용 중인 이메일입니다."
+        if User.objects.filter(username=username).exists():
+            errors['username'] = "이미 사용 중인 유저네임입니다."
+
+        # 오류가 있을 경우 상세 메시지 반환
+        if errors:
+            return Response({
+                'message': '회원가입에 실패했습니다.',
+                'errors': errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 사용자 생성 및 회원가입 성공 처리
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1
+            )
+            new_user = authenticate(request, email=email, password=password1)
+            login(request, new_user)
+            refresh = RefreshToken.for_user(new_user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            return Response({
+                'message': '회원가입이 완료되었습니다. 환영합니다!',
+                'user': {
+                    'username': user.username,
+                    'email': user.email
+                },
+                'access': access_token,
+                'refresh': refresh_token
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                'message': '회원가입 중 오류가 발생했습니다.',
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # 로그인
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        # 1. 이메일 존재 여부 확인
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {'error': '존재하지 않는 이메일입니다.'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 2. 비밀번호가 올바른지 확인
+        user = authenticate(request, email=email, password=password)
+        if user is None:
+            return Response(
+                {'error': '비밀번호가 잘못되었습니다.'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # 3. 계정 활성화 여부 확인
+        if not user.is_active:
+            return Response(
+                {'error': '이 계정은 비활성화 상태입니다. 관리자에게 문의하세요.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
         
-        if response.status_code == status.HTTP_200_OK:
-            user = self.request.user
-            username = user.username
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)  # Access Token 발급
+        refresh_token = str(refresh)  # Refresh Token 발급
+        login(request, user)
 
-            # JWT 토큰 생성
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            refresh_token = str(refresh)
-
-            response.data = {
-                'message': f'{username}님 안녕하세요😊',
-                'access': access_token,
-                'refresh': refresh_token
-            }
-            
-            # access_token, refresh_token 없으면 에러 메시지 
-            if not access_token or not refresh_token:
-                response.data['error'] = '토큰을 발급받지 못했습니다.'
-
-        return response
+        return Response({
+            'message': f'{user.username}님, 로그인 성공!',
+            'access': access_token,
+            'refresh': refresh_token
+        }, status=status.HTTP_200_OK)
     
 
 # 로그아웃

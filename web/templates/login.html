@@ -236,6 +236,8 @@
         function loginUser() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
+            console.log('로그인 시도:', email, password);  
         
             fetch('/auth/login/', {
                 method: 'POST',
@@ -249,22 +251,21 @@
                 })
             })
             .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return response.json().then(data => {
-                        alert('로그인 실패: ' + data.error);
-                        console.error('Error data:', data);
-                    });
-                }
+                console.log('응답 상태:', response.status);  // 응답 상태 확인
+                return response.json();  // 응답 데이터 반환
             })
             .then(data => {
+                console.log('응답 데이터:', data);  // 응답 데이터 확인
+
                 if (data.access && data.refresh) {
+                    // JWT 토큰 저장
                     localStorage.setItem('access_token', data.access);
                     localStorage.setItem('refresh_token', data.refresh);
-
-                    alert('로그인 성공! 나와 맞는 유저를 찾아보세요🥰');
+        
+                    alert('로그인 완료!👌');
                     window.location.href = '/home/';
+                } else if (data.error) {
+                    alert(data.error);
                 }
             })
             .catch(error => console.error('Error:', error));

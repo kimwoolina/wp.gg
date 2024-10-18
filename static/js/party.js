@@ -1,17 +1,3 @@
-function getRank(number) {
-    const rankText = rankMapping[number] || "Invalid Rank";
-    // document.getElementById("rankOutput").innerText = rankText;
-    return rankText;
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Django에서 받은 data.rank 값을 HTML에 출력
-    const rankValue = document.getElementById("rankInput").innerText;
-    const rankLabel = document.getElementById("rankLabel");
-    rankLabel.innerText = getRank(rankValue);  // 함수 호출 결과를 label에 출력
-});
-
-
 function deletemethod(itemId) {
     console.log('삭제할 itemId:', itemId);  // itemId를 콘솔에 출력
 

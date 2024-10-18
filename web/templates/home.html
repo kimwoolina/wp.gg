@@ -16,7 +16,7 @@
             <a href="{% url 'article-list' %}">유저리뷰</a>
             <a href="{% url 'ranking' %}">매너랭킹</a>
             <a href="{% url 'user_matching' %}">유저추천</a>
-            <a href="/api/party/">팀매칭</a>
+            <a href="{% url 'party' %}">팀매칭</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'chat-room-template' %}">채팅</a>
             {% else %}

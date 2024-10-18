@@ -12,6 +12,7 @@ from users.serializers import (
     UserProfileSerializer
 )
 from django.db.models import Avg
+import json
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -86,6 +87,46 @@ class ArticleSerializer(serializers.ModelSerializer):
             reviewee.score = 0.0
         reviewee.save()
 
+    def _handle_image_files(self, article, img_files):
+        """
+        이미지 파일을 처리하여 ArticleImages를 생성합니다.
+        """
+        # img_files가 비어있지 않은 경우에만 처리
+        for img_file in img_files:
+            ArticleImages.objects.create(article=article, img=img_file)
+                
+    def _handle_evaluation_data(self, article):
+        """
+        평가 데이터를 처리하여 Evaluations 객체를 생성 또는 업데이트합니다.
+        체크된 항목에 대해 +1씩 추가합니다.
+        """
+        req_data = self.context['request'].data
+        evaluation, created = Evaluations.objects.get_or_create(user=article.reviewee)
+
+        # selected_categories에서 값을 추출
+        selected_categories = req_data.get('selected_categories')
+        if selected_categories:
+            selected_categories = json.loads(selected_categories)  # JSON 문자열을 딕셔너리로 변환
+
+            # 각 항목에 대해 체크 여부에 따라 +1 추가
+            for field in [
+                'kindness', 'teamwork', 'communication', 'mental_strength', 
+                'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
+                'operation', 'negativity', 'profanity', 'afk', 
+                'cheating', 'verbal_abuse'
+            ]:
+                # selected_categories에서 해당 항목의 값이 1인지 확인
+                if selected_categories.get(field) == 1:  # 체크된 항목일 경우
+                    setattr(evaluation, field, getattr(evaluation, field, 0) + 1)
+
+        # 업데이트된 평가 데이터를 저장
+        evaluation.save()
+
+    def update(self, instance, validated_data):
+        article = super().update(instance, validated_data)
+        article.update_user_score()  # 아티클이 업데이트될 때 점수 업데이트
+        return article
+    
     def create(self, validated_data):
         """
         새로운 기사를 생성하고 관련 데이터를 처리합니다.
@@ -108,38 +149,4 @@ class ArticleSerializer(serializers.ModelSerializer):
         # 리뷰어의 점수 업데이트
         self.update_user_score(article.reviewee)
 
-        return article
-
-    def _handle_image_files(self, article, img_files):
-        """
-        이미지 파일을 처리하여 ArticleImages를 생성합니다.
-        """
-        # img_files가 비어있지 않은 경우에만 처리
-        for img_file in img_files:
-            ArticleImages.objects.create(article=article, img=img_file)
-                
-    def _handle_evaluation_data(self, article):
-        """
-        평가 데이터를 처리하여 Evaluations 객체를 생성 또는 업데이트합니다.
-        체크된 항목에 대해 +1씩 추가합니다.
-        """
-        req_data = self.context['request'].data
-        evaluation, created = Evaluations.objects.get_or_create(user=article.reviewee)
-
-        # 각 항목에 대해 체크 여부에 따라 +1 추가
-        for field in [
-            'kindness', 'teamwork', 'communication', 'mental_strength', 
-            'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
-            'operation', 'negativity', 'profanity', 'afk', 
-            'cheating', 'verbal_abuse'
-        ]:
-            if req_data.get(field) == '1':  # 체크된 항목일 경우
-                setattr(evaluation, field, getattr(evaluation, field, 0) + 1)
-
-        # 업데이트된 평가 데이터를 저장
-        evaluation.save()
-
-    def update(self, instance, validated_data):
-        article = super().update(instance, validated_data)
-        article.update_user_score()  # 아티클이 업데이트될 때 점수 업데이트
         return article

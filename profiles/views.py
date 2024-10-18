@@ -34,96 +34,120 @@ class UserDetailView(generics.GenericAPIView):
         username = kwargs.get('username')
         riot_tag = request.query_params.get('riot_tag')
 
-        # riot_tag가 있으면 같이 필터링, 없으면 riot_username만 필터링
-        filters = {'riot_username': username}
-        if riot_tag:
+        # 사용자 검색을 위한 필터
+        filters = {}
+
+        if riot_tag:  # riot_tag가 있는 경우
+            filters['riot_username'] = username
             filters['riot_tag'] = riot_tag
-        
-        # 유저검색
+        else:  # riot_tag가 없는 경우
+            filters['riot_username'] = username
+            
+            # 쿼리셋 생성
+            user_queryset = User.objects.filter(**filters)
+
+            # 유저를 찾지 못한 경우, username을 기준으로 다시 필터링
+            if not user_queryset.exists():
+                filters = {'username': username}  # username으로만 필터링
+                user_queryset = User.objects.filter(**filters)
+
+        # 사용자 검색
         user_queryset = User.objects.filter(**filters)
 
         if user_queryset.exists():
             user = user_queryset.first()
 
             # 라이엇 정보 가져오기
-            if riot_tag:  # riot_tag가 있는 경우에만 라이엇 정보 호출
-                user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
-
-                if 'error' in user_info:
-                    return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-
-                # 라이엇 프로필 이미지 저장
-                profile_icon_link = user_info.get('profileIconLink')
-                if profile_icon_link:
-                    user.riot_profile_image = profile_icon_link  # 프로필 이미지를 업데이트
-                    user.save()  # 변경된 내용을 저장
-
-                # riot_tier 업데이트
-                league_info = user_info.get('league', [])
-                if league_info:
-                    tier = league_info[0].get('tier')
-                    if tier and tier != user.riot_tier:
-                        user.riot_tier = tier
-                        user.save()  # 변경된 내용을 저장
-
-                # positions 업데이트
-                preferred_position = user_info.get('preferredPosition')
-                if preferred_position:
-                    # 기존 positions 초기화
-                    user.positions.clear()
-                    position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
-                    user.positions.add(position)
+            user_info = self.get_riot_info(user, username, riot_tag)
 
             # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
             articles = Articles.objects.filter(reviewee=user)
-            serializer = self.get_serializer(user)
-            serializer_data = serializer.data
-            
-            # Evaluations를 serializer_data에 추가
-            try:
-                evaluations = Evaluations.objects.get(user=user)
-                serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
-            except Evaluations.DoesNotExist:
-                serializer_data['evaluations'] = None
-            
-            # Evaluations가 None일 때 처리 (모든 필드를 기본값 0으로 설정)
-            if serializer_data.get('evaluations') is None:
-                serializer_data['evaluations'] = {
-                    'kindness': 0,
-                    'teamwork': 0,
-                    'communication': 0,
-                    'mental_strength': 0,
-                    'punctuality': 0,
-                    'positivity': 0,
-                    'mvp': 0,
-                    'mechanical_skill': 0,
-                    'operation': 0,
-                    'negativity': 0,
-                    'profanity': 0,
-                    'afk': 0,
-                    'cheating': 0,
-                    'verbal_abuse': 0,
-                }
-            else:
-                # 각 필드에 대해 None이면 기본값 0으로 설정
-                evaluations_data = serializer_data['evaluations']
-                for field in ['kindness', 'teamwork', 'communication', 'mental_strength', 
-                        'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
-                        'operation', 'negativity', 'profanity', 'afk', 
-                        'cheating', 'verbal_abuse']:
-                    evaluations_data[field] = evaluations_data.get(field, 0)
-                
-            # articles를 serializer_data에 추가
-            article_serializer = ArticleSerializer(articles, many=True)
-            serializer_data['articles'] = article_serializer.data
-            
+            serializer_data = self.get_serializer_data(user, articles)
+
             # 라이엇 정보 추가
-            if riot_tag:
+            if riot_tag and user_info:
                 serializer_data['riot_info'] = user_info
-                
+
             return Response(serializer_data)
 
-        return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})
+        return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    def get_riot_info(self, user, username, riot_tag):
+        if riot_tag:  # riot_tag가 있는 경우에만 라이엇 정보 호출
+            user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
+            if 'error' in user_info:
+                return None
+            
+            # 라이엇 프로필 이미지 저장
+            self.update_user_with_riot_info(user, user_info)
+            return user_info
+        return None
+
+    def update_user_with_riot_info(self, user, user_info):
+        profile_icon_link = user_info.get('profileIconLink')
+        if profile_icon_link:
+            user.riot_profile_image = profile_icon_link
+            user.save()
+
+        league_info = user_info.get('league', [])
+        if league_info:
+            tier = league_info[0].get('tier')
+            if tier and tier != user.riot_tier:
+                user.riot_tier = tier
+                user.save()
+
+        preferred_position = user_info.get('preferredPosition')
+        if preferred_position:
+            user.positions.clear()
+            position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
+            user.positions.add(position)
+
+    def get_serializer_data(self, user, articles):
+        serializer = self.get_serializer(user)
+        serializer_data = serializer.data
+
+        # Evaluations를 serializer_data에 추가
+        evaluations = self.get_evaluations(user)
+        serializer_data['evaluations'] = evaluations
+
+        # articles를 serializer_data에 추가
+        article_serializer = ArticleSerializer(articles, many=True)
+        serializer_data['articles'] = article_serializer.data
+
+        return serializer_data
+
+    def get_evaluations(self, user):
+        try:
+            evaluations = Evaluations.objects.get(user=user)
+            evaluations_data = EvaluationSerializer(evaluations).data
+        except Evaluations.DoesNotExist:
+            evaluations_data = self.default_evaluations()
+
+        # 각 필드에 대해 None이면 기본값 0으로 설정
+        return {field: evaluations_data.get(field, 0) for field in [
+            'kindness', 'teamwork', 'communication', 'mental_strength', 
+            'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
+            'operation', 'negativity', 'profanity', 'afk', 
+            'cheating', 'verbal_abuse'
+        ]}
+
+    def default_evaluations(self):
+        return {
+            'kindness': 0,
+            'teamwork': 0,
+            'communication': 0,
+            'mental_strength': 0,
+            'punctuality': 0,
+            'positivity': 0,
+            'mvp': 0,
+            'mechanical_skill': 0,
+            'operation': 0,
+            'negativity': 0,
+            'profanity': 0,
+            'afk': 0,
+            'cheating': 0,
+            'verbal_abuse': 0,
+        }
 
 
 

@@ -282,9 +282,9 @@
 
             // 채팅방 생성 버튼 클릭 시
             $('#create-chat-room').click(function() {
-                const user2Id = $('#user2-id').val();
-                if (user2Id) {
-                    createChatRoom(user2Id);
+                const userName = $('#user2-id').val();
+                if (userName) {
+                    createChatRoom(userName);
                     $('#user2-id').val('');
                 } else {
                     alert("Please enter a user ID.");
@@ -370,8 +370,7 @@
                 });
             }
     
-            // 채팅방 생성 함수
-            function createChatRoom(user2Id) {
+            function createChatRoom(userName) {
                 $.ajax({
                     url: '/api/chat/private-chat/',
                     method: 'POST',
@@ -380,7 +379,7 @@
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
                     contentType: 'application/json',
-                    data: JSON.stringify({ user2: user2Id }),
+                    data: JSON.stringify({ user_name: userName }), // 단일 입력
                     success: function(room) {
                         loadChatRooms(); // 성공 시 채팅방 목록 로드
                     },
@@ -388,6 +387,9 @@
                         if (xhr.status === 401) {
                             // 로그인 안했을 때
                             alert("로그인이 필요한 서비스 입니다.");
+                        } else if (xhr.status === 404) {
+                            // 존재하지 않는 유저명
+                            alert(xhr.responseJSON.error);
                         } else {
                             // 실패했을 때 에러 메시지 alert
                             alert(xhr.responseJSON.error || "알 수 없는 오류 발생");

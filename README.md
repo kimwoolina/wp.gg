@@ -29,7 +29,9 @@
 
 <a name="introduction"></a>
 ## 👀 Introduction
-리그오브레전드 유저 평판 관리 웹앱
+![image](https://github.com/user-attachments/assets/9802e38f-7d62-4ea1-92ab-ff5cdde9ea91)
+
+WP.GG는 리그 오브 레전드 유저들의 리뷰와 매칭 시스템을 통해, 긍정적인 팀 문화를 구축하고 즐거운 게임 경험을 만들어가는 공간입니다.
 
 ### 🗓 Duration
 24.09.30  ~ing
@@ -229,10 +231,10 @@ To set up and run the project, follow these steps:
 
 | **Name**         | **GitHub Handle**                          | **Responsibilities**                                                                                           |
 |------------------|------------------------------------------------|-------------------------------------------------------------------------------------------|
-| **Woolin Kim**👑  | [@kimwoolina](https://github.com/kimwoolina)   | 소셜 로그인 연동, 라이엇 API 사용, 유저 추천 기능(LLM 활용), 유저 검색 기능 등 |
-| **Saeye Lee**    | [@saeye](https://github.com/saeye)             | 회원, 채팅, 신고 관련 기능 , 비하발언 감지 기능(LLM) 등 |
-| **Nahee Kim**    | [@sptcnl](https://github.com/sptcnl)           | 리뷰, 댓글, 크레딧(결제) 관련 기능 등 |
-| **Minseong Jeon**  | [@Oztalun](https://github.com/Oztalun)       | 파티 관련 기능 (팀 생성, 방장 교체, 팀원 내보내기, 팀 삭제 등) |
+| **Woolin Kim**👑  | [@kimwoolina](https://github.com/kimwoolina)   | 소셜 로그인 연동, 라이엇 API 사용, 유저 추천 기능(LLM 활용), 채팅 기능, 유저 검색 기능 등 |
+| **Saeye Lee**    | [@saeye](https://github.com/saeye)             | 회원가입, 로그인 등 인증 기능, 신고 관련 기능 , 비하발언 감지 기능(LLM), UI/UX 등 |
+| **Nahee Kim**    | [@sptcnl](https://github.com/sptcnl)           | 리뷰, 댓글, 크레딧(결제) 관련 기능, UI/UX 등 |
+| **Minseong Jeon**  | [@Oztalun](https://github.com/Oztalun)       | 배포, 파티 관련 기능 (팀 생성, 방장 교체, 팀원 내보내기, 팀 삭제 등) |
 
 #### [📝 SA 문서 바로가기](https://www.notion.so/teamsparta/SA-97b05811e819459db6bfd1cd79ae6c1a)
 #### [👊 팀 노션 바로가기](https://www.notion.so/teamsparta/fff2dc3ef5148112a832fd4cdd59b2c1)

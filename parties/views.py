@@ -52,68 +52,44 @@ class PartyView(ListCreateAPIView):
     # 팀 생성 RQ-021-1
     def post(self, request):
         """position:mid, top, jun, adc, sup 5개중에 하나로 입력되고 그에 따라 방장의 라인이 결졍된다."""
+        print(request.user, "있나?asdfas")
+        if request.user.in_party is not None:
+            return Response({"data":"error", "message": "이미 파티에 참여된 상태입니다."}, status=400)
 
         # 체크박스의 값은 on, off로 들어오는것 같다.
         is_rank = request.data.get('is_rank') == 'on'
-
+        
         # print(f"rank:{request.data.get('rank')}, server:{request.data.get('server')}, language:{request.data.get('language')}")
         line = request.data.get("position")
         
-        # 로그인 안되면 확인용
         if line == "mid":
-            party = Parties.objects.create(user=User.objects.get(id=2), rank=request.data.get("rank"),
+            party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
                                 server=request.data.get("server"), language=request.data.get("language"),
                                 age=request.data.get("age"), gender=request.data.get("gender"),
-                                is_rank=is_rank, mid1=User.objects.get(id=2))
+                                is_rank=is_rank, mid1=request.user)
         elif line == "top":
-            party = Parties.objects.create(user=User.objects.get(id=2), rank=request.data.get("rank"),
+            party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
                                 server=request.data.get("server"), language=request.data.get("language"),
                                 age=request.data.get("age"), gender=request.data.get("gender"),
-                                is_rank=is_rank, top1=User.objects.get(id=2))
+                                is_rank=is_rank, top1=request.user)
         elif line == "jun":
-            party = Parties.objects.create(user=User.objects.get(id=2), rank=request.data.get("rank"),
+            party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
                                 server=request.data.get("server"), language=request.data.get("language"),
                                 age=request.data.get("age"), gender=request.data.get("gender"),
-                                is_rank=is_rank, jungle1=User.objects.get(id=2))
+                                is_rank=is_rank, jungle1=request.user)
         elif line == "sup":
-            party = Parties.objects.create(user=User.objects.get(id=2), rank=request.data.get("rank"),
+            party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
                                 server=request.data.get("server"), language=request.data.get("language"),
                                 age=request.data.get("age"), gender=request.data.get("gender"),
-                                is_rank=is_rank, support1=User.objects.get(id=2))
+                                is_rank=is_rank, support1=request.user)
         elif line == "adc":
-            party = Parties.objects.create(user=User.objects.get(id=2), rank=request.data.get("rank"),
+            party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
                                 server=request.data.get("server"), language=request.data.get("language"),
                                 age=request.data.get("age"), gender=request.data.get("gender"),
-                                is_rank=is_rank, adc1=User.objects.get(id=2))
-        
-        
-        # 로그인 되면 이거로 바꾸기
-        # if line == "mid":
-        #     party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
-        #                         server=request.data.get("server"), language=request.data.get("language"),
-        #                         age=request.data.get("age"), gender=request.data.get("gender"),
-        #                         is_rank=is_rank, mid1=request.user)
-        # elif line == "top":
-        #     party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
-        #                         server=request.data.get("server"), language=request.data.get("language"),
-        #                         age=request.data.get("age"), gender=request.data.get("gender"),
-        #                         is_rank=is_rank, top1=request.user)
-        # elif line == "jun":
-        #     party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
-        #                         server=request.data.get("server"), language=request.data.get("language"),
-        #                         age=request.data.get("age"), gender=request.data.get("gender"),
-        #                         is_rank=is_rank, jungle1=request.user)
-        # elif line == "sup":
-        #     party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
-        #                         server=request.data.get("server"), language=request.data.get("language"),
-        #                         age=request.data.get("age"), gender=request.data.get("gender"),
-        #                         is_rank=is_rank, support1=request.user)
-        # elif line == "adc":
-        #     party = Parties.objects.create(user=request.user, rank=request.data.get("rank"),
-        #                         server=request.data.get("server"), language=request.data.get("language"),
-        #                         age=request.data.get("age"), gender=request.data.get("gender"),
-        #                         is_rank=is_rank, adc1=request.user)
-
+                                is_rank=is_rank, adc1=request.user)
+        request.user.in_party=party.id
+        print(party.id, request.user.in_party)
+        request.user.save()
         serializer = PartiesSerializer(party)
         return Response({"data": serializer.data})
 

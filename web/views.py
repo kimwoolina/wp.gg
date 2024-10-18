@@ -79,14 +79,6 @@ def article_create_page(request):
 
 
 def article_detail_view(request, article_id):
-    # API에서 데이터 가져오기
-    try:
-        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
-        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
-        article = response.json()  # JSON으로 변환
-    except requests.exceptions.HTTPError:
-        raise Http404("Article not found.")  # 404 오류 발생
-    
     return render(request, 'articles/article_detail.html', {'article': article})
 
 
@@ -117,9 +109,11 @@ def party(request):
     elif request.method == 'POST':
         print("post request")
         try:
-            response = requests.post(f'http://localhost/api/party/', json=request.POST)
-            response.raise_for_status()
+            response = requests.post(f'http://127.0.0.1:8000/api/party/', json=request.POST)
+            response_data = response.json()
+            print(response_data.position)
         except:
-            return redirect('')
+            print("죽음")
+            return redirect('/party/')
         party_data = Parties.objects.all().order_by("-pk")
         return render(request, 'parties/parties.html', {'party': party_data})

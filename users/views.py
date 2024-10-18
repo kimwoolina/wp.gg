@@ -126,28 +126,43 @@ class CustomRegisterView(RegisterView):
 # 로그인
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        # 1. 이메일 존재 여부 확인
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {'error': '존재하지 않는 이메일입니다.'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 2. 비밀번호가 올바른지 확인
+        user = authenticate(request, email=email, password=password)
+        if user is None:
+            return Response(
+                {'error': '비밀번호가 잘못되었습니다.'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # 3. 계정 활성화 여부 확인
+        if not user.is_active:
+            return Response(
+                {'error': '이 계정은 비활성화 상태입니다. 관리자에게 문의하세요.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
         
-        if response.status_code == status.HTTP_200_OK:
-            user = self.request.user
-            username = user.username
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)  # Access Token 발급
+        refresh_token = str(refresh)  # Refresh Token 발급
+        login(request, user)
 
-            # JWT 토큰 생성
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            refresh_token = str(refresh)
-
-            response.data = {
-                'message': f'{username}님 안녕하세요😊',        
-                'access': access_token,
-                'refresh': refresh_token
-            }
-            
-            # access_token, refresh_token 없으면 에러 메시지 
-            if not access_token or not refresh_token:
-                response.data['error'] = '토큰을 발급받지 못했습니다.'
-
-        return response
+        return Response({
+            'message': f'{user.username}님, 로그인 성공!',
+            'access': access_token,
+            'refresh': refresh_token
+        }, status=status.HTTP_200_OK)
     
 
 # 로그아웃

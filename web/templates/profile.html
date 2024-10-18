@@ -8,6 +8,7 @@
     <title>내 정보</title>
     {% load static %}
     <!-- Static CSS -->
+
     <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
 </head>
 
@@ -103,6 +104,30 @@
                         <label for="introduce">introduce</label>
                         <textarea id="introduce" readonly>{{ request.user.introduction }}</textarea>
                     </div>
+
+                    <div class="profile-info">
+                        <label for="username">username</label>
+                        <input type="text" id="username" value="{{ request.user.username }}" readonly>
+                    
+                        <label for="riot-nickname">riot nickname</label>
+                        <input type="text" id="riot-username" value="{{ request.user.riot_username }}" readonly>
+                    
+                        <label for="riot-tag">riot tag</label>
+                        <input type="text" id="riot-tag" value="{{ request.user.riot_tag }}" readonly>
+                    
+                        <label for="email">email</label>
+                        <input type="email" id="email" value="{{ request.user.email }}" readonly>
+                    
+                        <label for="introduce">introduce</label>
+                        <textarea id="introduce" readonly>{{ request.user.introduction }}</textarea>
+                    
+                        <!-- 내 정보 수정하기 버튼 -->
+                        <button id="edit-profile-btn" class="action-button">내 정보 수정하기</button>
+                    
+                        <!-- 저장 버튼 (숨김 처리) -->
+                        <button id="save-profile-btn" class="action-button" style="display: none;">저장하기</button>
+                    </div>
+                    
                     
                     <div class="sns-category">라이엇 계정</div>
                     <div class="sns-container">

@@ -16,7 +16,6 @@ from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
 import re
 
-
 class UserDetailView(generics.GenericAPIView):
     """
     유저를 검색하여 해당하는 유저의 상세정보 + 라이엇 정보 조회

@@ -15,6 +15,10 @@ from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.views.decorators.cache import never_cache
 from .serializers import UserProfileSerializer
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import User
+from django.contrib import messages
 
 # 디스코드 로그인
 from wpgg.settings import DiscordOAuth2
@@ -41,6 +45,27 @@ def delete_session(request):
         logout(request)  # 로그아웃 처리
         return JsonResponse({'message': '세션 삭제 완료'}, status=200)
     return JsonResponse({'error': '잘못된 요청'}, status=400)
+
+@login_required
+def profile(request):
+    user = request.user  # 로그인된 사용자 정보
+
+    if request.method == 'POST':
+        data = request.POST.copy()
+        data.pop('email', None)  # 이메일 수정 금지
+        data.pop('username', None)  # 유저네임 수정 금지
+
+        # UserSerializer로 유효성 검사 및 수정 처리
+        serializer = UserProfileSerializer(user, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            messages.success(request, '프로필이 수정되었습니다.')
+            return redirect('user_profile')  # 수정 후 리다이렉트
+
+        # 유효성 검사 실패 시 에러 메시지 
+        messages.error(request, '프로필 수정에 실패했습니다.')
+    
+    return render(request, 'profile.html', {'user': user})
 
 
 # 회원가입

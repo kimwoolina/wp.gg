@@ -259,12 +259,12 @@
                 {{data.support2.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
             </div><!--라인-->
         </div>
-        <div class="option-container horizontal-container-set-civilwar">
-            <div class="button-container horizontal-container-set-civilwar chat-icon-civilwar">
-                <button type="button" class="exit-button"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 20px;"></button>
+        <div class="option-container">
+            <div class="button-container chat-icon-civilwar">
+                <button type="button" class="exit-button no-style-button" onclick="consoleprint('내전 파티 채팅')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
-            <div class="button-container horizontal-container-set-civilwar get-out-icon-civilwar">
-                <button type="button" class="exit-button"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 20px;"></button>
+            <div class="button-container get-out-icon-civilwar">
+                <button type="button" class="exit-button no-style-button" onclick="consoleprint('내전 파티 나가기')"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
         </div>
     </div>
@@ -359,11 +359,11 @@
             </div><!--라인-->
         </div>
         <div class="option-container">
-            <div class="button-container horizontal-container-set chat-icon">
-                <button type="button" class="exit-button"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 20px;"></button>
+            <div class="button-container chat-icon">
+                <button type="button" class="exit-button no-style-button" onclick="consoleprint('일반 파티 채팅')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div class="button-container horizontal-container-set get-out-icon">
-                <button type="button" class="exit-button"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 20px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="consoleprint('일반 파티 나가기')"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
         </div>
     </div>
@@ -376,50 +376,6 @@
 {% block javascript%}
 <script>
     // 숫자를 입력받아 해당 랭크를 출력하는 함수
-    function getRank(number) {
-        const rankText = rankMapping[number] || "Invalid Rank";
-        // document.getElementById("rankOutput").innerText = rankText;
-        return rankText;
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        // Django에서 받은 data.rank 값을 HTML에 출력
-        const rankValue = document.getElementById("rankInput").innerText;
-        const rankLabel = document.getElementById("rankLabel");
-        rankLabel.innerText = getRank(rankValue);  // 함수 호출 결과를 label에 출력
-    });
-
-
-    function deletemethod(itemId) {
-        console.log('삭제할 itemId:', itemId);  // itemId를 콘솔에 출력
-
-
-        const url = `http://127.0.0.1:8000/api/party/${itemId}`; // 엔드포인트에 변수를 포함한 URL
-
-        fetch(url, {
-            method: 'DELETE',
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert('삭제 성공');
-                } else {
-                    alert('삭제 실패');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        // fetch('/parties/' + itemId + '/', {
-        //     method: 'DELETE',
-        //     headers: {
-        //         'X-CSRFToken': csrftoken,
-        //     },
-        // })
-        // .then(response => response.json())
-    };
-
-    function positionprint() {
-        console.log('console print');
-    }
+    <link rel="stylesheet" href="{% static '/js/party.js' %}">
 </script>
 {% endblock javascript%}

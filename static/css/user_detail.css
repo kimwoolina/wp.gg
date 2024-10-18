@@ -109,3 +109,9 @@ body #result {
 .evaluation-item {
     display: inline;
 }
+
+.profile-img {
+    width: 500px;
+    height: 100px;
+    padding-bottom: 20px;    
+}

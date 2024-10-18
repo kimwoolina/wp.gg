@@ -122,6 +122,9 @@
         <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo">
     </div>
 
+    <!-- 에러 메시지 표시 영역 -->
+    <div id="error-messages" class="error-message"></div> 
+
     <!-- 회원가입 폼 -->
     <div class="register-container">
         <div class="register-box">
@@ -162,6 +165,12 @@
             const password2 = document.getElementById('password2').value;
             const password = document.getElementById('password1').value;
 
+            // 기존 에러 메시지 초기화
+            const errorMessagesDiv = document.getElementById('error-messages');
+
+            // 기존 에러 메시지 초기화
+            errorMessagesDiv.innerHTML = '';
+
             fetch('/auth/register/', {
                 method: 'POST',
                 headers: {
@@ -175,42 +184,27 @@
                     password2: password2
                 })
             })
-            .then(response => {
-                if (response.ok) {
-                    return fetch('/auth/login/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ email: email, password: password })
-                    });
-                } else {
-                    return response.json().then(data => {
-                        alert('회원가입 실패: ' + data.error);
-                    });
-                }
-            })
-            .then(response => {
-                if (response && response.ok) {
-                    return response.json(); // JWT 토큰 응답 처리
-                } else if (response) {
-                    return response.json().then(data => {
-                        alert('로그인 실패: ' + data.error);
-                    });
-                }
-            })
+            .then(response => response.json())
             .then(data => {
-                if (data && data.access && data.refresh) {
-                    // JWT 토큰 저장
-                    localStorage.setItem('access_token', data.access);
-                    localStorage.setItem('refresh_token', data.refresh);
-                    alert('로그인 성공!');
-                    window.location.href = '/home/';
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                if (data.errors) {
+                    // 각각의 오류 메시지를 팝업창으로 표시
+            for (const [key, value] of Object.entries(data.errors)) {
+                alert(`${key}: ${value}`); // 팝업창으로 개별 메시지 표시
+            }
+        } else if (data.message === "회원가입이 완료되었습니다. 환영합니다!") {
+            
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+
+            alert('회원가입 성공!');
+            window.location.href = '/home/';
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
+    });
+}
     </script>
 </body>
 </html>

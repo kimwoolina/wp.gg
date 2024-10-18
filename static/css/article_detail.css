@@ -126,3 +126,13 @@ body {
     font-size: 16px; /* 사용자 이름 크기 조정 */
     margin: 0; /* 기본 마진 제거 */
 }
+
+.article-detail h2 a,
+.article-detail h2 a:visited,
+.article-detail h2 a:hover,
+.article-detail h2 a:active {
+    color: inherit; /* 부모 요소의 색상 상속 */
+    text-decoration: none; /* 밑줄 제거 */
+    font-size: inherit; /* 폰트 크기 상속 */
+    cursor: pointer; /* 마우스 포인터를 손가락 모양으로 변경 */
+}

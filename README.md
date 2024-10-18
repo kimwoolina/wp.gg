@@ -30,7 +30,7 @@
 
 <a name="introduction"></a>
 ## 👀 Introduction
-![image](https://github.com/user-attachments/assets/6bfa6e6d-d382-48a2-bc65-d6bd94e5be0f)
+![브로셔_v4](https://github.com/user-attachments/assets/e2a7b6d3-26fc-4137-a586-b67559eae9b4)
 
 
 WP.GG는 리그 오브 레전드 유저들의 리뷰와 매칭 시스템을 통해, 긍정적인 팀 문화를 구축하고 즐거운 게임 경험을 만들어가는 공간입니다.

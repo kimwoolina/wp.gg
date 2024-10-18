@@ -14,6 +14,7 @@ from .riot import get_user_info
 from django.db import models
 from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
+import re
 
 
 class UserDetailView(generics.GenericAPIView):
@@ -33,96 +34,120 @@ class UserDetailView(generics.GenericAPIView):
         username = kwargs.get('username')
         riot_tag = request.query_params.get('riot_tag')
 
-        # riot_tag가 있으면 같이 필터링, 없으면 riot_username만 필터링
-        filters = {'riot_username': username}
-        if riot_tag:
+        # 사용자 검색을 위한 필터
+        filters = {}
+
+        if riot_tag:  # riot_tag가 있는 경우
+            filters['riot_username'] = username
             filters['riot_tag'] = riot_tag
-        
-        # 유저검색
+        else:  # riot_tag가 없는 경우
+            filters['riot_username'] = username
+            
+            # 쿼리셋 생성
+            user_queryset = User.objects.filter(**filters)
+
+            # 유저를 찾지 못한 경우, username을 기준으로 다시 필터링
+            if not user_queryset.exists():
+                filters = {'username': username}  # username으로만 필터링
+                user_queryset = User.objects.filter(**filters)
+
+        # 사용자 검색
         user_queryset = User.objects.filter(**filters)
 
         if user_queryset.exists():
             user = user_queryset.first()
 
             # 라이엇 정보 가져오기
-            if riot_tag:  # riot_tag가 있는 경우에만 라이엇 정보 호출
-                user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
-
-                if 'error' in user_info:
-                    return Response({"message": "소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-
-                # 라이엇 프로필 이미지 저장
-                profile_icon_link = user_info.get('profileIconLink')
-                if profile_icon_link:
-                    user.riot_profile_image = profile_icon_link  # 프로필 이미지를 업데이트
-                    user.save()  # 변경된 내용을 저장
-
-                # riot_tier 업데이트
-                league_info = user_info.get('league', [])
-                if league_info:
-                    tier = league_info[0].get('tier')
-                    if tier and tier != user.riot_tier:
-                        user.riot_tier = tier
-                        user.save()  # 변경된 내용을 저장
-
-                # positions 업데이트
-                preferred_position = user_info.get('preferredPosition')
-                if preferred_position:
-                    # 기존 positions 초기화
-                    user.positions.clear()
-                    position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
-                    user.positions.add(position)
+            user_info = self.get_riot_info(user, username, riot_tag)
 
             # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
             articles = Articles.objects.filter(reviewee=user)
-            serializer = self.get_serializer(user)
-            serializer_data = serializer.data
-            
-            # Evaluations를 serializer_data에 추가
-            try:
-                evaluations = Evaluations.objects.get(user=user)
-                serializer_data['evaluations'] = EvaluationSerializer(evaluations).data
-            except Evaluations.DoesNotExist:
-                serializer_data['evaluations'] = None
-            
-            # Evaluations가 None일 때 처리 (모든 필드를 기본값 0으로 설정)
-            if serializer_data.get('evaluations') is None:
-                serializer_data['evaluations'] = {
-                    'kindness': 0,
-                    'teamwork': 0,
-                    'communication': 0,
-                    'mental_strength': 0,
-                    'punctuality': 0,
-                    'positivity': 0,
-                    'mvp': 0,
-                    'mechanical_skill': 0,
-                    'operation': 0,
-                    'negativity': 0,
-                    'profanity': 0,
-                    'afk': 0,
-                    'cheating': 0,
-                    'verbal_abuse': 0,
-                }
-            else:
-                # 각 필드에 대해 None이면 기본값 0으로 설정
-                evaluations_data = serializer_data['evaluations']
-                for field in ['kindness', 'teamwork', 'communication', 'mental_strength', 
-                        'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
-                        'operation', 'negativity', 'profanity', 'afk', 
-                        'cheating', 'verbal_abuse']:
-                    evaluations_data[field] = evaluations_data.get(field, 0)
-                
-            # articles를 serializer_data에 추가
-            article_serializer = ArticleSerializer(articles, many=True)
-            serializer_data['articles'] = article_serializer.data
-            
+            serializer_data = self.get_serializer_data(user, articles)
+
             # 라이엇 정보 추가
-            if riot_tag:
+            if riot_tag and user_info:
                 serializer_data['riot_info'] = user_info
-                
+
             return Response(serializer_data)
 
-        return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."})
+        return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    def get_riot_info(self, user, username, riot_tag):
+        if riot_tag:  # riot_tag가 있는 경우에만 라이엇 정보 호출
+            user_info = get_user_info(RIOT_API_KEY, username, riot_tag)
+            if 'error' in user_info:
+                return None
+            
+            # 라이엇 프로필 이미지 저장
+            self.update_user_with_riot_info(user, user_info)
+            return user_info
+        return None
+
+    def update_user_with_riot_info(self, user, user_info):
+        profile_icon_link = user_info.get('profileIconLink')
+        if profile_icon_link:
+            user.riot_profile_image = profile_icon_link
+            user.save()
+
+        league_info = user_info.get('league', [])
+        if league_info:
+            tier = league_info[0].get('tier')
+            if tier and tier != user.riot_tier:
+                user.riot_tier = tier
+                user.save()
+
+        preferred_position = user_info.get('preferredPosition')
+        if preferred_position:
+            user.positions.clear()
+            position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
+            user.positions.add(position)
+
+    def get_serializer_data(self, user, articles):
+        serializer = self.get_serializer(user)
+        serializer_data = serializer.data
+
+        # Evaluations를 serializer_data에 추가
+        evaluations = self.get_evaluations(user)
+        serializer_data['evaluations'] = evaluations
+
+        # articles를 serializer_data에 추가
+        article_serializer = ArticleSerializer(articles, many=True)
+        serializer_data['articles'] = article_serializer.data
+
+        return serializer_data
+
+    def get_evaluations(self, user):
+        try:
+            evaluations = Evaluations.objects.get(user=user)
+            evaluations_data = EvaluationSerializer(evaluations).data
+        except Evaluations.DoesNotExist:
+            evaluations_data = self.default_evaluations()
+
+        # 각 필드에 대해 None이면 기본값 0으로 설정
+        return {field: evaluations_data.get(field, 0) for field in [
+            'kindness', 'teamwork', 'communication', 'mental_strength', 
+            'punctuality', 'positivity', 'mvp', 'mechanical_skill', 
+            'operation', 'negativity', 'profanity', 'afk', 
+            'cheating', 'verbal_abuse'
+        ]}
+
+    def default_evaluations(self):
+        return {
+            'kindness': 0,
+            'teamwork': 0,
+            'communication': 0,
+            'mental_strength': 0,
+            'punctuality': 0,
+            'positivity': 0,
+            'mvp': 0,
+            'mechanical_skill': 0,
+            'operation': 0,
+            'negativity': 0,
+            'profanity': 0,
+            'afk': 0,
+            'cheating': 0,
+            'verbal_abuse': 0,
+        }
 
 
 
@@ -193,16 +218,25 @@ class UserRecommendationView(APIView):
     작성 날짜: 2024.10.09
     """
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # 초기화
         matching_reviewee_id = None
 
         # 요청에서 필터링 값 가져오기
-        riot_tiers = request.GET.getlist('riot_tier', [])
-        positions = request.GET.getlist('positions', [])
-        filter_fields = request.GET.getlist('filter_fields', [])
-        user_preference = request.GET.get('user_preference', '')
+        # riot_tiers = request.POST.getlist('riot_tier', [])
+        # positions = request.POST.getlist('positions', [])
+        # filter_fields = request.POST.getlist('filter_fields', [])
+        # user_preference = request.POST.get('user_preference', '')
+        riot_tiers = request.data.get('riot_tier', [])
+        positions = request.data.get('riot_position', [])
+        filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
+        user_preference = request.data.get('user_preference', '')
 
+        # print("riot_tiers >>>>>", riot_tiers)
+        # print("positions >>>>>", positions)
+        # print("filter_fields >>>>>", filter_fields)
+        # print("user_preference >>>>>", user_preference)
+        
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
 
@@ -236,16 +270,20 @@ class UserRecommendationView(APIView):
         all_reviews = Articles.objects.all().values('content', 'reviewee')
         reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
 
+        # print("reviews_test >>>>>", reviews_text)
+        
         # 3. 사용자 입력 텍스트 처리
         if user_preference:
             # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
-            system_instructions = """
-            You are tasked with finding the most relevant review for a user based on their preferences.
-            Based on the user's preference, identify the review that best matches the following description: {user_preference}.
-            Here are all the reviews:
-            {reviews_text}.
-            Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
-            """
+            system_instructions = """ 당신은 사용자의 선호에 따라 관련성 높은 리뷰를 찾는 임무를 맡고 있습니다. 사용자의 선호를 기반으로 다음 설명과 잘 일치하는 리뷰를 모두 찾으세요: {user_preference}. 여기 모든 리뷰가 있습니다: {reviews_text}.일치하는 리뷰어의 ID 또는 IDs를 쉼표로 구분하여 제공합니다 (예: 1 또는 1, 2) 추가 텍스트 없이.
+                                """
+            # system_instructions = """
+            # You are tasked with finding the most relevant review for a user based on their preferences.
+            # Based on the user's preference, identify the review that best matches the following description: {user_preference}.
+            # Here are all the reviews:
+            # {reviews_text}.
+            # Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
+            # """
 
             prompt = system_instructions.format(
                 user_preference=user_preference,
@@ -253,22 +291,20 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-            print('user_preference_analysis:', user_preference_analysis)
+            # print('user_preference_analysis>>>>>>>>', user_preference_analysis)
 
-            # 응답 포맷 확인 및 처리
-            try:
-                if "Review ID:" in user_preference_analysis:
-                    # "Review ID: 1, 2" 형식 처리
-                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(":")[1].split(",")]
-                else:
-                    # "1, 2" 형식 처리
-                    matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(",")]
-            except (ValueError, IndexError) as e:
-                raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
+            # 정규 표현식을 사용하여 숫자 추출
+            matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
+            
+            # print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
 
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
+            else:
+                return Response({"message": "매칭되는 유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)   
+            
+            # print("users>>>>>", users)
 
         # 상위 3명만 선택
         users = users[:3]
@@ -276,89 +312,7 @@ class UserRecommendationView(APIView):
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return render(request, 'users/matching_result.html', {'users': serializer.data})
-
-    # def post(self, request, *args, **kwargs):
-    #     # 초기화
-    #     matching_reviewee_id = None
-
-    #     # 요청에서 필터링 값 가져오기
-    #     riot_tiers = request.data.getlist('riot_tier', [])
-    #     positions = request.data.getlist('positions', [])
-    #     filter_fields = request.data.getlist('filter_fields', [])
-    #     user_preference = request.data.get('user_preference', '')
-
-    #     # 기본 유저 리스트 가져오기
-    #     users = User.objects.all()
-
-    #     # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
-    #     if riot_tiers:
-    #         users = users.filter(riot_tier__in=riot_tiers)
-
-    #     if positions:
-    #         users = users.filter(positions__position_name__in=positions)
-
-    #     # 2. 평가 필드 필터링
-    #     if filter_fields:
-    #         # 필터링 조건 추가
-    #         filter_conditions = {}
-    #         for field in filter_fields:
-    #             if hasattr(Evaluations, field):
-    #                 filter_conditions[f'evaluations__{field}__gte'] = 1  # 필드 값이 1 이상인 경우
-
-    #         # 유저 필터링
-    #         users = users.filter(**filter_conditions)
-
-    #         # 평가 항목이 있는 유저만 필터링 후 정렬
-    #         users = users.filter(evaluations__isnull=False).annotate(
-    #             evaluations_count=models.Count('evaluations')
-    #         ).order_by(*[f'-evaluations__{field}' for field in filter_fields]).distinct()
-
-    #     # 리뷰 데이터 가져오기
-    #     all_reviews = Articles.objects.all().values('content', 'reviewee')
-    #     reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
-
-    #     # 3. 사용자 입력 텍스트 처리
-    #     if user_preference:
-    #         # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
-    #         system_instructions = """
-    #         You are tasked with finding the most relevant review for a user based on their preferences.
-    #         Based on the user's preference, identify the review that best matches the following description: {user_preference}.
-    #         Here are all the reviews:
-    #         {reviews_text}.
-    #         Provide only the matching reviewee's ID or IDs in a comma-separated format (e.g., 1 or 1, 2) without any additional text.
-    #         """
-
-    #         prompt = system_instructions.format(
-    #             user_preference=user_preference,
-    #             reviews_text=reviews_text
-    #         )
-
-    #         user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-    #         print('user_preference_analysis:', user_preference_analysis)
-
-    #         # 응답 포맷 확인 및 처리
-    #         try:
-    #             if "Review ID:" in user_preference_analysis:
-    #                 # "Review ID: 1, 2" 형식 처리
-    #                 matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(":")[1].split(",")]
-    #             else:
-    #                 # "1, 2" 형식 처리
-    #                 matching_reviewee_ids = [int(id.strip()) for id in user_preference_analysis.split(",")]
-    #         except (ValueError, IndexError) as e:
-    #             raise ValueError(f"Unexpected response format from OpenAI: {user_preference_analysis}") from e
-
-    #         # 유저 필터링
-    #         if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
-    #             users = users.filter(id__in=matching_reviewee_ids)
-
-        # 상위 3명만 선택
-        users = users[:3]
-        
-        # 직렬화하여 응답
-        serializer = UserSerializer(users, many=True)
-        # return render(request, 'users/matching_result.html', {'users': serializer.data})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return render(request, 'profiles/matching_result.html', {'users': serializer.data})
 
 
 class GetRiotInfoView(APIView):

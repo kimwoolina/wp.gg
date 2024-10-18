@@ -33,21 +33,6 @@ class PrivateChatRoom(models.Model):
         return f'1:1 채팅방: {self.user1.username}님과 {self.user2.username}님'
 
 
-# 단체 채팅방
-class GroupChatRoom(models.Model):
-    owner = models.ForeignKey(User, related_name='owned_group_chats', on_delete=models.CASCADE)  # 방장
-    room_name = models.CharField(max_length=15)
-    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def get_latest_message(self):
-        return GroupChatMessage.objects.filter(group_chat=self).order_by('-created_at').first()
-    
-    def __str__(self):
-        return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
-
-
 # 1:1 개인 채팅 메시지
 class ChatMessage(models.Model):
     room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="messages")
@@ -64,6 +49,21 @@ class ChatMessage(models.Model):
     def __str__(self):
         return f'{self.sender.username}: {self.content[:10]}'  # 첫 10자만 표시
 
+
+# 단체 채팅방
+class GroupChatRoom(models.Model):
+    owner = models.ForeignKey(User, related_name='owned_group_chats', on_delete=models.CASCADE)  # 방장
+    room_name = models.CharField(max_length=15)
+    room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_latest_message(self):
+        return GroupChatMessage.objects.filter(group_chat=self).order_by('-created_at').first()
+    
+    def __str__(self):
+        return f'단체 채팅방: {self.room_name} (방장: {self.owner.username})'
+    
 
 # 그룹 채팅 - 유저 중계테이블
 class RoomUsers(models.Model):

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block title %}title내용{% endblock title %}
+{% load static %}
+{% block title %}유저 랭킹{% endblock title %}
 
 {% block css %}
 <style>
@@ -9,7 +9,7 @@
         background-color: #1E1E1E;
         color: #fff;
     }
-    
+
     /* 유저 검색 상자 */
     .user-search-container {
         margin: 30px;
@@ -25,16 +25,10 @@
         overflow-y: auto;
         max-height: 1000px;
         font-family: 'Arial', sans-serif;
-        margin-bottom: 20px;
         font-size: 16px;
         font-weight: bold;
-        margin-top: 20px;
-        margin-bottom: 18px;
-        flex-direction: column;
-        margin-left: -3px;
     }
-    
-    
+
     .reviewee-select {
         width: 176px;
         padding: 10px;
@@ -44,10 +38,9 @@
         margin-top: 34px;
         font-size: 14px;
         margin-left: 5px;
-        margin-right: 8px;
         border: transparent;
     }
-    
+
     /* 이모티콘 점수 선택 */
     .emoji-score label {
         font-size: 50px;
@@ -55,7 +48,7 @@
         cursor: pointer;
         margin-bottom: 30px;
     }
-    
+
     /* 리뷰 내용 */
     .content-box {
         width: 91%;
@@ -64,20 +57,19 @@
         background-color: #333;
         color: #dbe1ff;
         border: none;
-        padding: 10px;
         padding: 16px;
         font-size: 16px;
         margin-top: 29px;
     }
-    
-/* 평가 항목 스타일 */
+
+    /* 평가 항목 스타일 */
     .review-categories {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 15px;
+        gap: 11px;
+        padding: 20px;
     }
-    
+
     .review-categories label {
         background-color: #444;
         padding: 10px;
@@ -85,7 +77,30 @@
         cursor: pointer;
         font-size: 14px;
     }
-    
+
+    .review-categories .badge {
+        background-color: #fdfdfd;
+        color: #31273d;
+        padding: 4px 10px;
+        border-radius: 14px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 18px;
+    }
+
+    .review-categories .badge:hover {
+        background-color: #f0f0f0;
+        border: 3px solid #119c77;
+        color: #119c77;
+    }
+
+    .review-categories .badge.selected {
+        background-color: #6d618b;
+        color: #e3d8ff;
+        border: 2px solid #119c77;
+    }
+
     /* 제출 버튼 */
     .submit-btn {
         margin-top: 40px;
@@ -96,13 +111,13 @@
         border-radius: 10px;
         cursor: pointer;
         font-size: 16px;
-        margin-left: 800px;
     }
-    
+
     .submit-btn:hover {
         background-color: #8B72B1;
     }
-    
+
+    /* 태그 컨테이너 */
     .tag-container {
         display: flex;
         flex-wrap: wrap;
@@ -110,7 +125,7 @@
         padding: 10px;
         background-color: #1e1e1e;
     }
-    
+
     .tag-label {
         display: flex;
         align-items: center;
@@ -122,152 +137,23 @@
         transition: all 0.3s ease;
         font-size: 18px;
     }
-    
-    .tag-label input {
-        display: none;
-    }
-    
+
     .tag-label span {
         margin-left: 8px;
         font-weight: bold;
         color: black;
     }
-    
+
     .tag-label:hover {
         background-color: #f0f0f0;
-        border-color: #716490; /* Hover border color */
+        border-color: #716490;
     }
-    
+
     .tag-label input:checked + span {
-        background-color: #6f69a5; /* Checked background color */
+        background-color: #6f69a5;
         color: white;
         padding: 5px 10px;
         border-radius: 25px;
-        transition: background-color 0.3s ease;
-    }
-    
-    .review-categories {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 11px;
-        padding: 20px;
-    }
-    
-    .review-categories .badge {
-        background-color: #fdfdfd;
-        color: #31273d;
-        padding: 4px 10px;
-        border-radius: 14px;
-        border: 2px solid transparent;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 18px;
-        display: inline-block;
-    }
-    
-    .review-categories .badge:hover {
-        background-color: #f0f0f0;
-        border: 3px solid #119c77;
-        color: #119c77;
-    }
-    
-    .review-categories .badge.selected {
-        background-color: #6d618b;
-        color: #e3d8ff;
-        border: 2px solid transparent #119c77;
-        glow: 2;
-    }
-    
-    /* 제출 버튼 */
-    .submit-btn {
-        margin-top: 40px;
-        padding: 8px 17px;
-        background-color: #716490;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-left: 800px;
-    }
-    
-    .submit-btn:hover {
-        background-color: #8B72B1;
-    }
-    
-    .tag-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 10px;
-        background-color: #1e1e1e;
-    }
-    
-    .tag-label {
-        display: flex;
-        align-items: center;
-        background-color: white;
-        padding: 7px 10px;
-        border-radius: 25px;
-        border: 2px solid transparent;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 18px;
-    }
-    
-    .tag-label input {
-        display: none;
-    }
-    
-    .tag-label span {
-        margin-left: 8px;
-        font-weight: bold;
-        color: black;
-    }
-    
-    .tag-label:hover {
-        background-color: #f0f0f0;
-        border-color: #716490; /* Hover border color */
-    }
-    
-    .tag-label input:checked + span {
-        background-color: #6f69a5; /* Checked background color */
-        color: white;
-        padding: 5px 10px;
-        border-radius: 25px;
-        transition: background-color 0.3s ease;
-    }
-    
-    .review-categories {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 11px;
-        padding: 20px;
-    }
-    
-    .review-categories .badge {
-        background-color: #fdfdfd;
-        color: #31273d;
-        padding: 4px 10px;
-        border-radius: 14px;
-        border: 2px solid transparent;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 18px;
-        display: inline-block;
-    }
-    
-    .review-categories .badge:hover {
-        background-color: #f0f0f0;
-        border: 3px solid #119c77;
-        color: #119c77;
-    }
-    
-    .review-categories .badge.selected {
-        background-color: #6d618b;
-        color: #e3d8ff;
-        border: 2px solid transparent #119c77;
-        glow: 2;
     }
 
     /* 돋보기 아이콘 스타일 */
@@ -278,11 +164,12 @@
         margin-left: 635px;
         margin-top: -70px;
     }
-    
+
     .search-btn:hover {
-        fill: #8B72B1; /* 호버시 색상 변경 */
+        fill: #8B72B1;
     }
 
+    /* 검색 바 스타일 */
     .search-bar {
         padding: 16px;
         border-radius: 19px;
@@ -295,56 +182,6 @@
         margin-left: 185px;
     }
 
-    /* 라디오 버튼과 이모티콘의 컨테이너 */
-    .emoji-radio-container {
-        display: flex;
-        justify-content: space-evenly;
-        margin-top: 37px;
-        margin-right: 12px;
-        margin-left: -30px;
-    }
-
-    /* 이모티콘 스타일 */
-    .emoji-label {
-        font-size: 50px;
-        display: block;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    /* 라디오 버튼 기본 스타일 */
-    .emoji-radio {
-        display: block;
-        margin: 0 auto;
-        appearance: none; /* 기본 라디오 버튼 숨김 */
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: 3px solid #f09eff;
-        position: relative;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    /* 라디오 버튼 체크시 보라색으로 채우기 */
-    .emoji-radio:checked {
-        background-color: #fff;
-    }
-
-    /* 선택된 상태에서의 내부 동그라미 */
-    .emoji-radio:checked::after {
-        content: '';
-        width: 20px;
-        height: 20px;
-        background-color: #6d4094;
-        border-radius: 100%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        glow: 1;
-}
-        
 </style>
 {% load static %}
 <link rel="stylesheet" href="{% static '/css/rank.css' %}">

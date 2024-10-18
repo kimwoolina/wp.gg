@@ -15,14 +15,6 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
         fields = ['sender', 'content', 'created_at', 'updated_at', 'is_read']
-        
-        
-class GroupChatMessageSerializer(serializers.ModelSerializer):
-    sender = serializers.StringRelatedField()  # 유저 이름을 문자열로 반환
-    
-    class Meta:
-        model = GroupChatMessage
-        fields = ['id', 'group_chat', 'sender', 'content', 'is_read', 'created_at', 'updated_at']
 
 
 class PrivateChatRoomSerializer(serializers.ModelSerializer):
@@ -38,6 +30,15 @@ class PrivateChatRoomSerializer(serializers.ModelSerializer):
             return ChatMessageSerializer(latest_message).data  # 직렬화된 데이터 반환
         return None  # 메시지가 없는 경우 None 반환
 
+
+class GroupChatMessageSerializer(serializers.ModelSerializer):
+    sender = serializers.StringRelatedField()  # 유저 이름을 문자열로 반환
+    
+    class Meta:
+        model = GroupChatMessage
+        fields = ['id', 'group_chat', 'sender', 'content', 'is_read', 'created_at', 'updated_at']
+        
+        
 class GroupChatRoomSerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField()
 

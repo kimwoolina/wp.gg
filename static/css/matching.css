@@ -1,0 +1,469 @@
+/* 전체 배경색 */
+body {
+    background-color: #1E1E1E;
+    color: #fff;
+}
+
+/* 유저 검색 상자 */
+.user-search-container {
+    position: relative;
+    margin: 0 auto 0;
+    width: 45%;
+}
+
+.reviewee-select {
+    -webkit-appearance: none; /* 사파리 브라우저 */
+    -moz-appearance: none; /* 파이어폭스 */
+    appearance: none; /* 모든 브라우저 */
+    width: 152px;
+    padding: 10px;
+    border-radius: 13px;
+    background-color: #333;
+    color: #deddec;
+    margin-top: 34px;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-right: 8px;
+    border: transparent;
+}
+
+/* 드롭다운 버튼에 커스텀 화살표 효과 없애기 */
+.reviewee-select::after {
+    display: none; /* 기본 화살표를 완전히 제거 */
+}
+
+/* 호버 스타일 */
+.reviewee-select:hover {
+    background-color: #444;
+}
+
+
+/* 이모티콘 점수 선택 */
+.emoji-score label {
+    font-size: 50px;
+    margin-right: 15px;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+/* 리뷰 내용 */
+.content-box {
+    width: 91%;
+    height: 100px;
+    border-radius: 15px;
+    background-color: #333;
+    color: #dbe1ff;
+    border: none;
+    padding: 10px;
+    padding: 16px;
+    font-size: 16px;
+    margin-top: 29px;
+}
+
+/* 평가 항목 스타일 */
+.review-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.review-categories label {
+    background-color: #444;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 제출 버튼 */
+.submit-btn {
+    margin-top: 40px;
+    padding: 8px 17px;
+    background-color: #716490;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 800px;
+}
+
+.submit-btn:hover {
+    background-color: #8B72B1;
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background-color: #1e1e1e;
+}
+
+.tag-label {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 7px 10px;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.tag-label input {
+    display: none;
+}
+
+.tag-label span {
+    margin-left: 8px;
+    font-weight: bold;
+    color: black;
+}
+
+.tag-label:hover {
+    background-color: #f0f0f0;
+    border-color: #716490; /* Hover border color */
+}
+
+.tag-label input:checked + span {
+    background-color: #6f69a5; /* Checked background color */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.review-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 11px;
+    padding: 20px;
+}
+
+.review-categories .badge {
+    background-color: #fdfdfd;
+    color: #31273d;
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.review-categories .badge:hover {
+    background-color: #f0f0f0;
+    border: 3px solid #119c77;
+    color: #119c77;
+}
+
+.review-categories .badge.selected {
+    background-color: #6d618b;
+    color: #e3d8ff;
+    border: 2px solid transparent #119c77;
+    glow: 2;
+}
+
+/* 제출 버튼 */
+.submit-btn {
+    margin-top: 40px;
+    padding: 8px 17px;
+    background-color: #716490;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 800px;
+}
+
+.submit-btn:hover {
+    background-color: #8B72B1;
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background-color: #1e1e1e;
+}
+
+.tag-label {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 7px 10px;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.tag-label input {
+    display: none;
+}
+
+.tag-label span {
+    margin-left: 8px;
+    font-weight: bold;
+    color: black;
+}
+
+.tag-label:hover {
+    background-color: #f0f0f0;
+    border-color: #716490; /* Hover border color */
+}
+
+.tag-label input:checked + span {
+    background-color: #6f69a5; /* Checked background color */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.review-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 11px;
+    padding: 20px;
+}
+
+.review-categories .badge {
+    background-color: #fdfdfd;
+    color: #31273d;
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.review-categories .badge:hover {
+    background-color: #f0f0f0;
+    border: 3px solid #119c77;
+    color: #119c77;
+}
+
+.review-categories .badge.selected {
+    background-color: #6d618b;
+    color: #e3d8ff;
+    border: 2px solid transparent #119c77;
+    glow: 2;
+}
+
+/* 돋보기 아이콘 */
+.search-btn {
+    position: absolute;
+    right: 16%;
+    top: 25%;
+    /* transform: translateY(-50%); */
+    width: 20px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    fill: #8B72B1; /* 호버 시 색상 변경 */
+}
+
+.search-bar {
+    padding: 16px;
+    border-radius: 19px;
+    background-color: #464646;
+    max-width: 1400px;
+    border: none;
+    color: #fff;
+    margin: 30px 17% 30px auto;
+    width: 70%;
+}
+
+/* 라디오 버튼과 이모티콘의 컨테이너 */
+.emoji-radio-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 37px;
+    margin-right: 12px;
+    margin-left: -30px;
+}
+
+/* 이모티콘 스타일 */
+.emoji-label {
+    font-size: 50px;
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* 라디오 버튼 기본 스타일 */
+.emoji-radio {
+    display: block;
+    margin: 0 auto;
+    appearance: none; /* 기본 라디오 버튼 숨김 */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #f09eff;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 라디오 버튼 체크시 보라색으로 채우기 */
+.emoji-radio:checked {
+    background-color: #fff;
+}
+
+/* 선택된 상태에서의 내부 동그라미 */
+.emoji-radio:checked::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background-color: #6d4094;
+    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    glow: 1;
+}
+
+/* 티어, 포지션 드롭다운 스타일 */
+.cute-dropdown {
+position: relative;
+display: inline-block;
+width: 150px; /* 드롭다운 너비 조정 */
+max-width: 200px;
+margin: 0 -30px; /* 드롭다운 간격 */
+margin-left: 10px;
+}
+
+/* 기본 화살표 제거 및 커스텀 스타일 적용 */
+.cute-dropdown select {
+-webkit-appearance: none; /* 사파리용 */
+-moz-appearance: none; /* 파이어폭스용 */
+appearance: none; /* 모든 브라우저에서 기본 화살표 제거 */
+width: 80%;
+padding: 16px 15px; /* 패딩을 더 넓게 */
+font-size: 16px; /* 글자 크기 조정 */
+font-weight: bold; /* 글자 굵기 */
+border: none; /* 테두리 없애기 */
+border-radius: 15px; /* 둥근 테두리 */
+background-color: #281b37; /* 어두운 배경색 */
+color: #f3f2f6; /* 밝은 텍스트 색상 */
+text-align: center; /* 가운데 정렬 */
+box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* 그림자 효과 */
+cursor: pointer;
+}
+
+.cute-dropdown select:hover {
+background-color: #49239E; /* 호버 시 배경색 변경 */
+glow: 1;
+}
+
+.cute-dropdown select:focus {
+outline: none;
+border-color: #8B72B1;
+box-shadow: 0 0 5px rgba(139, 114, 177, 0.5);
+}
+
+/* 티어, 포지션 */
+.form-group {
+margin-top: 100px;
+display: block;
+text-align: left;
+}
+
+.left-body {
+display: flex;
+width: 100%;
+margin-right: 0px;
+margin-top: 0px;
+}
+
+.review-categories {
+gap: 14px;
+padding: 16px;
+margin-right: 50px;
+}
+
+.submit-btn {
+margin: 28px auto;
+/* margin-top: 40px; */
+padding: 11px 17px;
+background-color: #716490;
+color: white;
+border: none;
+border-radius: 22px;
+cursor: pointer;
+font-size: 15px;
+/* margin-left: 400px; */
+}
+
+/* 선호 스타일 입력 영역 스타일 */
+.preference-group {
+display: block;
+margin-top: 28px;
+margin-left: 10px;
+}
+
+.content-box {
+width: 100%;
+height: 120px;
+border-radius: 20px;
+background-color: #333;
+color: #dbe1ff;
+font-size: 17px;
+padding: 15px;
+border: none;
+resize: none;
+max-width: 1122px;
+}
+
+.preference-label {
+display: block;
+font-size: 18px;
+margin-bottom: -15px;
+margin-left: 16px;
+color: #b0b0b1;
+}
+
+submit-btn {
+margin-top: 40px;
+padding: 11px 17px;
+background-color: #716490;
+color: white;
+border: none;
+border-radius: 22px;
+cursor: pointer;
+font-size: 15px;
+align-content: center;
+}
+.search-bar {
+padding: 16px;
+border-radius: 19px;
+background-color: #464646;
+max-width: 1400px;
+border: none;
+color: #fff;
+margin: 30px auto 30px;
+width: 70%;
+align-content: center;
+}
+
+.left-container {
+width: 100%;
+margin-top: -10px;
+margin-bottom: 50px;
+margin-left: 90px;
+margin-right: 80px;
+text-align: center;
+}

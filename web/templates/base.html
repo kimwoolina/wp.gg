@@ -150,10 +150,10 @@
             const [summonerName, riotTag] = inputValue.split('#');
             // URL 인코딩
             const encodedTag = encodeURIComponent(riotTag.trim());
-            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+            window.location.href = `/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
         } else {
             // 기본 검색 경우
-            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(inputValue.trim())}`;
+            window.location.href = `/${encodeURIComponent(inputValue.trim())}`;
         }
     }
     

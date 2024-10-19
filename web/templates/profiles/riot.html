@@ -31,7 +31,7 @@
         const tagLine = document.getElementById("tagLine").value;
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/profile/riot/?riot_id=${encodeURIComponent(riotId)}&tag_line=${encodeURIComponent(tagLine)}`, {
+            const response = await fetch(`/api/profile/riot/?riot_id=${encodeURIComponent(riotId)}&tag_line=${encodeURIComponent(tagLine)}`, {
                 method: 'GET',  // GET 메서드로 변경
                 headers: {
                     'Content-Type': 'application/json',

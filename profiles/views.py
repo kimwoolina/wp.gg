@@ -15,7 +15,6 @@ from django.db import models
 from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
 import re
-from common.cache import cache_get, cache_set
 
 
 class UserDetailView(generics.GenericAPIView):
@@ -39,25 +38,9 @@ class UserDetailView(generics.GenericAPIView):
         filters = {}
 
         if riot_tag:  # riot_tag가 있는 경우
-            # 캐싱
-            cache_key = f"user_info:{username}:{riot_tag}"
-            cached_data = cache_get(cache_key)
-            if cached_data:
-                print(f"Cache hit for key: ", cache_key)
-                print("cached_data", cached_data)
-                return Response(cached_data)
-            
-            # 저장된 캐시가 없는 경우
             filters['riot_username'] = username
             filters['riot_tag'] = riot_tag
         else:  # riot_tag가 없는 경우
-            # 캐싱
-            cache_key = f"user_info:{username}"
-            cached_data = cache_get(cache_key)
-            if cached_data:
-                return Response(cached_data)
-            
-            # 저장된 캐시가 없는 경우
             filters['riot_username'] = username
             
             # 쿼리셋 생성
@@ -84,14 +67,6 @@ class UserDetailView(generics.GenericAPIView):
             # 라이엇 정보 추가
             if riot_tag and user_info:
                 serializer_data['riot_info'] = user_info
-                
-                # 캐시에 저장
-                cache_set(f"user_info:{username}:{riot_tag}", serializer_data)
-            else:
-                # 캐시에 저장
-                cache_set(f"user_info:{username}", serializer_data)
-            
-            return Response(serializer_data)
 
         return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 

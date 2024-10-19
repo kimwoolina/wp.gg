@@ -17,23 +17,23 @@ def home(request):
 
 """게임 선택 페이지"""
 def gamechoice(request):
-    return render(request, 'gamechoice.html')
+    return render(request, 'users/gamechoice.html')
 
 """계정 선택 페이지"""
 def login_selection(request):
-    return render(request, 'login_selection.html')
+    return render(request, 'users/login_selection.html')
 
 """회원가입 페이지 렌더링"""
 def register_page(request):
-    return render(request, 'register.html')
+    return render(request, 'users/register.html')
 
 """로그인 페이지 렌더링"""
 def login_page(request):
-    return render(request, 'login.html')
+    return render(request, 'users/login.html')
 
 """마이페이지 조회 렌더링"""
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'users/profile.html')
 
 
 # profile 앱 관련

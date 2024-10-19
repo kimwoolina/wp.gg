@@ -23,7 +23,7 @@ class PrivateChatRoom(models.Model):
     def save(self, *args, **kwargs):
         # 방 이름 없으면 user2의 유저네임으로 설정
         if not self.room_name:
-            self.room_name = self.user2.username
+            self.room_name = f"{self.user1.username} & {self.user2.username}"
         super().save(*args, **kwargs)
 
     def get_latest_message(self):

@@ -92,27 +92,29 @@
 
         #chat-room-list {
             list-style: none;
-            padding: 0;
+            padding: 18px;
             margin-bottom: 112px;
-            width: 100%;
+            width: 76%;
+            margin: -46px 11px 25px 20px;
         }
 
         #chat-room-list li {
             display: flex;
-            padding: 5px;
+            padding: 16px 26px;
             margin-bottom: 10px;
             background-color: #2C2F33;
-            border-radius: 10px;
+            border-radius: 17px;
             cursor: pointer;
             transition: background-color 0.3s;
-            align-items: center;
+            margin: 6px 2px 1px 2px;
+            boader: 15px;
             justify-content: space-evenly;
-            flex-direction: column;
+            block-size: -20px;
         }
 
         .select-chat-room {
             background-color: transparent;
-            color: transparent;
+            color: #fff;
             border: none;
             padding: 0px 0px;
             border-radius: 0px;
@@ -123,6 +125,11 @@
         #chat-room-list li:hover {
             background-color: #716490;
         }
+
+        .select-chat-room :hover{
+            color: #6f69a5
+        }
+
 
         /* 채팅 영역 */
         .chat-area {
@@ -136,16 +143,6 @@
             justify-content: space-between;
         }
 
-        {% comment %} /* 채팅 메시지 */
-        .msgbyright {
-            background-color: transparent;
-            color: #85c2ff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px 10px 10px 0;
-            text-align: right;
-            align-self: flex-start;
-        } {% endcomment %}
 
         /* 받은 메시지 스타일 */
         .msgbyleft {
@@ -214,6 +211,45 @@
             boader-radius: 10px;
 
         }
+
+        /* 라디오 버튼 스타일 */
+        .radio-btn {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2.7px solid #8B72B1;
+            background-color: #3A3B52
+            cursor: pointer;
+            transition: background-color 0.4s, border-color 0.4s;
+        }
+
+        .radio-btn:checked {
+            background-color: #8B72B1;
+            border-color: #f6f1ff;
+        }
+
+        /* 호버 시 라디오 버튼 색상 변경 */
+        #chat-room-list li:hover .radio-btn {
+            background-color: #fff;
+            border-color: #362E50;
+        }
+        .chat-rooms-header h2 {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            font-size: 23px;
+            color: #c1b1e0;
+        }
+        
+        .logo-small {
+            width: 73px;
+            height: 58px;
+            margin-left: 14px;
+            cursor: pointer;
+            margin: -13px 2px -16px 9px;
+        }
+        
     </style>
     <link rel="stylesheet" href="{% static '/css/base_style.css' %}">
 </head>
@@ -226,7 +262,10 @@
 
     <div class="container">
         <div class="sidebar">
-            <h2>Chat Rooms</h2>
+            <h2>
+                <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="WP Logo" class="logo-small">
+                Chat Rooms
+            </h2>
             <ul id="chat-room-list"></ul>
             <div class="create-chat-room">
                 <input type="text" id="user2-id" placeholder="채팅하고 싶은 유저 ID">
@@ -249,6 +288,11 @@
     </div>
 
     <script>
+        // 로고 클릭 시 home 페이지로 리다이렉트
+        document.querySelector('.logo-small').addEventListener('click', function() {
+            window.location.href = '/home/';
+        });
+
     const myuser = '{{ user.username }}'
         $(document).ready(function() {
             // 채팅방 목록 로드
@@ -265,19 +309,6 @@
 
                 loadMessages(roomId);
                 startPolling(roomId);
-            });
-    
-            // 메시지 전송
-            $('#send-message').click(function() {
-                const roomId = $('.select-chat-room.selected').data('room-id');
-                const messageContent = $('#message-input').val();
-
-                if (messageContent && roomId) {
-                    sendMessage(roomId, messageContent);
-                    $('#message-input').val('');
-                } else {
-                    alert("Please select a chat room and enter a message.");
-                }
             });
 
             // 채팅방 생성 버튼 클릭 시
@@ -315,16 +346,27 @@
                     headers: { 'Authorization': 'Bearer ' + getAccessToken() },
                     success: function(data) {
                         $('#chat-room-list').empty();
-                        data.forEach(function(room) {
-                            $('#chat-room-list').append('<li>' + room.room_name + ' <button class="select-chat-room" data-room-id="' + room.id + '">OPEN THIS CHAT ROOM</button></li>');
-                        });
-                    },
-                    error: function(xhr) {
-                        alert("로그인이 필요한 서비스 입니다.");
-                        //alert("Failed to load chat rooms. Error: " + xhr.responseText);
-                    }
-                });
-            }
+                        data.forEach(function(room) {const chatRoomHTML = `
+                            <li>
+                                <span>${room.room_name}</span>
+                                <input type="radio" name="chat-room" class="radio-btn" data-room-id="${room.id}">
+                            </li>
+                        `;
+                        $('#chat-room-list').append(chatRoomHTML);
+                    });
+                },
+                error: function(xhr) {
+                    alert("로그인이 필요한 서비스 입니다.");
+                }
+            });
+        }
+
+        // 라디오 버튼 클릭 시 해당 방의 메시지 로드
+        $(document).on('change', '.radio-btn', function() {
+            const roomId = $(this).data('room-id');
+            loadMessages(roomId);
+            startPolling(roomId);
+        });
     
             // 메시지 로드 함수
             function loadMessages(roomId) {
@@ -349,6 +391,27 @@
                     }
                 });
             }
+
+            // 메시지 전송 (작동 안 함)
+            $('#send-message').click(function() {
+                const roomId = $('input[name="chat-room"]:checked').data('room-id'); // 라디오 버튼에서 선택된 roomId 가져오기
+                const messageContent = $('#message-input').val();
+
+                if (!roomId) {
+                    alert("Please select a chat room."); // 채팅방이 선택되지 않은 경우
+                    return;
+                }
+
+                if (!messageContent) {
+                    alert("Please enter a message."); // 메시지가 비어있는 경우
+                    return;
+                }
+
+                // 메시지 전송 함수 호출
+                sendMessage(roomId, messageContent);
+                $('#message-input').val(''); // 입력 필드 비우기
+            });
+
     
             // 메시지 전송 함수
             function sendMessage(roomId, content) {

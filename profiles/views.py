@@ -150,7 +150,6 @@ class UserDetailView(generics.GenericAPIView):
         }
 
 
-
 class MannerRankingView(ListAPIView):
     """
     유저 매너 랭킹 - 총점, 평가항목 순으로 정렬 기능, 포지션과 티어 필터 기능

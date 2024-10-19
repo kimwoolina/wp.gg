@@ -80,6 +80,7 @@
                     displayUserData(data);
                 })
                 .catch(error => {
+                    document.getElementById('loader').style.display = 'none';
                     console.error('Error:', error);
                     // alert('유저 정보를 가져오는 데 문제가 발생했습니다.'); 
                     document.getElementById("result").innerText = '소환사 정보를 찾을 수 없습니다.'

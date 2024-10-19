@@ -17,7 +17,6 @@ from rest_framework.decorators import api_view
 User = get_user_model()
 
 class ArticleDetailView(APIView):
-    # permission_classes = [IsAuthenticated]
     def get(self, request, pk):  # URL에서 article_id를 받아옵니다.
         article = get_object_or_404(Articles, id=pk)  # ID로 기사 찾기
         serializer = ArticleDetailSerializer(article)  # Serializer를 사용하여 데이터 변환

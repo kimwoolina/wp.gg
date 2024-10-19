@@ -277,7 +277,9 @@
             users.forEach((user, index) => {
                 const row = document.createElement('dl');
                 let score = Number(user.score.toFixed(2));
-                row.innerHTML = `
+                console.log(user.riot_username)
+                if (user.riot_username == null){
+                    row.innerHTML = `
                     <dt class="user-info">
                         <h2>${index + 1}위 ${user.username} ${user.riot_username || ''} ${user.riot_tag || ''}</h2> 
                         <span class="user-score">👍${score}<span>
@@ -293,7 +295,27 @@
                     💪피지컬 ${user.evaluations.mechanical_skill} 
                     🧠운영능력 ${user.evaluations.operation} 
                     <dd>
+                    `;
+                }else{
+                    row.innerHTML = `
+                    <dt class="user-info">
+                        <h2>${index + 1}위 ${user.username} (${user.riot_username} #${user.riot_tag || 'KR1'})</h2> 
+                        <span class="user-score">👍${score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
                 `;
+                }
+                
                 tableBody.appendChild(row);
             });
         }

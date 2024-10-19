@@ -14,7 +14,7 @@ document.getElementById('createparty').addEventListener('submit', function(event
     });
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    fetch('http://127.0.0.1:8000/api/party/', {
+    fetch('/api/party/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ function deleteparty(partyId) {
     }
     console.log("headers:", headers)
 
-    fetch('http://127.0.0.1:8000/api/party/', {
+    fetch('/api/party/', {
         method: 'DELETE',
         headers: headers,
         body: JSON.stringify({ id: partyId })
@@ -70,7 +70,7 @@ function deleteparty(partyId) {
 function JoinParty(partyId, position) {
     console.log(partyId);
     console.log(position);
-    const url = `http://127.0.0.1:8000/api/party/${partyId}/`; // 엔드포인트에 변수를 포함한 URL
+    const url = `/api/party/${partyId}/`; // 엔드포인트에 변수를 포함한 URL
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const headers = {
         'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ function JoinParty(partyId, position) {
 function GetOutParty(partyId) {
     console.log(partyId);
     console.log(position);
-    const url = `http://127.0.0.1:8000/api/party/${partyId}/`; // 엔드포인트에 변수를 포함한 URL
+    const url = `/api/party/${partyId}/`; // 엔드포인트에 변수를 포함한 URL
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const headers = {
         'Content-Type': 'application/json',

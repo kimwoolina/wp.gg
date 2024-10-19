@@ -196,7 +196,7 @@ class PartyDetailView(APIView):
         elif position=="adc1":
             if party.adc1 is None:
                 party.adc1 = user
-                requser.user.position = position
+                user.position = position
             else:
                 print("error adc1 이미 존재")
                 return Response({"status":"error", "message": "adc already exist"})
@@ -259,43 +259,53 @@ class PartyDetailView(APIView):
             print("top1")
             party.top1 = None
             user.in_party = None
+            user.position = None
         elif party.jungle1 == user:
             print("jungle1")
             party.jungle1 = None
             user.in_party = None
+            user.position = None
         elif party.mid1 == user:
             print("mid1")
             party.mid1 = None
             user.in_party = None
+            user.position = None
         elif party.support1 == user:
             print("support1")
             party.support1 = None
             user.in_party = None
+            user.position = None
         elif party.adc1 == user:
             print("adc1")
             party.adc1 = None
-            requser.user.in_party = None
+            user.in_party = None
+            user.position = None
         elif party.is_rank == 1:
             if party.top2 == user:
                 print("top2")
                 party.top2 = None
                 user.in_party = None
+                user.position = None
             if party.jungle2 == user:
                 print("jungle2")
                 party.jungle2 = None
                 user.in_party = None
+                user.position = None
             if party.mid2 == user:
                 print("mid2")
                 party.mid2 = None
                 user.in_party = None
+                user.position = None
             if party.support2 == user:
                 print("support2")
                 party.support2 = None
                 user.in_party = None
+                user.position = None
             if party.adc2 == user:
                 print("adc2")
                 party.adc2 = None
                 user.in_party = None
+                user.position = None
             else:
                 print("error")
                 return Response({"status":"error", "message": "unknown position"})

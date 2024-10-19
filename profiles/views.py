@@ -67,6 +67,8 @@ class UserDetailView(generics.GenericAPIView):
             # 라이엇 정보 추가
             if riot_tag and user_info:
                 serializer_data['riot_info'] = user_info
+            
+            return Response(serializer_data)
 
         return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 

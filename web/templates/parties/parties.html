@@ -10,7 +10,7 @@
 <div class="left-container"></div>
 {% if request.user %}
 <label style="padding: 20px;">파티 생성하기</label><br />
-<form action="{% url 'party' %}" method="POST" id="createparty">
+<form action="{% url 'parties:party' %}" method="POST" id="createparty">
     {% csrf_token %}
     <div class="grid-container">
         <div class="grid-header">랭크</div>
@@ -366,7 +366,7 @@
             </div>
             {% if data.id == request.user.in_party%}
             <div class="button-container horizontal-container-set get-out-icon">
-                <button type="button" class="exit-button no-style-button" onclick="consoleprint('일반 파티 나가기')"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="deleteparty({{data.id}})" id="PartyDelete"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             {% endif %}
         </div>

@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, I
 class PartyView(ListCreateAPIView):
     serializer_class = PartiesSerializer
     # 인증(로그인)해야 이 기능 사용 가능 비로그인은 읽기 허용
-    permission_classes = [AllowAny]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
+    permission_classes = [IsAuthenticatedOrReadOnly]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
 
     # 팀 매칭(파티 찾기) RQ-021
     def get(self, request):
@@ -95,11 +95,47 @@ class PartyView(ListCreateAPIView):
 
     def delete(self, request):
         print(request.user)
+        if request.user == "AnonymousUser":
+            print("사용자 정보 전달 안됨")
         pk=request.data.get("id")
         delete_party = get_object_or_404(Parties, id=pk)
         # 방장만 방 폭파 가능
         if request.user == delete_party.user:
             print("delete_party")
+            if delete_party.top1:
+                delete_party.top1.in_party = None
+                delete_party.top1.save()
+            if delete_party.jungle1:
+                delete_party.jungle1.in_party = None
+                delete_party.jungle1.save()
+            if delete_party.mid1:
+                delete_party.mid1.in_party = None
+                delete_party.mid1.save()
+            if delete_party.support1:
+                delete_party.support1.in_party = None
+                delete_party.support1.save()
+            if delete_party.adc1:
+                delete_party.adc1.in_party = None
+                delete_party.adc1.save()
+            if not delete_party.is_rank:
+                print("내전")
+                if delete_party.top2:
+                    delete_party.top2.in_party = None
+                    delete_party.top2.save()
+                if delete_party.jungle2:
+                    delete_party.jungle2.in_party = None
+                    delete_party.jungle2.save()
+                if delete_party.mid2:
+                    delete_party.mid2.in_party = None
+                    delete_party.mid2.save()
+                if delete_party.support2:
+                    delete_party.support2.in_party = None
+                    delete_party.support2.save()
+                if delete_party.adc2:
+                    delete_party.adc2.in_party = None
+                    delete_party.adc2.save()
+            delete_party.save()
+                
             delete_party.delete()
             return Response({"status": "succeed", "message": "delete_party", "delete_id": pk})
         else:
@@ -108,7 +144,7 @@ class PartyView(ListCreateAPIView):
 
 
 class PartyDetailView(APIView):
-    permission_classes = [AllowAny]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
+    permission_classes = [IsAuthenticatedOrReadOnly]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
     def post(self, request, party_pk):
         def putparty(id):
             if party.top1 is request.user:

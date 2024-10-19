@@ -69,24 +69,55 @@ document.getElementById('createparty').addEventListener('submit', function(event
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}', 'Authorization': 'Bearer ' + getAccessToken() // CSRF 토큰 추가
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Authorization': 'Bearer ' + getAccessToken()
         },
         body: JSON.stringify(jsonData)
     })
     .then(response => {
-        response_json = response.json()
-        console.log(response_json);
-        if response_json.data = "error"{
-            alert('실패')
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-        else{
-            alert('성공')
-        }
-
+        return response.json(); // 응답을 JSON 형식으로 변환
     })
-    .then(data => console.log(data))
+    .then(data => {
+        console.log(data);
+        location.reload(); // 화면 새로고침
+    })
     .catch(error => console.error('Error:', error));
 });
+
+
+
+function deleteparty(partyId) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{csrftoken}}',
+        'Authorization': 'Bearer ' + getAccessToken()
+    }
+    console.log("headers:", headers)
+
+    fetch('http://127.0.0.1:8000/api/party/', {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({ id: partyId })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("파티가 삭제되었습니다.");
+        } else {
+            alert("삭제 실패: " + response.statusText);
+        }
+    })
+    .then(data => {
+        console.log(data);
+        location.reload(); // 화면 새로고침
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
 
 
 

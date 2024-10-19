@@ -94,10 +94,6 @@ def article_detail_view(request, article_id):
     return render(request, 'articles/article_detail.html', {'article': article})
 
 
-class indexView(generic.TemplateView):
-    template_name = 'users/discordIndex.html'
-
-
 def base(request):
     return render(request, 'base.html')
     

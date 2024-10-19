@@ -21,8 +21,6 @@ from django.db.models.functions import Coalesce
 
 User = get_user_model()
 
-# def index(request):
-#     return render(request, "chats/index.html")
 
 # 개인 채팅방 생성
 class PrivateChatRoomCreateView(APIView):

@@ -338,7 +338,7 @@ To set up and run the project, follow these steps:
 
 <a name="architecture"></a>
 ## 🌐 Architecture
-![image](https://github.com/user-attachments/assets/7117e8ac-c231-4403-8023-57de20cbf2cf)
+<img width="913" alt="스크린샷 2024-10-19 오후 8 33 46" src="https://github.com/user-attachments/assets/e802ce45-001d-4730-8c49-148c8c22c9b4">
 
 <br>
 

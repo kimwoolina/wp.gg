@@ -130,6 +130,8 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware', 
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 ROOT_URLCONF = 'wpgg.urls'
 
 TEMPLATES = [

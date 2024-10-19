@@ -8,6 +8,7 @@
     <title>내 정보</title>
     {% load static %}
     <!-- Static CSS -->
+
     <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
 </head>
 
@@ -86,23 +87,29 @@
                         </div>
                     </div>
                     <br>
-
-                    <div class="profile-info">
-                        <label for="username">username</label>
-                        <input type="text" id="username" value="{{ request.user.username }}" readonly>
-
-                        <label for="riot-nickname">riot nickname</label>
-                        <input type="text" id="riot-username" value="{{ request.user.riot_username }}" readonly>
-
-                        <label for="riot-tag">riot tag</label>
-                        <input type="text" id="riot-tag" value="{{ request.user.riot_tag }}" readonly>
-
-                        <label for="email">email</label>
-                        <input type="email" id="email" value="{{ request.user.email }}" readonly>
-
-                        <label for="introduce">introduce</label>
-                        <textarea id="introduce" readonly>{{ request.user.introduction }}</textarea>
-                    </div>
+                    <form id="profile_update" method="POST" action="/profile/update/" enctype="multipart/form-data">
+                        <div class="profile-info">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" value="{{ request.user.username }}" readonly>
+                    
+                            <label for="riot-username">Riot Nickname</label>
+                            <input type="text" id="riot-username" name="riot_username" value="{{ request.user.riot_username }}" readonly>
+                    
+                            <label for="riot-tag">Riot Tag</label>
+                            <input type="text" id="riot-tag" name="riot_tag" value="{{ request.user.riot_tag }}" readonly>
+                    
+                            <label for="introduce">Introduce</label>
+                            <textarea id="introduce" name="introduction" readonly>{{ request.user.introduction }}</textarea>
+                    
+                            <label for="profile_image">Profile Image</label>
+                            <input type="file" id="profile-image" name="profile_image" accept="image/*">
+                    
+                            <!-- 수정 및 저장 버튼 -->
+                            <button id="edit-profile-btn" class="action-button">내 정보 수정하기</button>
+                            <button id="save-profile-btn" class="action-button" style="display: none;">저장하기</button>
+                        </div>
+                    </form>
+                    
                     
                     <div class="sns-category">라이엇 계정</div>
                     <div class="sns-container">
@@ -200,7 +207,67 @@
             }
         })
         .catch(error => console.error('Error:', error));
+
     });
+    // 수정 모드로 전환
+    document.getElementById('edit-profile-btn').addEventListener('click', function (e) {
+        e.preventDefault();  // 폼 자동 제출 버튼 막기
+        toggleEditMode(true);  // 수정 모드 활성화
+    });
+
+    // 저장 버튼 클릭 시 서버에 변경 내용 전송
+    document.getElementById('save-profile-btn').addEventListener('click', function (e) {
+        e.preventDefault(); // 폼 자동 제출 버튼 막기
+        saveProfile();  // 프로필 저장 함수 호출
+    });
+
+    // 수정 모드 활성화 및 해제 함수
+    function toggleEditMode(isEdit) {
+        const inputs = document.querySelectorAll('#username, #introduce, #riot-username, #riot-tag');
+        
+        inputs.forEach(input => {
+            input.readOnly = !isEdit;  // 수정 가능 여부 설정
+        });
+    
+        // 파일 업로드 필드는 항상 활성화
+        const fileInput = document.getElementById('profile-image');
+        fileInput.disabled = !isEdit;
+    
+        // 버튼 표시 전환
+        document.getElementById('edit-profile-btn').style.display = isEdit ? 'none' : 'inline-block';
+        document.getElementById('save-profile-btn').style.display = isEdit ? 'inline-block' : 'none';
+    }    
+        // 프로필 저장 함수
+        function saveProfile() {
+        const username = document.getElementById('username').value;
+        const introduction = document.getElementById('introduce').value;
+        const riotUsername = document.getElementById('riot-username').value;
+        const riotTag = document.getElementById('riot-tag').value;
+        const profileImage = document.getElementById('profile-image').files[0];
+
+        const formElement = document.querySelector('form');
+        const formData = new FormData(formElement);
+
+        fetch('/auth/api/profile/', {
+            method: 'PUT',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // CSRF 보호,
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: formData
+                })
+        .then(response => response.json())  // JSON 응답 파싱
+        .then(data => {
+            if (data.message) {
+                alert(data.message);  // 성공 메시지
+                window.location.reload();  // 새로고침으로 최신 데이터 표시
+            } else {
+                alert(`프로필 수정 실패: ${data.error || '다시 시도해주세요.'}`);  // 오류 메시지
+            }
+        })
+        .catch(error => console.error('Error:', error));  // 에러 처리
+    }
+
 </script>
 </body>
 </html>

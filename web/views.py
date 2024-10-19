@@ -129,3 +129,4 @@ def party(request):
             return redirect('/party/')
         party_data = Parties.objects.all().order_by("-pk")
         return render(request, 'parties/parties.html', {'party': party_data})
+    

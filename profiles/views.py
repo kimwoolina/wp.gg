@@ -15,7 +15,9 @@ from django.db import models
 from rest_framework.permissions import AllowAny
 from wpgg.settings import RIOT_API_KEY
 import re
+import logging
 
+logger = logging.getLogger('django') 
 
 class UserDetailView(generics.GenericAPIView):
     """
@@ -56,10 +58,13 @@ class UserDetailView(generics.GenericAPIView):
 
         if user_queryset.exists():
             user = user_queryset.first()
-
             # 라이엇 정보 가져오기
             user_info = self.get_riot_info(user, username, riot_tag)
-
+            
+            if not user_info:
+                logger.error(f'Riot API로부터 사용자 정보 조회 실패: {username}, {riot_tag}')
+                return Response({"message": "라이엇 정보 조회 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
             # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
             articles = Articles.objects.filter(reviewee=user)
             serializer_data = self.get_serializer_data(user, articles)
@@ -70,6 +75,7 @@ class UserDetailView(generics.GenericAPIView):
             
             return Response(serializer_data)
 
+        logger.error(f"소환사 '{username}'에 대한 정보를 찾을 수 없습니다.")
         return Response({"message": f"{username} 소환사에 대한 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
     def get_riot_info(self, user, username, riot_tag):

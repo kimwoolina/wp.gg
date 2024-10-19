@@ -263,3 +263,23 @@ DiscordOAuth2 = {
     "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
     "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
 }
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'error.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

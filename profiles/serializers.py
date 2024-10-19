@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from users.models import User, Evaluations, Positions
 from articles.models import Articles 
+import logging
 
+# 로깅 객체 생성
+logger = logging.getLogger('django')
 
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +13,12 @@ class EvaluationSerializer(serializers.ModelSerializer):
         exclude = ['created_at', 'updated_at',]
 
     def create(self, validated_data):
-        return Evaluations.objects.create(**validated_data)
+        try:
+                evaluation = Evaluations.objects.create(**validated_data)
+                return evaluation
+        except Exception as e:
+            logger.error(f"Failed to create evaluation: {e}")
+            raise serializers.ValidationError("Failed to create evaluation.")
 
     def update(self, instance, validated_data):
         for field in validated_data:

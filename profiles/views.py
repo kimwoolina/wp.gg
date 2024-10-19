@@ -17,6 +17,7 @@ from wpgg.settings import RIOT_API_KEY
 import re
 import logging
 
+
 logger = logging.getLogger('django') 
 
 class UserDetailView(generics.GenericAPIView):

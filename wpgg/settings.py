@@ -62,16 +62,28 @@ INSTALLED_APPS = [
     'parties',
     'profiles',
     'credits',
+    'common',
     'web',
 ]
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # Redis 서버 주소와 포트
-        },
-    },
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],  # Redis 서버 주소와 포트
+#         },
+#     },
+# }
+
+# Redis를 django의 cache로 사용
+CACHES = {  
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }
 
 Q_CLUSTER = {
@@ -251,4 +263,24 @@ DiscordOAuth2 = {
     "API_ENDPOINT": "https://discord.com/api/v10",
     "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
     "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
+}
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'error.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
 }

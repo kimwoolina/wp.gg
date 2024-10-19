@@ -12,6 +12,7 @@ import sys
 import os
 import requests
 from urllib.parse import quote
+from common.cache import cache_get, cache_set
 
 # 현재 파일의 경로를 기준으로 상위 디렉토리(프로젝트 루트)를 PYTHONPATH에 추가
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
@@ -133,6 +134,16 @@ def get_top_champions(api_key, puuid):
 
 def get_champion_name(champion_id):
     """주어진 챔피언 ID로 챔피언 이름을 조회합니다."""
+    # 캐시 키 생성
+    cache_key = f"champion_name:{champion_id}"
+    
+    # 캐시에서 챔피언 ID, 이름 조회
+    cached_champion = cache_get(cache_key)
+    if cached_champion:
+        print(f"Cache hit for champion ID: {champion_id}")
+        return cached_champion["id"], cached_champion["name"]   # 캐시된 값 반환
+    
+    # 캐시되지 않은 경우, API 호출
     url_champion_data = "https://ddragon.leagueoflegends.com/cdn/14.20.1/data/ko_KR/champion.json"
     try:
         response = requests.get(url_champion_data, timeout=10)
@@ -141,7 +152,11 @@ def get_champion_name(champion_id):
         
         for champion in champions.values():
             if champion["key"] == str(champion_id):
+                # 캐시에 챔피언 이름 저장 (유효한 경우)
+                champion_data = {"id": champion["id"], "name": champion["name"]}
+                cache_set(cache_key, champion_data)
                 return champion["id"], champion["name"]  # (챔피언 ID, 챔피언 이름)
+            
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching champion data: {e}")

@@ -7,92 +7,6 @@
     {% load static %}
     <script src="{% static 'app.js' %}"></script>
     <link rel="stylesheet" href="{% static '/css/home_style.css' %}">
-    <style>
-        /* 전체 배경 설정 */
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #1E1E1E;
-            font-family: 'Nanum Gothic', sans-serif;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .search-box {
-            width: 600px;
-            padding: 15px;
-            background-color: #554477;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 94px 0px 0px 0px;
-        }
-
-        .gif-and-text-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .gif-and-text-container img {
-            width: 300px;
-            animation: bounce 1s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        #fade-container {
-            position: relative;
-            width: 100%;
-            text-align: center;
-            margin-top: 20px;
-            height: 50px;
-        }
-
-        .fade-item {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 28px;
-            font-weight: bold;
-            color: #fcd9ff;
-            white-space: nowrap;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 28px;
-            background-color: white;
-            margin-left: 2px;
-            animation: blink 1s steps(2, start) infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% {
-                opacity: 1;
-            }
-            51%, 100% {
-                opacity: 0;
-            }
-        }
-        
-    </style>
 </head>
 <body>
     <!-- 네비게이션 바 -->
@@ -109,6 +23,8 @@
                 <a href="{% url 'login_selection' %}?next={% url 'chat-room-template' %}">채팅</a>
             {% endif %}
         </div>
+
+        <!-- 상단 오른쪽 Login, Logout, Join, Mypage 버튼 -->
         <div class="nav-right">
             {% if request.user.is_authenticated %}
                 <button id="mypage-btn" class="action-btn">My Page</button>
@@ -119,7 +35,6 @@
         </div>
     </div>
 
-    <!-- 검색 바 -->
     <div class="search-bar">
         <div class="search-box">
             <span class="hamburger">☰</span>
@@ -130,66 +45,188 @@
         </div>
     </div>
 
-    <!-- GIF와 텍스트 애니메이션 -->
-    <div class="gif-and-text-container">
-        <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="로고">
-        <div id="fade-container">
-            <div class="fade-item" data-text="WHAT'S YOUR GAME?"></div>
-            <div class="fade-item" data-text="Who do you want to play with?"></div>
-            <div class="fade-item" data-text="WPGG matches you with people you like!"></div>
-            <div class="fade-item" data-text="Join us!"></div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const fadeItems = document.querySelectorAll('#fade-container .fade-item');
-            let currentIndex = 0;
-
-            function typeText(element, text, callback) {
-                let index = 0;
-                element.innerHTML = '';
-                const cursor = document.createElement('span');
-                cursor.classList.add('cursor');
-                element.appendChild(cursor);
-
-                const typingInterval = setInterval(() => {
-                    if (index < text.length) {
-                        element.innerHTML = text.slice(0, index + 1) + cursor.outerHTML;
-                        index++;
-                    } else {
-                        clearInterval(typingInterval);
-                        blinkCursor(cursor, callback);
-                    }
-                }, 45);
+<!-- 로그아웃 및 마이페이지 이동 -->
+<script>
+    // 세션 삭제 요청 함수
+    function deleteSession() {
+        fetch('/delete-session/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰 포함
             }
-
-            function blinkCursor(cursor, callback) {
-                let blinkCount = 0;
-                const blinkInterval = setInterval(() => {
-                    cursor.style.opacity = cursor.style.opacity === '1' ? '0' : '1';
-                    blinkCount++;
-                    if (blinkCount >= 5) {
-                        clearInterval(blinkInterval);
-                        cursor.remove();
-                        callback();
-                    }
-                }, 500);
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('세션 삭제 완료');
+            } else {
+                console.error('세션 삭제 실패');
             }
-
-            function showNextItem() {
-                fadeItems.forEach(item => (item.style.display = 'none'));
-                const currentItem = fadeItems[currentIndex];
-                const text = currentItem.getAttribute('data-text');
-                currentItem.style.display = 'block';
-                typeText(currentItem, text, () => {
-                    currentIndex = (currentIndex + 1) % fadeItems.length;
-                    showNextItem();
-                });
-            }
-
-            showNextItem();
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    </script>
+    }
+
+    // 리프레시 토큰 만료 시간 체크
+    function checkRefreshTokenExpiry() {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (refreshToken) {
+            const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
+            const expiryTime = tokenParts.exp * 1000;
+            const now = new Date().getTime();
+            const timeLeft = expiryTime - now;
+
+            if (timeLeft <= 60000) { 
+                deleteSession();
+            }
+        }
+    }
+    
+    // 페이지 로드 시 JWT 토큰을 확인하고 저장하기
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access');
+        const refreshToken = urlParams.get('refresh');
+
+        // JWT 토큰이 있으면 로컬 스토리지에 저장
+        if (accessToken && refreshToken) {
+            localStorage.setItem('access_token', accessToken);
+            localStorage.setItem('refresh_token', refreshToken);
+
+            // URL에서 토큰 파라미터 제거
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const logoutButton = document.getElementById('logout-btn');
+        const mypageButton = document.getElementById('mypage-btn');
+        const searchInput = document.getElementById('user-search');
+        const searchIcon = document.getElementById('search-icon');
+
+        if (logoutButton) {
+            // 로그아웃 버튼 클릭 시 이벤트 처리
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 로컬 스토리지에서 리프레시 토큰 가져오기
+                const refreshToken = localStorage.getItem('refresh_token');
+
+                // 새로운 액세스 토큰을 요청하는 함수
+                function refreshAccessToken() {
+                    return fetch('/auth/token/refresh/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰을 헤더에 포함
+                        },
+                        body: JSON.stringify({ "refresh": refreshToken }) // 리프레시 토큰 전송
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('로그아웃 되었습니다. 다시 로그인 해주세요');
+                            localStorage.removeItem('refresh_token');
+                            window.location.href = '/home/';
+                        } 
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.access) {
+                            console.log('새로운 액세스 토큰 받음:', data.access);
+                            localStorage.setItem('access_token', data.access);
+                            return data.access;
+                        } else {
+                            console.error('응답에서 액세스 토큰을 찾을 수 없습니다.');
+                            return Promise.reject('No access token in response');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('토큰 갱신 중 오류 발생:', error);
+                        return Promise.reject(error);
+                    });
+                }
+
+                // 로그아웃 요청을 보내는 함수
+                function executeLogout(token) {
+                    fetch('/auth/logout/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ "refresh_token": refreshToken })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('로그아웃👌');
+                            localStorage.removeItem('access_token');
+                            localStorage.removeItem('refresh_token');
+                            window.location.href = '/home/';
+                        } else {
+                            alert('로그아웃 실패: 서버 문제로 로그아웃에 실패했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                    });
+                }
+
+                // 새로운 액세스 토큰으로 로그아웃 요청
+                refreshAccessToken().then(newAccessToken => {
+                    if (newAccessToken) {
+                        executeLogout(newAccessToken);
+                    }
+                });
+            });
+        }
+
+        // 마이페이지 버튼 클릭 시 profile로 이동
+        if (mypageButton) {
+            mypageButton.addEventListener('click', function() {
+                window.location.href = '/profile/';
+            });
+        }
+
+        // 검색 아이콘 클릭 시 이벤트 리스너
+        searchIcon.addEventListener('click', function () {
+            const inputValue = searchInput.value.trim();
+            searchUser(inputValue);
+        });
+
+        // Enter 키를 눌렀을 때도 검색 기능 추가
+        searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                const inputValue = searchInput.value.trim();
+                searchUser(inputValue);
+            }
+        });
+        // 유저 검색을 위한 함수
+        function searchUser(inputValue) {
+            // 입력값이 비어있는지 확인
+            if (!inputValue) {
+                alert('검색어를 입력해주세요.');
+                return;
+            }
+
+            // 입력값이 '#' 문자를 포함하는지 확인
+            if (inputValue.includes('#')) {
+                // 태그가 포함된 경우
+                const [summonerName, riotTag] = inputValue.split('#');
+                // URL 인코딩
+                const encodedTag = encodeURIComponent(riotTag.trim());
+                window.location.href = `/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+            } else {
+                // 기본 검색 경우
+                window.location.href = `/${encodeURIComponent(inputValue.trim())}`;
+            }
+        }
+        
+    });
+
+</script>
+
 </body>
 </html>

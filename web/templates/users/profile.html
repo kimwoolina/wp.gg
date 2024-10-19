@@ -23,7 +23,7 @@
         <div class="search-box">
             <span class="hamburger">☰</span>
                 <div class="search-box">
-                    <input type="text" placeholder="캣티천사">
+                    <input type="text" placeholder="소환사 이름 +  #태그">
                     <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
                     </svg>
@@ -122,9 +122,9 @@
                             <div class="username">{{ request.user.riot_username }}</div>
                         </div>
                         {% if request.user.riot_username %}
-                        <div class="action-button">라이엇 계정 연결됨</div>
+                        <div id="sns-button" class="action-button">라이엇 계정 연결됨</div>
                         {% else %}
-                        <div class="action-button">라이엇 계정 연결하기</div>
+                        <div id="sns-button" class="action-button">라이엇 계정 연결하기</div>
                         {% endif %}
                     </div>
 
@@ -139,9 +139,9 @@
                             <div class="username">{{ request.user.discord_username }}</div>
                         </div>
                         {% if request.user.riot_username %}
-                        <div class="action-button">디스코드 계정 연결됨</div>
+                        <div id="sns-button" class="action-button">디스코드 계정 연결됨</div>
                         {% else %}
-                        <div class="action-button">디스코드 계정 연결하기</div>
+                        <div id="sns-button" class="action-button">디스코드 계정 연결하기</div>
                         {% endif %}
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                         <img src="{% static 'img/rank_default.png' %}" alt="Rating Icon" class="rating-icon">
                     </div>
                     <div class="rating-panel">
-                        <div class="rating-value">{{ request.user.score }}</div>
+                        <div class="rating-value">{{ request.user.score|floatformat:2 }}</div>
                         <div class="rating-scale">
                             <span class="thumb-down">&#128078;</span>
                             <div class="rating-bar">
@@ -267,6 +267,47 @@
         })
         .catch(error => console.error('Error:', error));  // 에러 처리
     }
+
+    // 유저 검색을 위한 함수
+    function searchUser(inputValue) {
+        // 입력값이 비어있는지 확인
+        if (!inputValue) {
+            alert('검색어를 입력해주세요.');
+            return;
+        }
+
+        // 입력값이 '#' 문자를 포함하는지 확인
+        if (inputValue.includes('#')) {
+            // 태그가 포함된 경우
+            const [summonerName, riotTag] = inputValue.split('#');
+            // URL 인코딩
+            const encodedTag = encodeURIComponent(riotTag.trim());
+            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+        } else {
+            // 기본 검색 경우
+            window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(inputValue.trim())}`;
+        }
+    }
+    
+    // 검색 박스에 엔터키 이벤트 추가
+    const searchInput = document.querySelector('.search-box input[type="text"]');
+    const searchIcon = document.querySelector('.search-icon');
+
+    searchInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // 기본 엔터키 동작 방지
+            searchUser(searchInput.value);
+        }
+    });
+
+    searchIcon.addEventListener('click', function() {
+        searchUser(searchInput.value);
+    });   
+
+    // "계정 연결됨" 버튼 클릭 시 alert 표시
+    document.getElementById('connected-button').onclick = function() {
+        alert('죄송합니다. 소셜 계정 연결/해제 서비스는 준비 중입니다.');
+    };
 
 </script>
 </body>

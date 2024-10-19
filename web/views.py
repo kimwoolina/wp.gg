@@ -104,29 +104,5 @@ def base(request):
 
 def party(request):
     print(request.method)
-    if request.method == 'GET':
-        # try:
-        #     response = requests.get('http://127.0.0.1:8000/api/party/')  # 로컬 API URL
-        #     response.raise_for_status()  # 오류 발생 시 예외 처리
-        # except requests.exceptions.RequestException as e:
-        #     return HttpResponse(f"API 요청 오류: {e}", status=500)
-        
-        # # API로부터 받은 JSON 데이터를 파싱
-        # party_data = response.json()
-        # print(party_data)
-        
-        # 데이터를 템플릿으로 전달하여 HTML 렌더링
-        party_data = Parties.objects.all().order_by("-pk")
-        return render(request, 'parties/parties.html', {'party': party_data})
-    elif request.method == 'POST':
-        print("post request")
-        try:
-            response = requests.post(f'http://127.0.0.1:8000/api/party/', json=request.POST)
-            response_data = response.json()
-            print(response_data.position)
-        except:
-            print("죽음")
-            return redirect('/party/')
-        party_data = Parties.objects.all().order_by("-pk")
-        return render(request, 'parties/parties.html', {'party': party_data})
-    
+    party_data = Parties.objects.all().order_by("-pk")
+    return render(request, 'parties/parties.html', {'party': party_data})

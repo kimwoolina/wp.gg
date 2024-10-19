@@ -15,3 +15,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'is_notification_sound_on',  # 알람 소리 설정
             'is_notification_message_on'  # 알람 메시지 설정
         ]
+        read_only_fields = ['email']  # 수정 불가 필드

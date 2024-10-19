@@ -15,6 +15,12 @@ from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.views.decorators.cache import never_cache
 from .serializers import UserProfileSerializer
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import User
+from django.contrib import messages
+
+from django.http import JsonResponse
 
 # 디스코드 로그인
 from wpgg.settings import DiscordOAuth2
@@ -41,6 +47,43 @@ def delete_session(request):
         logout(request)  # 로그아웃 처리
         return JsonResponse({'message': '세션 삭제 완료'}, status=200)
     return JsonResponse({'error': '잘못된 요청'}, status=400)
+
+# 내 프로필 수정
+"""
+회원정보 수정 - 로그인 된 사용자만 가능, 마이프로필 페이지에서 버튼으로
+작성자: 이새예
+작성일자: 2024.10.19
+"""
+from django.http import JsonResponse
+
+@login_required
+def profile_update(request):
+    user = request.user  # 로그인된 사용자 정보
+
+    if request.method == 'POST':
+        data = request.POST.copy()
+        files = request.FILES
+
+        # 이메일 수정 방지
+        if data.get('email') and data['email'] != user.email:
+            return JsonResponse({'error': '이메일은 수정할 수 없습니다.'}, status=400)
+
+        # 유저네임 중복 체크
+        new_username = data.get('username')
+        if new_username and new_username != user.username:
+            if User.objects.filter(username=new_username).exists():
+                return JsonResponse({'error': '이미 사용 중인 유저네임입니다.'}, status=400)
+
+        # 시리얼라이저로 데이터 처리
+        serializer = UserProfileSerializer(user, data=data, files=files, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'message': '프로필이 수정되었습니다!'}, status=200)
+
+        # 유효성 오류 반환
+        return JsonResponse({'errors': serializer.errors}, status=400)
+
+    return JsonResponse({'error': '잘못된 요청입니다.'}, status=400)
 
 
 # 회원가입
@@ -217,8 +260,37 @@ class UserProfileView(APIView):
         serializer = UserProfileSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message': '프로필이 수정되었습니다!'}, status=200)
+        return JsonResponse({'error': '잘못된 요청입니다.'}, status=400)
+    
+    # def put(self, request):
+        
+    #         user = request.user  # 로그인된 사용자 정보
+
+    #         if request.method == 'POST':
+    #             data = request.POST.copy()
+    #             files = request.FILES
+
+    #             # 이메일 수정 방지
+    #             if data.get('email') and data['email'] != user.email:
+    #                 return JsonResponse({'error': '이메일은 수정할 수 없습니다.'}, status=400)
+
+    #             # 유저네임 중복 체크
+    #             new_username = data.get('username')
+    #             if new_username and new_username != user.username:
+    #                 if User.objects.filter(username=new_username).exists():
+    #                     return JsonResponse({'error': '이미 사용 중인 유저네임입니다.'}, status=400)
+
+    #             # 시리얼라이저로 데이터 처리
+    #             serializer = UserProfileSerializer(user, data=data, files=files, partial=True)
+    #             if serializer.is_valid():
+    #                 serializer.save()
+    #                 return JsonResponse({'message': '프로필이 수정되었습니다!'}, status=200)
+
+    #             # 유효성 오류 반환
+    #             return JsonResponse({'errors': serializer.errors}, status=400)
+
+    #         return JsonResponse({'error': '잘못된 요청입니다.'}, status=400)
 
 
 # 비밀번호 변경

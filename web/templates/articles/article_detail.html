@@ -17,9 +17,12 @@
         <div class="reviewer">
             <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
             <div>
-                <h2 class="username">{{ article.reviewer.username }} (Reviewer)</h2>
+                <h2 class="username">
+                    <a class="reviewer-link" href="{% url 'user-detail' article.reviewer.username %}">{{ article.reviewer.username }} (Reviewer)</a>
+                </h2>
             </div>
         </div>
+        
     
         <!-- 평가 대상 정보 -->
         <div class="reviewer">
@@ -27,9 +30,13 @@
             <div style="display: flex; align-items: center; justify-content: center;">
                 {% if article.reviewee.riot_username %}
                     <img src="https://i.namu.wiki/i/CkC1jHQTylD3bFyvYoODHw24yEVJeZxzYZkqiZ6u2GR83VnUKFCsuR3ahrI1ukCK5CxJd-Vpt4VAUEcfVlh9-Q.svg" alt="Riot : " style="width:15px; margin-right: 5px; vertical-align: middle;"> 
-                    <h2 class="username">{{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</h2>
+                    <h2 class="username">
+                        <a class="reviewee-link" href="{% url 'user-detail' article.reviewee.username %}">{{ article.reviewee.riot_username }} #{{ article.reviewee.riot_tag }}</a>
+                    </h2>
                 {% else %}
-                    <h2 class="username">{{ article.reviewee.username }}</h2>
+                    <h2 class="username">
+                        <a class="reviewee-link" href="{% url 'user-detail' article.reviewee.username %}">{{ article.reviewee.username }}</a>
+                    </h2>
                 {% endif %}
                 <h2 class="username" style="margin-left: 5px;">(Reviewee)</h2>
             </div>

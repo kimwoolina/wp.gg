@@ -181,6 +181,7 @@
         width: 57%;
         margin-left: 185px;
     }
+    
 
 </style>
 {% load static %}
@@ -192,7 +193,8 @@
     <div class="top-container">
         <div class="filter-container">
             <label for="positions">포지션 선택:</label>
-            <select id="positions" multiple>
+            <select id="positions" size="1">
+                <option value="">전체</option>
                 <option value="top">탑</option>
                 <option value="jungle">정글</option>
                 <option value="mid">미드</option>
@@ -306,12 +308,15 @@
         function applyFilters() {
             const positions = getSelectedValues(document.getElementById('positions'));
             const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
-
+            console.log(positions)
             let url = '/api/profile/rankings/?';
             if (positions) {
-                url += `positions=${positions}&`;
+                url += `positions=${positions}`;
             }
             if (sortBy) {
+                if(positions){
+                    url += `&`;
+                }
                 url += `sort_by=${sortBy}`;
             }
 

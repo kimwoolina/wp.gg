@@ -17,8 +17,8 @@ from wpgg.settings import RIOT_API_KEY
 import re
 import logging
 
-
 logger = logging.getLogger('django') 
+
 
 class UserDetailView(generics.GenericAPIView):
     """
@@ -104,9 +104,8 @@ class UserDetailView(generics.GenericAPIView):
 
         preferred_position = user_info.get('preferredPosition')
         if preferred_position:
-            user.positions.clear()
-            position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
-            user.positions.add(position)
+            user.position = preferred_position.lower()  # position 필드에 값 저장
+            user.save()
 
     def get_serializer_data(self, user, articles):
         serializer = self.get_serializer(user)
@@ -176,7 +175,7 @@ class MannerRankingView(ListAPIView):
             'teamwork': 'evaluations__teamwork',
             'communication': 'evaluations__communication',
             'mental_strength': 'evaluations__mental_strength',
-            'punctualiity': 'evaluations__punctualiity',
+            'punctuality': 'evaluations__punctuality',  # 오타 수정
             'positivity': 'evaluations__positivity',
             'mvp': 'evaluations__mvp',
             'mechanical_skill': 'evaluations__mechanical_skill',
@@ -191,17 +190,15 @@ class MannerRankingView(ListAPIView):
         # 쿼리 매개변수에 따라 정렬 기준 설정, 없으면 'score'로 정렬
         sort_by_field = sort_fields.get(sort_by, 'score')
 
-        # 포지션 필터링 처리
-        positions = request.query_params.getlist('positions')  # 다중 포지션 가져오기
+        # 포지션 필터링 처리 (단일 값으로 전달됨)
+        position = request.query_params.get('positions')  # 단일 값으로 처리
+
         # 리뷰가 존재하는 유저 정보만 가져오기
         queryset = User.objects.filter(evaluations__isnull=False).select_related('evaluations')
 
-        # 여러 포지션으로 필터링
-        if positions:
-            position_query = Q()
-            for position in positions:
-                position_query |= Q(positions__position_name=position)  # OR 조건 추가
-            queryset = queryset.filter(position_query)
+        # 포지션 필터링 (단일 값으로 필터링)
+        if position:
+            queryset = queryset.filter(position=position)  # position 필드로 필터링
 
         # 쿼리셋을 정렬
         queryset = queryset.order_by(F(sort_by_field).desc(nulls_last=True))
@@ -213,7 +210,8 @@ class MannerRankingView(ListAPIView):
         # 정상적인 결과가 있을 경우
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return render(request, 'users/rankings.html', {'users': serializer.data})
+
+
 
     
 class UserRecommendationView(APIView):

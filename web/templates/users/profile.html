@@ -153,7 +153,7 @@
                         <img src="{% static 'img/rank_default.png' %}" alt="Rating Icon" class="rating-icon">
                     </div>
                     <div class="rating-panel">
-                        <div class="rating-value">{{ request.user.score }}</div>
+                        <div class="rating-value">{{ request.user.score|floatformat:2 }}</div>
                         <div class="rating-scale">
                             <span class="thumb-down">&#128078;</span>
                             <div class="rating-bar">

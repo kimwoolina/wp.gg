@@ -140,7 +140,7 @@ def get_champion_name(champion_id):
     # 캐시에서 챔피언 ID, 이름 조회
     cached_champion = cache_get(cache_key)
     if cached_champion:
-        print(f"Cache hit for champion ID: {champion_id}")
+        # print(f"Cache hit for champion ID: {champion_id}")
         return cached_champion["id"], cached_champion["name"]   # 캐시된 값 반환
     
     # 캐시되지 않은 경우, API 호출

@@ -54,6 +54,7 @@ class PartyView(ListCreateAPIView):
         """position:mid, top, jun, adc, sup 5개중에 하나로 입력되고 그에 따라 방장의 라인이 결졍된다."""
         print(request.user, "있나?asdfas")
         if request.user.in_party is not None:
+            print("이미 참여됨")
             return Response({"data":"error", "message": "이미 파티에 참여된 상태입니다."}, status=400)
 
         # 체크박스의 값은 on, off로 들어오는것 같다.
@@ -146,116 +147,146 @@ class PartyView(ListCreateAPIView):
 class PartyDetailView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]# 확인용으로 바꿈 IsAuthenticatedOrReadOnly로 바꿔줘야함
     def post(self, request, party_pk):
-        def putparty(id):
-            if party.top1 is request.user:
-                print("already in party")
-            elif party.jungle1 is request.user:
-                print("already in party")
-            elif party.mid1 is request.user:
-                print("already in party")
-            elif party.support1 is request.user:
-                print("already in party")
-            elif party.adc1 is request.user:
-                print("already in party")
-            
-            # 파티 중복 가능하면
-            if id=="top1":
-                if party.top1 is None:
-                    party.top1 = request.user
-                else:
-                    print("error top1 not")
-                    return Response({"status":"error", "message": "top already exist"})
-            elif id=="jun1":
-                if party.jungle1 is None:
-                    party.jungle1 = request.user
-                else:
-                    print("error jungle1 not")
-                    return Response({"status":"error", "message": "jungle already exist"})
-            elif id=="mid1":
-                if party.mid1 is None:
-                    party.mid1 = request.user
-                else:
-                    print("error mid1 not")
-                    return Response({"status":"error", "message": "mid already exist"})
-            elif id=="sup1":
-                if party.support1 is None:
-                    party.support1 = request.user
-                else:
-                    print("error support1 not")
-                    return Response({"status":"error", "message": "support already exist"})
-            elif id=="adc1":
-                if party.adc1 is None:
-                    party.adc1 = request.user
-                else:
-                    print("error adc1 not")
-                    return Response({"status":"error", "message": "adc already exist"})
-            elif id=="top2":
+        party = get_object_or_404(Parties, id=party_pk)
+        position = request.data.get("position")
+        if request.user.in_party is not None:
+            return Response({"status": "dismissed", "message": f"이미 참여하고 있는 파티가 존재합니다. 파티:{request.user.in_party}"})
+        if position=="top1":
+            if party.top1 is None:
+                party.top1 = request.user
+                request.user.in_party = party.id
+            else:
+                print("error top1 이미 존재")
+                return Response({"status":"error", "message": "top already exist"})
+        elif position=="jun1":
+            if party.jungle1 is None:
+                party.jungle1 = request.user
+                request.user.in_party = party.id
+            else:
+                print("error jungle1 이미 존재")
+                return Response({"status":"error", "message": "jungle already exist"})
+        elif position=="mid1":
+            if party.mid1 is None:
+                party.mid1 = request.user
+                request.user.in_party = party.id
+            else:
+                print("error mid1 이미 존재")
+                return Response({"status":"error", "message": "mid already exist"})
+        elif position=="sup1":
+            if party.support1 is None:
+                party.support1 = request.user
+                request.user.in_party = party.id
+            else:
+                print("error support1 이미 존재")
+                return Response({"status":"error", "message": "support already exist"})
+        elif position=="adc1":
+            if party.adc1 is None:
+                party.adc1 = request.user
+                requser.user.in_party = party.id
+            else:
+                print("error adc1 이미 존재")
+                return Response({"status":"error", "message": "adc already exist"})
+        if party.is_rank:
+            if position=="top2":
                 if party.top2 is None:
                     party.top2 = request.user
+                    request.user.in_party = party.id
                 else:
-                    print("error top2 not")
+                    print("error top2 이미 존재")
                     return Response({"status":"error", "message": "top already exist"})
-            elif id=="jun2":
+            elif position=="jun2":
                 if party.jungle2 is None:
                     party.jungle2 = request.user
+                    request.user.in_party = party.id
                 else:
-                    print("error jungle2 not")
+                    print("error jungle2 이미 존재")
                     return Response({"status":"error", "message": "jungle already exist"})
-            elif id=="mid2":
+            elif position=="mid2":
                 if party.mid2 is None:
                     party.mid2 = request.user
+                    request.user.in_party = party.id
                 else:
-                    print("error mid2 not")
+                    print("error mid2 이미 존재")
                     return Response({"status":"error", "message": "mid already exist"})
-            elif id=="sup2":
+            elif position=="sup2":
                 if party.support2 is None:
                     party.support2 = request.user
+                    request.user.in_party = party.id
                 else:
-                    print("error support2 not")
+                    print("error support2 이미 존재")
                     return Response({"status":"error", "message": "support already exist"})
-            elif id=="adc2":
+            elif position=="adc2":
                 if party.adc2 is None:
                     party.adc2 = request.user
+                    request.user.in_party = party.id
                 else:
-                    print("error adc2 not")
+                    print("error adc2 이미 존재")
                     return Response({"status":"error", "message": "adc already exist"})
             else:
                 print("error")
                 return Response({"status":"error", "message": "unknown position"})
-            party.save()
-            print("end")
-            return Response({"status":position, "i":"am"})
-            # 파티 중복 불가능하면
-            # if not request.user.party_top1:
-            #     print("already exist")
-            # elif request.user.party_top2:
-            #     print("already exist")
-            # elif request.user.party_mid1:
-            #     print("already exist")
-            # elif request.user.party_mid2:
-            #     print("already exist")
-            # elif request.user.party_jungle1:
-            #     print("already exist")
-            # elif request.user.party_jungle2:
-            #     print("already exist")
-            # elif request.user.party_support1:
-            #     print("already exist")
-            # elif request.user.party_support2:
-            #     print("already exist")
-            # elif request.user.party_adc1:
-            #     print("already exist")
-            # elif request.user.party_adc2:
-            #     print("already exist")
-        # print(f"{request.user.party_top1}")
-        party = get_object_or_404(Parties, id=party_pk)
-        position = request.data.get("position")
-        print(f"id:{party.id}, user:{request.user.id}")
-        if request.data.get("status") == "party in":
-            return putparty(position)
-        elif request.data.get("status") == "change":
-            return putparty(position)
+        party.save()
+        request.user.in_party = party.id
+        request.user.save()
+        print(f"end {party.id}")
+        return Response({"status":position, "i":"am"})
+                
 
     def delete(self, request, party_pk):
+        party = get_object_or_404(Parties, id=party_pk)
+        user = request.user
+        print(user)
+        if request.user.in_party is None:
+            return Response({"status": "dismissed", "message": "참여하고 있는 파티가 없습니다!"})
+        if party.top1 == user:
+            print("top1")
+            party.top1 = None
+            request.user.in_party = None
+        elif party.jungle1 == user:
+            print("jungle1")
+            party.jungle1 = None
+            request.user.in_party = None
+        elif party.mid1 == user:
+            print("mid1")
+            party.mid1 = None
+            request.user.in_party = None
+        elif party.support1 == user:
+            print("support1")
+            party.support1 = None
+            request.user.in_party = None
+        elif party.adc1 == user:
+            print("adc1")
+            party.adc1 = None
+            requser.user.in_party = None
+        elif party.is_rank == 1:
+            if party.top2 == user:
+                print("top2")
+                party.top2 = None
+                request.user.in_party = None
+            if party.jungle2 == user:
+                print("jungle2")
+                party.jungle2 = None
+                request.user.in_party = None
+            if party.mid2 == user:
+                print("mid2")
+                party.mid2 = None
+                request.user.in_party = None
+            if party.support2 == user:
+                print("support2")
+                party.support2 = None
+                request.user.in_party = None
+            if party.adc2 == user:
+                print("adc2")
+                party.adc2 = None
+                request.user.in_party = None
+            else:
+                print("error")
+                return Response({"status":"error", "message": "unknown position"})
+        else:
+            print("error")
+        party.save()
+        request.user.save()
+        print(f"success")
         return Response({"status":party_pk})
 
 

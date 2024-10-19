@@ -312,7 +312,7 @@
             });
     
             // 메시지 전송
-            $('#send-message').click(function() {
+            /*$('#send-message').click(function() {
                 const roomId = $('.select-chat-room.selected').data('room-id');
                 const messageContent = $('#message-input').val();
 
@@ -322,7 +322,7 @@
                 } else {
                     alert("Please select a chat room and enter a message.");
                 }
-            });
+            });*/
 
             // 채팅방 생성 버튼 클릭 시
             $('#create-chat-room').click(function() {
@@ -408,6 +408,7 @@
             // 메시지 전송 (작동 안 함)
             $('#send-message').click(function() {
                 const roomId = $('input[name="chat-room"]:checked').data('room-id'); // 라디오 버튼에서 선택된 roomId 가져오기
+                const messageContent = $('#message-input').val();
 
                 if (!roomId) {
                     alert("Please select a chat room."); // 채팅방이 선택되지 않은 경우

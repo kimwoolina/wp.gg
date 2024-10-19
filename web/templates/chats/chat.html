@@ -310,19 +310,6 @@
                 loadMessages(roomId);
                 startPolling(roomId);
             });
-    
-            // 메시지 전송
-            /*$('#send-message').click(function() {
-                const roomId = $('.select-chat-room.selected').data('room-id');
-                const messageContent = $('#message-input').val();
-
-                if (messageContent && roomId) {
-                    sendMessage(roomId, messageContent);
-                    $('#message-input').val('');
-                } else {
-                    alert("Please select a chat room and enter a message.");
-                }
-            });*/
 
             // 채팅방 생성 버튼 클릭 시
             $('#create-chat-room').click(function() {

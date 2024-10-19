@@ -137,12 +137,12 @@ def get_champion_name(champion_id):
     # 캐시 키 생성
     cache_key = f"champion_name:{champion_id}"
     
-    # 캐시에서 챔피언 이름 조회
-    cached_champion_name = cache_get(cache_key)
-    if cached_champion_name:
+    # 캐시에서 챔피언 ID, 이름 조회
+    cached_champion = cache_get(cache_key)
+    if cached_champion:
         print(f"Cache hit for champion ID: {champion_id}")
-        return champion_id, cached_champion_name  # 캐시된 값 반환
-
+        return cached_champion["id"], cached_champion["name"]   # 캐시된 값 반환
+    
     # 캐시되지 않은 경우, API 호출
     url_champion_data = "https://ddragon.leagueoflegends.com/cdn/14.20.1/data/ko_KR/champion.json"
     try:
@@ -153,7 +153,8 @@ def get_champion_name(champion_id):
         for champion in champions.values():
             if champion["key"] == str(champion_id):
                 # 캐시에 챔피언 이름 저장 (유효한 경우)
-                cache_set(cache_key, champion["name"])
+                champion_data = {"id": champion["id"], "name": champion["name"]}
+                cache_set(cache_key, champion_data)
                 return champion["id"], champion["name"]  # (챔피언 ID, 챔피언 이름)
             
 

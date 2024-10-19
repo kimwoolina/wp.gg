@@ -29,7 +29,7 @@ class User(AbstractUser):
     is_notification_sound_on = models.BooleanField(default=True)  # 알람 소리 
     is_notification_message_on = models.BooleanField(default=True)  # 알람 메시지
     in_party = models.IntegerField(null=True, blank=True, default=None)
-    position = models.CharField(max_length=10, default="", null=True, blank=True)
+    position = models.CharField(max_length=10, default="", null=True)
 
     def __str__(self):
         return self.username

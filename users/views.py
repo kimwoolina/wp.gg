@@ -396,7 +396,7 @@ class discordLoginView(generic.View):
         )
 
         # 응답 상태 및 내용 출력 (디버깅 용도)
-        print(response.status_code, response.text)
+        # print(response.status_code, response.text)
         response.raise_for_status()
 
         # 토큰 응답을 JSON으로 파싱

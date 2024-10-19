@@ -64,7 +64,6 @@ class UserDetailView(generics.GenericAPIView):
             
             if not user_info:
                 logger.error(f'Riot API로부터 사용자 정보 조회 실패: {username}, {riot_tag}')
-                return Response({"message": "라이엇 정보 조회 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
             # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
             articles = Articles.objects.filter(reviewee=user)
@@ -237,11 +236,6 @@ class UserRecommendationView(APIView):
         positions = request.data.get('riot_position', [])
         filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
         user_preference = request.data.get('user_preference', '')
-
-        # print("riot_tiers >>>>>", riot_tiers)
-        # print("positions >>>>>", positions)
-        # print("filter_fields >>>>>", filter_fields)
-        # print("user_preference >>>>>", user_preference)
         
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
@@ -276,8 +270,6 @@ class UserRecommendationView(APIView):
         all_reviews = Articles.objects.all().values('content', 'reviewee')
         reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
 
-        # print("reviews_test >>>>>", reviews_text)
-        
         # 3. 사용자 입력 텍스트 처리
         if user_preference:
             # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
@@ -297,21 +289,16 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-            # print('user_preference_analysis>>>>>>>>', user_preference_analysis)
 
             # 정규 표현식을 사용하여 숫자 추출
             matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
             
-            # print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
-
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
             else:
                 return Response({"message": "매칭되는 유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)   
             
-            # print("users>>>>>", users)
-
         # 상위 3명만 선택
         users = users[:3]
         

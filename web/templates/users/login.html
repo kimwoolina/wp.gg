@@ -237,8 +237,6 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            console.log('로그인 시도:', email, password);  
-        
             fetch('/auth/login/', {
                 method: 'POST',
                 headers: {

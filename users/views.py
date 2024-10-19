@@ -15,6 +15,12 @@ from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.views.decorators.cache import never_cache
 from .serializers import UserProfileSerializer
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import User
+from django.contrib import messages
+
+from django.http import JsonResponse
 
 # 디스코드 로그인
 from wpgg.settings import DiscordOAuth2
@@ -28,6 +34,9 @@ from django.http import JsonResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+import logging
+
+logger = logging.getLogger('django') 
 
 @never_cache
 def home_view(request):
@@ -42,7 +51,6 @@ def delete_session(request):
         return JsonResponse({'message': '세션 삭제 완료'}, status=200)
     return JsonResponse({'error': '잘못된 요청'}, status=400)
 
-
 # 회원가입
 class CustomRegisterView(RegisterView):
     def create(self, request, *args, **kwargs):
@@ -55,7 +63,6 @@ class CustomRegisterView(RegisterView):
 
         # 오류 메시지 모음
         errors ={}
-
 
         # 이메일 유효성 검사 및 오류 처리
         if not email:
@@ -89,6 +96,7 @@ class CustomRegisterView(RegisterView):
 
         # 오류가 있을 경우 상세 메시지 반환
         if errors:
+            logger.error(f"회원가입 실패: {str(errors)}")
             return Response({
                 'message': '회원가입에 실패했습니다.',
                 'errors': errors
@@ -106,7 +114,9 @@ class CustomRegisterView(RegisterView):
             refresh = RefreshToken.for_user(new_user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
-
+            
+            logger.info(f"회원가입 성공: 유저명 {username}")
+            
             return Response({
                 'message': '회원가입이 완료되었습니다. 환영합니다!',
                 'user': {
@@ -117,6 +127,7 @@ class CustomRegisterView(RegisterView):
                 'refresh': refresh_token
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
+            logger.error(f"회원가입 실패: {str(e)}")
             return Response({
                 'message': '회원가입 중 오류가 발생했습니다.',
                 'error': str(e)
@@ -128,6 +139,9 @@ class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         password = request.data.get('password')
+        
+        # 로깅
+        logger.info(f"로그인 시도: 이메일: {email}")
 
         # 1. 이메일 존재 여부 확인
         try:
@@ -217,8 +231,8 @@ class UserProfileView(APIView):
         serializer = UserProfileSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message': '프로필이 수정되었습니다!'}, status=200)
+        return JsonResponse({'error': '잘못된 요청입니다.'}, status=400)
 
 
 # 비밀번호 변경
@@ -249,8 +263,13 @@ class discordLoginView(generic.View):
         # URL에 코드가 있는 경우
         elif len(self.request.META['QUERY_STRING']) > 0:
             code = self.request.GET.get('code')
+            
+            # 로깅
+            logger.info(f"디스코드 인증 코드 수신: {code}")
+        
             getUser = self.exchangeCode(code)
-
+            logger.info(f"디스코드 사용자 정보: {getUser}")
+            
             # 디스코드 사용자 정보로 User 검색
             user = User.objects.filter(
                 discord_username=getUser['username'], 
@@ -288,6 +307,7 @@ class discordLoginView(generic.View):
 
         # 코드가 없으면 디스코드 API로 리다이렉트
         else:
+            logger.info("디스코드 인증 코드 없음, 디스코드 API로 리다이렉트")
             return redirect(DiscordOAuth2["DISCORD_OAUTH2_URL"])
 
     # 디스코드 API로부터 사용자 정보를 가져오는 함수
@@ -309,7 +329,7 @@ class discordLoginView(generic.View):
         )
 
         # 응답 상태 및 내용 출력 (디버깅 용도)
-        print(response.status_code, response.text)
+        # print(response.status_code, response.text)
         response.raise_for_status()
 
         # 토큰 응답을 JSON으로 파싱

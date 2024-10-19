@@ -4,6 +4,10 @@ from django.views import generic
 from django.views.generic import TemplateView
 import requests
 from django.http import Http404
+from django.http import HttpResponseNotFound
+
+def custom_page_not_found_view(request, exception):
+    return render(request, '404.html', status=404)
 
 # user 앱 관련
 
@@ -13,23 +17,23 @@ def home(request):
 
 """게임 선택 페이지"""
 def gamechoice(request):
-    return render(request, 'gamechoice.html')
+    return render(request, 'users/gamechoice.html')
 
 """계정 선택 페이지"""
 def login_selection(request):
-    return render(request, 'login_selection.html')
+    return render(request, 'users/login_selection.html')
 
 """회원가입 페이지 렌더링"""
 def register_page(request):
-    return render(request, 'register.html')
+    return render(request, 'users/register.html')
 
 """로그인 페이지 렌더링"""
 def login_page(request):
-    return render(request, 'login.html')
+    return render(request, 'users/login.html')
 
 """마이페이지 조회 렌더링"""
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'users/profile.html')
 
 
 # profile 앱 관련
@@ -79,6 +83,14 @@ def article_create_page(request):
 
 
 def article_detail_view(request, article_id):
+    # API에서 데이터 가져오기
+    try:
+        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+        article = response.json()  # JSON으로 변환
+    except requests.exceptions.HTTPError:
+        raise Http404("Article not found.")  # 404 오류 발생
+    
     return render(request, 'articles/article_detail.html', {'article': article})
 
 

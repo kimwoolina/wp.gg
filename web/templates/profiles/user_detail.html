@@ -80,6 +80,7 @@
                     displayUserData(data);
                 })
                 .catch(error => {
+                    document.getElementById('loader').style.display = 'none';
                     console.error('Error:', error);
                     // alert('유저 정보를 가져오는 데 문제가 발생했습니다.'); 
                     document.getElementById("result").innerText = '소환사 정보를 찾을 수 없습니다.'
@@ -102,7 +103,8 @@
                 // resultDiv.innerHTML += `<span id="summoner-level">${data.riot_info.summonerLevel}</span>`
             }
             else {
-                resultDiv.innerHTML += `<img id="profile-icon" src="${data.profile_image}" alt="Profile Icon"/>`;
+                const profileImageUrl = "{% if data.profile_image %}{{ data.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}";
+                resultDiv.innerHTML += `<img id="profile-icon" class="profile-img" src="${profileImageUrl}" alt="Profile Icon"/>`;
             }
             
             // 유저 기본 정보

@@ -85,7 +85,11 @@ def article_create_page(request):
 def article_detail_view(request, article_id):
     # API에서 데이터 가져오기
     try:
-        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+        # response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+        scheme = request.scheme  # 'http' 또는 'https'
+        host = request.get_host()  # '127.0.0.1:8000' 등 호스트 주소
+        url = f'{scheme}://{host}/api/articles/{article_id}/'
+        response = requests.get(url)
         response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
         article = response.json()  # JSON으로 변환
     except requests.exceptions.HTTPError:

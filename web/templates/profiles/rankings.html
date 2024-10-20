@@ -256,7 +256,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Initial data:', data); // API 호출 결과 출력
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
                 .catch(error => console.error('Error loading data:', error));
@@ -277,7 +276,7 @@
             users.forEach((user, index) => {
                 const row = document.createElement('dl');
                 let score = Number(user.score.toFixed(2));
-                console.log(user.riot_username)
+
                 if (user.riot_username == null){
                     row.innerHTML = `
                     <dt class="user-info">
@@ -330,8 +329,8 @@
         function applyFilters() {
             const positions = getSelectedValues(document.getElementById('positions'));
             const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
-            console.log(positions)
             let url = '/api/profile/rankings/?';
+
             if (positions) {
                 url += `positions=${positions}`;
             }
@@ -350,7 +349,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Filtered data:', data); // 필터링된 결과 출력
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
                 .catch(error => console.error('Error applying filters:', error));

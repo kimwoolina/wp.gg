@@ -25,6 +25,7 @@ document.getElementById('createparty').addEventListener('submit', function(event
     })
     .then(response => {
         if (!response.ok) {
+            console.log(response)
             throw new Error('Network response was not ok');
         }
         return response.json(); // 응답을 JSON 형식으로 변환

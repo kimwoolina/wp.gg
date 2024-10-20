@@ -372,7 +372,7 @@
         </div>
         <div class="option-container">
             <div class="chat-icon">
-                <button type="button" class="exit-button no-style-button" onclick="consoleprint('일반 파티 채팅{{data.id}}')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="alert('준비중인 서비스입니다.');consoleprint('일반 파티 채팅{{data.id}}')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             {% if data.id == request.user.in_party %}
             <div class="get-out-icon">

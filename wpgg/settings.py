@@ -26,7 +26,8 @@ RIOT_API_KEY = config.RIOT_API_KEY
 OPEN_API_KEY = config.OPEN_API_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["43.201.57.125", "localhost", "127.0.0.1", "wpgg.kr"]
 

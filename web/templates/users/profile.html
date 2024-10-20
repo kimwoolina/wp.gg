@@ -10,6 +10,46 @@
     <!-- Static CSS -->
 
     <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
+    <style>
+        .icon-background {
+            width: 80px;
+            height: 116px;
+            margin: 0 auto;
+            background-color: transparent;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rating-icon {
+            width: 300px;
+            height: auto;
+            margin: 25px 29px 84px 27px;
+        }
+        .rating-value {
+            font-size: 24px;
+            margin-top: 46px;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #ffd700);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.3); /* 조금 더 커짐 */
+                filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #ffd700);
+            }
+        }
+        
+        /* 반짝반짝 효과 적용 */
+        .sparkle-effect {
+            animation: sparkle 2s infinite ease-in-out;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -42,7 +82,7 @@
                 매너 랭킹
             </li>
             <li class="menu-item" onclick="location.href='{% url 'user_matching' %}';">
-                <img src="{% static 'img/thumbs-up_v2.png' %}" class="menu-icon" alt="Team Match Icon">
+                <img src="{% static 'img/recommend.png' %}" class="menu-icon" alt="Team Match Icon">
                 유저 추천
             </li>
             <li class="menu-item" onclick="location.href='/api/party';">
@@ -146,12 +186,34 @@
                     </div>
                 </div>
             </div>
-
             <div class="right-body">
                 <div class="rating-container">
                     <div class="icon-background">
-                        <img src="{% static 'img/rank_default.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% if request.user.score >= 0 and request.user.score < 1 %}
+                            <img src="{% static 'img/1.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 1 and request.user.score < 2 %}
+                            <img src="{% static 'img/2.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 2 and request.user.score < 3 %}
+                            <img src="{% static 'img/3.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 3 and request.user.score < 4 %}
+                            <img src="{% static 'img/4.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 4 and request.user.score < 5 %}
+                            <img src="{% static 'img/5.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 5 and request.user.score < 6 %}
+                            <img src="{% static 'img/6.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 6 and request.user.score < 7 %}
+                            <img src="{% static 'img/7.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 7 and request.user.score < 8 %}
+                            <img src="{% static 'img/8.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 8 and request.user.score < 9 %}
+                            <img src="{% static 'img/9.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 9 and request.user.score < 10 %}
+                            <img src="{% static 'img/10.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score == 10 %}
+                            <img src="{% static 'img/10.png' %}" alt="Rating Icon" class="rating-icon sparkle-effect">
+                        {% endif %}
                     </div>
+
                     <div class="rating-panel">
                         <div class="rating-value">{{ request.user.score|floatformat:2 }}</div>
                         <div class="rating-scale">

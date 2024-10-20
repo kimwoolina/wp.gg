@@ -33,6 +33,9 @@
 
 WP.GG는 리그 오브 레전드 유저들의 리뷰와 매칭 시스템을 통해, 긍정적인 팀 문화를 구축하고 즐거운 게임 경험을 만들어가는 공간입니다.
 
+You can access the live demo of the project [here](http://43.201.57.125/).
+
+
 ### 🗓 Duration
 24.09.30  ~ing
 

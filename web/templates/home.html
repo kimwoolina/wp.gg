@@ -47,11 +47,6 @@
         }
     }
 
-    .gif-container {
-        justify-content: center;
-        margin: -106px 567px 24px 560px;
-    }
-
 
     /* 전체 배경 설정 */
     .body {
@@ -69,7 +64,6 @@
         /* 검색바 아래 로고 - 원래 애니메이션 */
         .search-logo {
             width: 280px;
-            margin: 8px -256px 1px -45px;
         }
 
         @keyframes bigBounce {
@@ -103,7 +97,7 @@
             white-space: nowrap;
             font-family: bold;
             font-weight: 900;
-            margin: 12px auto 26px 50px;
+            margin: 30px auto;
         }
 
         /* League of Legends 텍스트 스타일 */
@@ -152,13 +146,13 @@
     }
 
     .gif-container {
-        justify-content: center;
-        margin: -113px 581px 12px 700px;
+        text-align: center;
     }
 
     </style>
 </head>
 <body>
+
     <!-- 네비게이션 바 -->
     <div class="nav-bar">
         <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="nav_logo" class="nav-logo">
@@ -196,6 +190,8 @@
     <div class="gif-container">
         <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="search_logo" class="search-logo">
     </div>
+
+
     
     <div id="fade-container">
         <div class="fade-item" data-text="WHAT'S YOUR GAME?"></div>

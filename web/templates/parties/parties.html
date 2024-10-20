@@ -101,7 +101,7 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.top1 is none %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top2'), positionprint('top1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top2')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -116,7 +116,7 @@
             </div><!--라인-->
             <div class="image-container">
                 {% if data.top2 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top2'), positionprint('top2')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top2')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -133,7 +133,7 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.mid1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1'), positionprint('mid1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
                 {% else %}{{data.mid1.profile_image}}
@@ -147,7 +147,7 @@
             </div><!--라인-->
             <div class="image-container">
                 {% if data.mid2 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid2'), positionprint('mid2')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid2')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -164,7 +164,7 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.jungle1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1'), positionprint('jun1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -179,7 +179,7 @@
             </div><!--라인-->
             <div class="image-container">
                 {% if data.jungle2 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun2'), positionprint('jun2')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun2')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -196,7 +196,7 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.adc1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1'), positionprint('adc1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -211,7 +211,7 @@
             </div><!--라인-->
             <div class="image-container">
                 {% if data.adc2 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc2'), positionprint('adc2')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc2')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -228,11 +228,11 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.support1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1'), positionprint('sup1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="positionprint('Tlqkf')">
+                <button type="button" class="no-style-button" onclick="">
                     <img src="{% static 'party/profileIcon6631.webp' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% endif %}
@@ -245,7 +245,7 @@
             </div><!--라인-->
             <div class="image-container">
                 {% if data.support2 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup2'), positionprint('sup2')" >
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup2')" >
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -268,11 +268,11 @@
                 <button type="button" class="exit-button no-style-button" onclick="consoleprint('탈출버튼')"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div class="settings-icon-civilwar">
-                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event), consoleprint('설정{{data.id}}')" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div id="dropdownMenu" class="dropdown-content">
                 {% if data.user == request.user %}
-                <a href="#" onclick="deleteparty({{data.id}}), consoleprint('방 삭제{{data.id}}')">방 삭제</a>
+                <a href="#" onclick="deleteparty({{data.id}})">방 삭제</a>
                 {% endif %}
                 <a href="#">설정 2</a>
                 <a href="#">설정 3</a>
@@ -287,7 +287,7 @@
         <div class="horizontal-container-div">
             <div class="image-container">
                 {% if data.top1 is none %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1'), positionprint('top1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -304,7 +304,7 @@
         <div class="horizontal-container-div">
             <div class="image-container">
                 {% if data.mid1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1'), positionprint('mid1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
                 {% else %}{{data.mid1.profile_image}}
@@ -320,7 +320,7 @@
         <div class="horizontal-container-div">
             <div class="image-container">
                 {% if data.jungle1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1'), positionprint('jun1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -337,7 +337,7 @@
         <div class="horizontal-container-div">
             <div class="image-container">
                 {% if data.adc1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1'), positionprint('adc1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
@@ -354,11 +354,11 @@
         <div class="horizontal-container-div">
             <div class="image-container">
                 {% if data.support1 is null %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1'), positionprint('sup1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="positionprint()">
+                <button type="button" class="no-style-button" onclick="">
                     <img src="{% static 'party/profileIcon6631.webp' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% endif %}
@@ -379,14 +379,14 @@
                 <button type="button" class="exit-button no-style-button" onclick="consoleprint('나가기{{data.id}}')" id="PartyDelete"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div class="settings-icon">
-                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event), consoleprint('설정{{data.id}}')" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div id="dropdownMenu" class="dropdown-content">
                 {% if data.id == request.user.in_party %}
                 <a href="#" onclick="GetOutParty({{data.id}})">파티 나가기</a>
                 {% endif %}
                 {% if data.user == request.user %}
-                <a href="#" onclick="deleteparty({{data.id}}), consoleprint('방 삭제{{data.id}}')">방 삭제</a>
+                <a href="#" onclick="deleteparty({{data.id}})">방 삭제</a>
                 {% endif %}
                 <a href="#">설정 3</a>
             </div>

@@ -64,7 +64,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#">
+                <a href="#" id="credit-link">
                     <img src="{% static 'img/card_v3.png' %}" class="menu-icon" alt="Credit Icon">
                     크레딧
                 </a>
@@ -170,6 +170,11 @@
 
     searchIcon.addEventListener('click', function() {
         searchUser(searchInput.value);
+    });
+
+    document.getElementById("credit-link").addEventListener("click", function(event) {
+        event.preventDefault();  // 링크의 기본 동작을 막음
+        alert("크레딧 서비스는 준비 중 입니다.");
     });
 </script>
 </body>

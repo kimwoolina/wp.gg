@@ -53,9 +53,9 @@ class PartyView(ListCreateAPIView):
     def post(self, request):
         """position:mid, top, jun, adc, sup 5개중에 하나로 입력되고 그에 따라 방장의 라인이 결졍된다."""
         user = request.user
-        print(user, "있나?asdfas")
+        # print(user, "있나?asdfas")
         if user.in_party is not None:
-            print("이미 참여됨")
+            # print("이미 참여됨")
             return Response({"data":"error", "message": "이미 파티에 참여된 상태입니다."}, status=400)
 
         # 체크박스의 값은 on, off로 들어오는것 같다.

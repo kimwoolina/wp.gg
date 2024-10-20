@@ -10,6 +10,14 @@
     <!-- Static CSS -->
 
     <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
+    <style>
+        .rating-icon {
+            width: 300px;
+            height: auto;
+            margin: 35px 29px 84px 27px;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -146,11 +154,30 @@
                     </div>
                 </div>
             </div>
-
             <div class="right-body">
                 <div class="rating-container">
                     <div class="icon-background">
-                        <img src="{% static 'img/rank_default.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% if request.user.score >= 0 and request.user.score < 1 %}
+                            <img src="{% static 'img/1.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 1 and request.user.score < 2 %}
+                            <img src="{% static 'img/2.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 2 and request.user.score < 3 %}
+                            <img src="{% static 'img/3.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 3 and request.user.score < 4 %}
+                            <img src="{% static 'img/4.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 4 and request.user.score < 5 %}
+                            <img src="{% static 'img/5.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 5 and request.user.score < 6 %}
+                            <img src="{% static 'img/6.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 6 and request.user.score < 7 %}
+                            <img src="{% static 'img/7.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 7 and request.user.score < 8 %}
+                            <img src="{% static 'img/8.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 8 and request.user.score < 9 %}
+                            <img src="{% static 'img/9.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 9 %}
+                            <img src="{% static 'img/10.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% endif %}
                     </div>
                     <div class="rating-panel">
                         <div class="rating-value">{{ request.user.score|floatformat:2 }}</div>

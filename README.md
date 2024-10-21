@@ -200,10 +200,9 @@ To set up and run the project, follow these steps:
 <div markdown="1">
     
 <img width="1300" alt="스크린샷 2024-10-19 오전 3 35 37" src="https://github.com/user-attachments/assets/91a666b5-eb12-4653-b72b-6bce951681f4">
-<img width="1300" alt="스크린샷 2024-10-19 오전 3 39 05" src="https://github.com/user-attachments/assets/91ca1152-c78d-47dc-b20a-5874a5c7b1fe">
+<img width="1421" alt="스크린샷 2024-10-21 오후 3 39 40" src="https://github.com/user-attachments/assets/9baaac94-5d28-4961-a622-74f817468137">
 <img width="1300" alt="스크린샷 2024-10-19 오전 3 46 02" src="https://github.com/user-attachments/assets/1db705e9-ede0-422c-aba7-f14ba465406f">
 <img width="1300" alt="스크린샷 2024-10-19 오전 3 46 22" src="https://github.com/user-attachments/assets/656d3372-e153-4957-96ca-da4649e37c6d">
-
 
 <br>
 </div>
@@ -224,7 +223,7 @@ To set up and run the project, follow these steps:
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img width="1300" alt="스크린샷 2024-10-19 오전 3 22 38" src="https://github.com/user-attachments/assets/1b2aadc6-d4e1-4652-aa11-9789714a76b2">
+<img width="1440" alt="스크린샷 2024-10-21 오후 3 39 08" src="https://github.com/user-attachments/assets/e854e399-aec4-4b3c-9472-087ba3c149ae">
 
 <br>
 </div>

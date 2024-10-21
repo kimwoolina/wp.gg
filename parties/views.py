@@ -164,7 +164,7 @@ class PartyDetailView(APIView):
         position = request.data.get("position")
         user = request.user
         if user.in_party is not None:
-            return Response({"status": "dismissed", "message": f"이미 참여하고 있는 파티가 존재합니다. 파티:{user.in_party}"})
+            return Response({"status": "dismissed", "message": f"이미 참여하고 있는 파티가 존재합니다. 파티:{user.in_party}"}, status=400)
         if position=="top1":
             if party.top1 is None:
                 party.top1 = user

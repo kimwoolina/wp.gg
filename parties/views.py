@@ -171,35 +171,35 @@ class PartyDetailView(APIView):
                 user.position = position
             else:
                 # print("error top1 이미 존재")
-                return Response({"status":"error", "message": "top already exist"})
+                return Response({"status":"error", "message": "top already exist"}, status=400)
         elif position=="jun1":
             if party.jungle1 is None:
                 party.jungle1 = user
                 user.position = position
             else:
                 # print("error jungle1 이미 존재")
-                return Response({"status":"error", "message": "jungle already exist"})
+                return Response({"status":"error", "message": "jungle already exist"}, status=400)
         elif position=="mid1":
             if party.mid1 is None:
                 party.mid1 = user
                 user.position = position
             else:
                 # print("error mid1 이미 존재")
-                return Response({"status":"error", "message": "mid already exist"})
+                return Response({"status":"error", "message": "mid already exist"}, status=400)
         elif position=="sup1":
             if party.support1 is None:
                 party.support1 = user
                 user.position = position
             else:
                 # print("error support1 이미 존재")
-                return Response({"status":"error", "message": "support already exist"})
+                return Response({"status":"error", "message": "support already exist"}, status=400)
         elif position=="adc1":
             if party.adc1 is None:
                 party.adc1 = user
                 user.position = position
             else:
                 # print("error adc1 이미 존재")
-                return Response({"status":"error", "message": "adc already exist"})
+                return Response({"status":"error", "message": "adc already exist"}, status=400)
         if party.is_rank:
             if position=="top2":
                 if party.top2 is None:
@@ -207,35 +207,35 @@ class PartyDetailView(APIView):
                     user.position = position
                 else:
                     # print("error top2 이미 존재")
-                    return Response({"status":"error", "message": "top already exist"})
+                    return Response({"status":"error", "message": "top already exist"}, status=400)
             elif position=="jun2":
                 if party.jungle2 is None:
                     party.jungle2 = user
                     user.position = position
                 else:
                     # print("error jungle2 이미 존재")
-                    return Response({"status":"error", "message": "jungle already exist"})
+                    return Response({"status":"error", "message": "jungle already exist"}, status=400)
             elif position=="mid2":
                 if party.mid2 is None:
                     party.mid2 = user
                     user.position = position
                 else:
                     # print("error mid2 이미 존재")
-                    return Response({"status":"error", "message": "mid already exist"})
+                    return Response({"status":"error", "message": "mid already exist"}, status=400)
             elif position=="sup2":
                 if party.support2 is None:
                     party.support2 = user
                     user.position = position
                 else:
                     # print("error support2 이미 존재")
-                    return Response({"status":"error", "message": "support already exist"})
+                    return Response({"status":"error", "message": "support already exist"}, status=400)
             elif position=="adc2":
                 if party.adc2 is None:
                     party.adc2 = user
                     user.position = position
                 else:
                     # print("error adc2 이미 존재")
-                    return Response({"status":"error", "message": "adc already exist"})
+                    return Response({"status":"error", "message": "adc already exist"}, status=400)
             else:
                 # print("error")
                 return Response({"status":"error", "message": "unknown position"})
@@ -251,7 +251,7 @@ class PartyDetailView(APIView):
         user = request.user
         # print(user)
         if user.in_party is None:
-            return Response({"status": "dismissed", "message": "참여하고 있는 파티가 없습니다!"})
+            return Response({"status": "dismissed", "message": "참여하고 있는 파티가 없습니다!"}, status=400)
         elif user is party.user:
             # if not party.top1 and not party.top2 and 
             return response({"status": "dismissed", "message": ""})
@@ -286,31 +286,32 @@ class PartyDetailView(APIView):
                 party.top2 = None
                 user.in_party = None
                 user.position = None
-            if party.jungle2 == user:
+            elif party.jungle2 == user:
                 # print("jungle2")
                 party.jungle2 = None
                 user.in_party = None
                 user.position = None
-            if party.mid2 == user:
+            elif party.mid2 == user:
                 # print("mid2")
                 party.mid2 = None
                 user.in_party = None
                 user.position = None
-            if party.support2 == user:
+            elif party.support2 == user:
                 # print("support2")
                 party.support2 = None
                 user.in_party = None
                 user.position = None
-            if party.adc2 == user:
+            elif party.adc2 == user:
                 # print("adc2")
                 party.adc2 = None
                 user.in_party = None
                 user.position = None
             else:
                 # print("error")
-                return Response({"status":"error", "message": "unknown position"})
-        # else:
+                return Response({"status":"error", "message": "no space"}, status=400)
+        else:
             # print("error")
+            return Response({"status":"error", "message": "no space"}, status=400)
         party.save()
         user.save()
         # print(f"success")

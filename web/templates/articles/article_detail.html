@@ -15,7 +15,9 @@
     <div class="reviewers-container">
         <!-- 작성자 정보 -->
         <div class="reviewer">
-            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ MEDIA_URL }}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
+
+            <h1> {{ article.reviewer.profile_image }} </h1>
+            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
             <div>
                 <h2 class="username">
                     <a class="reviewer-link" href="{% url 'user-detail' article.reviewer.username %}">{{ article.reviewer.username }} (Reviewer)</a>

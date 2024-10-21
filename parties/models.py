@@ -78,7 +78,7 @@ class Parties(models.Model):
     # Party1
     top1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_top1", null=True)
     jungle1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_jungle1", null=True)
-    mid1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="parrty_mid1", null=True)
+    mid1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_mid1", null=True)
     support1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_support1", null=True)
     adc1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="party_adc1", null=True)
     

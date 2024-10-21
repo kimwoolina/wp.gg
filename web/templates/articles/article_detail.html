@@ -48,9 +48,7 @@
     <div class="article-images mb-4">
         {% if article_images %}
         {% for image in article_images %}
-            <img src="{{ image }}" alt="Article 이미지1" style="width: 100%; height: auto; margin-bottom: 10px;">
-            <img src="{{ image.img }}" alt="Article 이미지2" style="width: 100%; height: auto; margin-bottom: 10px;">
-            <img src="{{ image.img.url }}" alt="Article 이미지3" style="width: 100%; height: auto; margin-bottom: 10px;">
+            <img src="{{ image.img }}" alt="Article 이미지" style="width: 100%; height: auto; margin-bottom: 10px;">
         {% endfor %}
     {% endif %}
     </div>

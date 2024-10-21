@@ -10,12 +10,12 @@
 {% block content %}
 <div class="article-detail">
     <h1>{{ article.title }}</h1>
-    <p><span id="formatted-date"></span></p>
+    <p><span id="formatted-date">{{article.created_at}}</span></p>
 
     <div class="reviewers-container">
         <!-- 작성자 정보 -->
         <div class="reviewer">
-            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
+            <img class="profile-image" src="{% if article.reviewer.profile_image %}{{ MEDIA_URL }}{{ article.reviewer.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}" alt="{{ article.reviewer.username }} 프로필 이미지">
             <div>
                 <h2 class="username">
                     <a class="reviewer-link" href="{% url 'user-detail' article.reviewer.username %}">{{ article.reviewer.username }} (Reviewer)</a>
@@ -46,11 +46,11 @@
 
     <!-- 이미지들 -->
     <div class="article-images mb-4">
-        {% if article.article_images %}
-        {% for image in article.article_images %}
-            <img src="{{ image.img }}" alt="Article 이미지" style="width: 100%; height: auto; margin-bottom: 10px;">
+        {% if article_images %}
+        {% for image in article_images %}
+            <img src="{{ image.img.url }}" alt="Article 이미지" style="width: 100%; height: auto; margin-bottom: 10px;">
         {% endfor %}
-        {% endif %}
+    {% endif %}
     </div>
 
     <!-- 글 내용 -->
@@ -69,19 +69,21 @@
     {% endif %}
 
     <!-- 댓글 섹션 (댓글 작성 칸 아래로 이동) -->
-    <div style="margin-left: 5px; margin-bottom: 10px;">댓글 {{ article.comments|length }} 개 </div>
+    <div style="margin-left: 5px; margin-bottom: 10px;">댓글 {{ comments|length }} 개 </div>
     <div id="comments-section" class="mb-4">
-        {% for comment in article.comments %}
+        {% for comment in comments %}
             <div class="comment">
                 <h4>{{ comment.user.username }}</h4>
                 <p>{{ comment.content }}</p>
-                <p><span class="formatted-comment-date">{{ comment.created_at }}</span></p>
+                <p><span class="formatted-comment-date">{{comment.created_at|date:"c"}} </span></p>
                 {% if comment.parent_comment %}
                     <p>{{ comment.parent_comment.id }}</p>
                 {% endif %}
             </div>
+        {% empty %}
+            <p>댓글이 없습니다.</p>
         {% endfor %}
-    </div>
+        </div>
 </div>
 
 <!-- 스크립트 -->

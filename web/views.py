@@ -5,6 +5,8 @@ from django.views.generic import TemplateView
 import requests
 from django.http import Http404
 from django.http import HttpResponseNotFound
+from django.shortcuts import get_object_or_404
+from articles.models import Articles
 
 def custom_page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
@@ -82,16 +84,32 @@ def article_create_page(request):
 	return render(request, 'articles/article_create.html')
 
 
+# def article_detail_view(request, article_id):
+#     # # API에서 데이터 가져오기
+#     # try:
+#     #     response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+#     #     # response = requests.get(f'http://43.201.57.125/api/articles/{article_id}/')
+#     #     response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+#     #     article = response.json()  # JSON으로 변환
+#     # except requests.exceptions.HTTPError:
+#     #     raise Http404("Article not found.")  # 404 오류 발생
+    
+#     return render(request, 'articles/article_detail.html', {'article': article})
+
+
 def article_detail_view(request, article_id):
     # API에서 데이터 가져오기
-    try:
-        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
-        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
-        article = response.json()  # JSON으로 변환
-    except requests.exceptions.HTTPError:
-        raise Http404("Article not found.")  # 404 오류 발생
+    article = get_object_or_404(Articles, id=article_id)
     
-    return render(request, 'articles/article_detail.html', {'article': article})
+    # 관련된 이미지들 가져오기
+    article_images = article.article_images.all()  # .all()로 이미지들을 가져옴
+    comments = article.comments.all()  # 댓글들도 모두 가져오기
+    
+    return render(request, 'articles/article_detail.html', {
+        'article': article, 
+        'article_images': article_images, 
+        'comments': comments
+    })
 
 
 def base(request):

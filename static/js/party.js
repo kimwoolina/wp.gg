@@ -180,10 +180,6 @@ document.addEventListener("click", function() {
 });
 
 
-function positionprint(position) {
-    console.log(position);
-}
-
 function consoleprint(action) {
-    console.log(action);
+    alert("준비중인 서비스입니다.")
 }

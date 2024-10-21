@@ -8,43 +8,35 @@
     <script src="{% static 'app.js' %}"></script>
     <link rel="stylesheet" href="{% static '/css/home_style.css' %}">
     <style>
+        /* 검색바 아래 로고 - 원래 애니메이션 */
+        .search-logo {
+            width: 280px;
+            margin: -2px -48px;
+            animation: bounce 0.8s ease-in-out infinite;
+        }
+        
+        /* 큰 바운스 애니메이션 */
+        @keyframes bigBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-100px); /* 훨씬 크게 뛰어오르기 */
+            }
+        }
 
-    /* 검색바 아래 로고 - 원래 애니메이션 */
-    .search-logo {
-        width: 280px;
-        margin: -2px -48px;
-        animation: bounce 0.8s ease-in-out infinite;
-    }
-    
-    /* 큰 바운스 애니메이션 */
-    @keyframes bigBounce {
-        0%, 100% {
-            transform: translateY(0);
+        .nav-logo {
+            width: 140px;
+            cursor: pointer;
+            margin-left: 25px;
+            transition: transform 0.3s ease-in-out;
         }
-        50% {
-            transform: translateY(-100px); /* 훨씬 크게 뛰어오르기 */
+        
+        /* 네비게이션 바 로고 애니메이션 (작고 부드러운 바운스) */
+        .nav-bar:hover .nav-logo {
+            animation: smallBounce 0.8s ease-in-out infinite;
         }
-    }
-
-    .nav-logo {
-        width: 140px;
-        cursor: pointer;
-        margin-left: 25px;
-        transition: transform 0.3s ease-in-out;
-    }
-    
-    /* 네비게이션 바 로고 애니메이션 (작고 부드러운 바운스) */
-    .nav-bar:hover .nav-logo {
-        animation: smallBounce 0.8s ease-in-out infinite;
-    }
-    
-    @keyframes smallBounce {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-5px); /* 작게 튀기 */
-        }
+<<<<<<< HEAD
     }
 
 
@@ -59,6 +51,29 @@
         flex-direction: column;
         height: 100vh;
         font-family: 'Nanum Gothic', sans-serif;
+=======
+        
+        @keyframes smallBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); /* 작게 튀기 */
+            }
+        }
+        
+        /* 전체 배경 설정 */
+        .body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Nanum Gothic', sans-serif;
+>>>>>>> dev
         }
 
         /* 검색바 아래 로고 - 원래 애니메이션 */
@@ -144,11 +159,18 @@
             margin: -30px 84px 48px 172px;
             justify-content: space-between;
         }
+<<<<<<< HEAD
 
         .gif-container {
             text-align: center;
         }
 
+=======
+        
+        .gif-container {
+            text-align: center;
+        }
+>>>>>>> dev
     </style>
 </head>
 <body>

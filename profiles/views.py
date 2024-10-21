@@ -198,8 +198,7 @@ class MannerRankingView(ListAPIView):
 
         # 포지션 필터링 (단일 값으로 필터링)
         if position:
-            queryset = queryset.filter(position=position)  # position 필드로 필터링
-
+            queryset = queryset.filter(positions__position_name=position) # position 필드로 필터링
         # 쿼리셋을 정렬
         queryset = queryset.order_by(F(sort_by_field).desc(nulls_last=True))
 
@@ -230,7 +229,8 @@ class UserRecommendationView(APIView):
         # positions = request.POST.getlist('positions', [])
         # filter_fields = request.POST.getlist('filter_fields', [])
         # user_preference = request.POST.get('user_preference', '')
-        riot_tiers = request.data.get('riot_tier', [])
+        # riot_tiers = request.data.get('riot_tier', [])
+        riot_tiers = request.data.get('riot_tier')
         positions = request.data.get('riot_position', [])
         filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
         user_preference = request.data.get('user_preference', '')
@@ -240,7 +240,7 @@ class UserRecommendationView(APIView):
 
         # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
         if riot_tiers:
-            users = users.filter(riot_tier__in=riot_tiers)
+            users = users.filter(riot_tier=riot_tiers)
 
         if positions:
             users = users.filter(positions__position_name__in=positions)
@@ -290,7 +290,8 @@ class UserRecommendationView(APIView):
 
             # 정규 표현식을 사용하여 숫자 추출
             matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
-            
+            matching_reviewee_ids = list(set(matching_reviewee_ids))
+
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
@@ -299,6 +300,7 @@ class UserRecommendationView(APIView):
             
         # 상위 3명만 선택
         users = users[:3]
+        # print(users)
         
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)

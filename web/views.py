@@ -1,10 +1,13 @@
 from parties.models import Parties
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.views.generic import TemplateView
+from articles.models import Articles, ArticleImages, Comments
+from articles.serializers import ArticleDetailSerializer, ArticleImageSerializer, CommentSerializer
 import requests
 from django.http import Http404
 from django.http import HttpResponseNotFound
+
 
 def custom_page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
@@ -82,17 +85,36 @@ def article_create_page(request):
 	return render(request, 'articles/article_create.html')
 
 
+# def article_detail_view(request, article_id):
+#     # # API에서 데이터 가져오기
+#     # try:
+#     #     response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+#     #     # response = requests.get(f'http://43.201.57.125/api/articles/{article_id}/')
+#     #     response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+#     #     article = response.json()  # JSON으로 변환
+#     # except requests.exceptions.HTTPError:
+#     #     raise Http404("Article not found.")  # 404 오류 발생
+    
+#     return render(request, 'articles/article_detail.html', {'article': article})
+
+
 def article_detail_view(request, article_id):
     # API에서 데이터 가져오기
-    try:
-        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
-        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
-        article = response.json()  # JSON으로 변환
-    except requests.exceptions.HTTPError:
-        raise Http404("Article not found.")  # 404 오류 발생
+    article = get_object_or_404(Articles, id=article_id)
     
-    return render(request, 'articles/article_detail.html', {'article': article})
-
+    # 관련된 이미지들 가져오기
+    article_images = ArticleImageSerializer(article.article_images.all(), many=True).data
+    comments = CommentSerializer(article.comments.all(), many=True).data
+    
+    # ArticleDetailSerializer를 사용하여 article 정보를 직렬화
+    article_serializer = ArticleDetailSerializer(article)
+    
+    # 시리얼라이저를 사용해서 반환된 데이터들을 템플릿에 전달
+    return render(request, 'articles/article_detail.html', {
+        'article': article_serializer.data,  # ArticleDetailSerializer로 직렬화된 데이터
+        'article_images': article_images,  # ArticleImageSerializer로 직렬화된 이미지 데이터
+        'comments': comments,  # CommentSerializer로 직렬화된 댓글 데이터
+    })
 
 def base(request):
     return render(request, 'base.html')

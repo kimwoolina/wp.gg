@@ -45,6 +45,9 @@ body #result {
 #articles a {
     text-decoration: none;
     color: inherit;
+    margin: 20px auto 0;
+    width: 70%;
+    display: block;
 }
 
 .article {
@@ -52,8 +55,6 @@ body #result {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 20px auto 0;
-    width: 70%;
     padding: 0.5% 0.5% 1% 0.5%;
 }
 
@@ -87,7 +88,6 @@ body #result {
     background-color: #34C759;
     padding: 2px 6px 4px 6px;
     border-radius: 11px;
-    width: 33px;
     margin-left: 2%;
 }
 

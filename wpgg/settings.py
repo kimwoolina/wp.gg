@@ -27,7 +27,7 @@ RIOT_API_KEY = config.RIOT_API_KEY
 OPEN_API_KEY = config.OPEN_API_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["43.201.57.125", "localhost", "127.0.0.1", "wpgg.kr"]
 
@@ -260,7 +260,7 @@ DiscordOAuth2 = {
     "CLIENT_ID": config.DISCORD_CLIENT_ID,
     "CLIENT_SECRET": config.DISCORD_SECRET_ID,
     "API_ENDPOINT": "https://discord.com/api/v10",
-    "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
+    "REDIRECT_URI": "https://43.201.57.125/auth/discordlogin/",
     "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
 }
 

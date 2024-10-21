@@ -9,7 +9,7 @@ User = get_user_model()
 class PrivateChatRoom(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user2')
-    room_name = models.CharField(max_length=15, blank=True, null=True)
+    room_name = models.CharField(max_length=35, blank=True, null=True)
     room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

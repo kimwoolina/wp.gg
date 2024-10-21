@@ -99,8 +99,8 @@ class PartyView(ListCreateAPIView):
     def delete(self, request):
         user = request.user
         # print(user)
-        if user == "AnonymousUser":
-            # print("사용자 정보 전달 안됨")
+        # if user == "AnonymousUser":
+        # print("사용자 정보 전달 안됨")
         pk=request.data.get("id")
         delete_party = get_object_or_404(Parties, id=pk)
         # 방장만 방 폭파 가능
@@ -309,7 +309,7 @@ class PartyDetailView(APIView):
             else:
                 # print("error")
                 return Response({"status":"error", "message": "unknown position"})
-        else:
+        # else:
             # print("error")
         party.save()
         user.save()

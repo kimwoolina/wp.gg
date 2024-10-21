@@ -290,7 +290,7 @@
                 <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
-                {% else %}
+                {% elif data.top1.profile_image %}
                 <button type="button" class="no-style-button" onclick="">
                     <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
@@ -309,7 +309,7 @@
                 <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
-                {% else %}
+                {% elif data.mid1.profile_image %}
                 <button type="button" class="no-style-button" onclick="">
                     <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
@@ -328,7 +328,7 @@
                 <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
-                {% else %}
+                {% elif data.jungle1.profile_image %}
                 <button type="button" class="no-style-button" onclick="">
                     <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
@@ -347,7 +347,7 @@
                 <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1')">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
-                {% else %}
+                {% elif data.support1.profile_image %}
                 <button type="button" class="no-style-button" onclick="">
                     <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>

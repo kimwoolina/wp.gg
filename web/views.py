@@ -116,7 +116,6 @@ def article_detail_view(request, article_id):
         'comments': comments,  # CommentSerializer로 직렬화된 댓글 데이터
     })
 
-
 def base(request):
     return render(request, 'base.html')
     

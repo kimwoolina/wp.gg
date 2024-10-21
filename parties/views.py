@@ -200,7 +200,7 @@ class PartyDetailView(APIView):
             else:
                 # print("error adc1 이미 존재")
                 return Response({"status":"error", "message": "adc already exist"}, status=400)
-        if party.is_rank:
+        elif party.is_rank == 1:
             if position=="top2":
                 if party.top2 is None:
                     party.top2 = user
@@ -236,9 +236,9 @@ class PartyDetailView(APIView):
                 else:
                     # print("error adc2 이미 존재")
                     return Response({"status":"error", "message": "adc already exist"}, status=400)
-            else:
-                # print("error")
-                return Response({"status":"error", "message": "unknown position"})
+        else:
+            # print("error")
+            return Response({"status":"error", "message": "no space"}, status=400)
         party.save()
         user.in_party = party.id
         user.save()

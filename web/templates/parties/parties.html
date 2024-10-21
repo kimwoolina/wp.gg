@@ -330,10 +330,12 @@
                 <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div id="dropdownMenu" class="dropdown-content">
+                {% if data.id == request.user.in_party %}
+                <a href="#" onclick="GetOutParty({{data.id}})">파티 나가기</a>
+                {% endif %}
                 {% if data.user == request.user %}
                 <a href="#" onclick="deleteparty({{data.id}})">방 삭제</a>
                 {% endif %}
-                <a href="#">설정 2</a>
                 <a href="#">설정 3</a>
             </div>
             {% endif %}

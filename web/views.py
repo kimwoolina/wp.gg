@@ -81,18 +81,15 @@ def article_list_page(request):
 def article_create_page(request):
 	return render(request, 'articles/article_create.html')
 
-
 def article_detail_view(request, article_id):
     # API에서 데이터 가져오기
     try:
-        response = requests.get(f'http://localhost:8000/api/articles/{article_id}/')
+        response = requests.get(f'https://43.201.57.125/api/articles/{article_id}/')
         response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
         article = response.json()  # JSON으로 변환
     except requests.exceptions.HTTPError:
         raise Http404("Article not found.")  # 404 오류 발생
-    
     return render(request, 'articles/article_detail.html', {'article': article})
-
 
 def base(request):
     return render(request, 'base.html')

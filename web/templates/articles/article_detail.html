@@ -75,7 +75,7 @@
             <div class="comment">
                 <h4>{{ comment.user.username }}</h4>
                 <p>{{ comment.content }}</p>
-                <p><span class="formatted-comment-date">{{comment.created_at|date:"c"}} </span></p>
+                <p><span class="formatted-comment-date" data-created-at="{{ comment.created_at }}">{{ comment.created_at }}</span></p>
                 {% if comment.parent_comment %}
                     <p>{{ comment.parent_comment.id }}</p>
                 {% endif %}
@@ -161,8 +161,20 @@
         }
     }
 
-    // 문서가 로드된 후에 작성일 포맷팅 적용
     document.addEventListener('DOMContentLoaded', function() {
+        // 글 작성일 포맷팅
+        const formattedDate = formatDate("{{ article.created_at }}");
+        document.getElementById('formatted-date').textContent = formattedDate;
+    
+        // 댓글 작성일 포맷팅
+        document.querySelectorAll('.formatted-comment-date').forEach(function(span) {
+            const createdAt = span.getAttribute('data-created-at');
+            span.textContent = formatDate(createdAt);
+        });
+    });
+    
+    // 문서가 로드된 후에 작성일 포맷팅 적용
+    {% comment %} document.addEventListener('DOMContentLoaded', function() {
         // 글 작성일 포맷팅
         const formattedDate = formatDate("{{ article.created_at }}");
         document.getElementById('formatted-date').textContent = formattedDate;
@@ -171,6 +183,6 @@
         document.querySelectorAll('.formatted-comment-date').forEach(function(span) {
             span.textContent = formatDate(span.textContent);
         });
-    });
+    }); {% endcomment %}
 </script>
 {% endblock content %}

@@ -1,12 +1,13 @@
 from parties.models import Parties
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.views.generic import TemplateView
+from articles.models import Articles, ArticleImages, Comments
+from articles.serializers import ArticleDetailSerializer, ArticleImageSerializer, CommentSerializer
 import requests
 from django.http import Http404
 from django.http import HttpResponseNotFound
-from django.shortcuts import get_object_or_404
-from articles.models import Articles
+
 
 def custom_page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
@@ -102,13 +103,17 @@ def article_detail_view(request, article_id):
     article = get_object_or_404(Articles, id=article_id)
     
     # 관련된 이미지들 가져오기
-    article_images = article.article_images.all()  # .all()로 이미지들을 가져옴
-    comments = article.comments.all()  # 댓글들도 모두 가져오기
+    article_images = ArticleImageSerializer(article.article_images.all(), many=True).data
+    comments = CommentSerializer(article.comments.all(), many=True).data
     
+    # ArticleDetailSerializer를 사용하여 article 정보를 직렬화
+    article_serializer = ArticleDetailSerializer(article)
+    
+    # 시리얼라이저를 사용해서 반환된 데이터들을 템플릿에 전달
     return render(request, 'articles/article_detail.html', {
-        'article': article, 
-        'article_images': article_images, 
-        'comments': comments
+        'article': article_serializer.data,  # ArticleDetailSerializer로 직렬화된 데이터
+        'article_images': article_images,  # ArticleImageSerializer로 직렬화된 이미지 데이터
+        'comments': comments,  # CommentSerializer로 직렬화된 댓글 데이터
     })
 
 

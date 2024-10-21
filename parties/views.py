@@ -254,7 +254,7 @@ class PartyDetailView(APIView):
             return Response({"status": "dismissed", "message": "참여하고 있는 파티가 없습니다!"})
         elif user is party.user:
             # if not party.top1 and not party.top2 and 
-            return response({"status": "dismissed", "message": ""})
+            return Response({"status": "dismissed", "message": ""})
         if party.top1 == user:
             # print("top1")
             party.top1 = None
@@ -322,11 +322,11 @@ class PartyExileView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, party_pk, position, *args, **kwargs):
-        party_exile = get_object_or_404(party, id=party_pk)
+        party_exile = get_object_or_404(Parties, id=party_pk)
         party_exile.delete()
 
     def delete(self, request, party_pk, position):
-        party_exile = get_object_or_404(party, id=party_pk)
+        party_exile = get_object_or_404(Parties, id=party_pk)
         party_exile.delete()
 
 

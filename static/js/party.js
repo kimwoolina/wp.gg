@@ -39,87 +39,87 @@ document.getElementById('createparty').addEventListener('submit', function(event
 
 
 
-function deleteparty(partyId) {
-
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const headers = {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{csrftoken}}',
-        'Authorization': 'Bearer ' + getAccessToken()
-    }
-
-    fetch('/api/party/', {
-        method: 'DELETE',
-        headers: headers,
-        body: JSON.stringify({ id: partyId, status:'Forced deletion' })
-    })
-    .then(response => {
-        if (response.ok) {
-            alert("파티가 삭제되었습니다.");
-            return response.json(); // 응답 데이터가 있으면 처리
-        } else {
-            return response.json().then(data => { 
-                // 서버에서 받은 에러 메시지를 출력
-                alert("삭제 실패: " + (data.detail || response.statusText)); 
-                // throw new Error(data.detail || response.statusText);
-            });
-        }
-    })
-    .then(data => {
-        location.reload(); // 화면 새로고침
-    })
-    // .catch(error => console.error('Error:', error));
-}
-
-
 // function deleteparty(partyId) {
 
 //     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 //     const headers = {
 //         'Content-Type': 'application/json',
-//         'X-CSRFToken': csrftoken,
+//         'X-CSRFToken': '{{csrftoken}}',
 //         'Authorization': 'Bearer ' + getAccessToken()
-//     };
+//     }
 
-//     // 삭제 요청을 보내는 함수
-//     function sendDeleteRequest(status = 'deletion') {
-//         fetch('/api/party/', {
-//             method: 'DELETE',
-//             headers: headers,
-//             body: JSON.stringify({ id: partyId, status: status })
-//         })
-//         .then(response => {
-//             return response.json().then(data => {
-//                 if (response.ok) {
-//                     alert("파티가 삭제되었습니다.");
-//                     location.reload();  // 성공 시에만 새로고침
-//                 } else {
-//                     alert("삭제 실패: " + data.message); // 서버에서 받은 에러 메시지를 출력
-//                     showModal(); // 실패 시 모달 표시
-//                 }
+//     fetch('/api/party/', {
+//         method: 'DELETE',
+//         headers: headers,
+//         body: JSON.stringify({ id: partyId, status:'Forced deletion' })
+//     })
+//     .then(response => {
+//         if (response.ok) {
+//             alert("파티가 삭제되었습니다.");
+//             return response.json(); // 응답 데이터가 있으면 처리
+//         } else {
+//             return response.json().then(data => { 
+//                 // 서버에서 받은 에러 메시지를 출력
+//                 alert("삭제 실패: " + (data.detail || response.statusText)); 
+//                 // throw new Error(data.detail || response.statusText);
 //             });
-//         })
-//         // .catch(error => {
-//         //     console.error('Error:', error);
-//         //     showModal(); // 오류 발생 시 모달 표시
-//         // });
-//     }
-
-//     // 모달 표시 함수
-//     function showModal() {
-//         const modal = document.getElementById('errorModal');
-//         modal.style.display = 'block'; // 모달을 표시
-//     }
-
-//     // 모달의 다시 시도 버튼에 이벤트 추가
-//     document.getElementById('retryButton').addEventListener('click', function(event) {
-//         // event.preventDefault(); // 기본 동작 중단
-//         // document.getElementById('errorModal').style.display = 'none'; // 모달 닫기
-//         // sendDeleteRequest('Forced deletion'); // status를 'Forced deletion'으로 변경하여 다시 요청
-//     });
-
-//     sendDeleteRequest(); // 처음 요청을 보냄
+//         }
+//     })
+//     .then(data => {
+//         location.reload(); // 화면 새로고침
+//     })
+//     // .catch(error => console.error('Error:', error));
 // }
+
+
+function deleteparty(partyId) {
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+        'Authorization': 'Bearer ' + getAccessToken()
+    };
+
+    // 삭제 요청을 보내는 함수
+    function sendDeleteRequest(status = 'deletion') {
+        fetch('/api/party/', {
+            method: 'DELETE',
+            headers: headers,
+            body: JSON.stringify({ id: partyId, status: status })
+        })
+        .then(response => {
+            return response.json().then(data => {
+                if (response.ok) {
+                    alert("파티가 삭제되었습니다.");
+                    location.reload();  // 성공 시에만 새로고침
+                } else {
+                    alert("삭제 실패: " + data.message); // 서버에서 받은 에러 메시지를 출력
+                    showModal(); // 실패 시 모달 표시
+                }
+            });
+        })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        //     showModal(); // 오류 발생 시 모달 표시
+        // });
+    }
+
+    // 모달 표시 함수
+    function showModal() {
+        const modal = document.getElementById('errorModal');
+        modal.style.display = 'block'; // 모달을 표시
+    }
+
+    // 모달의 다시 시도 버튼에 이벤트 추가
+    document.getElementById('retryButton').addEventListener('click', function(event) {
+        event.preventDefault(); // 기본 동작 중단
+        document.getElementById('errorModal').style.display = 'none'; // 모달 닫기
+        sendDeleteRequest('Forced deletion'); // status를 'Forced deletion'으로 변경하여 다시 요청
+    });
+
+    sendDeleteRequest(); // 처음 요청을 보냄
+}
 
 
 

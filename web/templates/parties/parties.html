@@ -379,9 +379,9 @@
             </div>
             <div id="dropdownMenu" class="dropdown-content">
                 {% if data.user == request.user %}
-                <a href="" onclick="deleteparty({{data.id}})">방 삭제</a>
+                <span onclick="deleteparty({{data.id}})">방 삭제</span>
                 {% endif %}
-                <a href="">설정 3</a>
+                <span>설정 3</span>
             </div>
             {% endif %}
         </div>
@@ -538,9 +538,9 @@
             </div>
             <div id="dropdownMenu" class="dropdown-content">
                 {% if data.user == request.user %}
-                <a href="" onclick="deleteparty({{data.id}})">방 삭제</a>
+                <span href="" onclick="deleteparty({{data.id}})">방 삭제</span>
                 {% endif %}
-                <a href="">설정 3</a>
+                <span href="">설정 3</span>
             </div>
             {% endif %}
         </div>

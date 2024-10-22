@@ -392,26 +392,40 @@
                 });
             }
 
-            // 메시지 전송 (작동 안 함)
-            $('#send-message').click(function() {
-                const roomId = $('input[name="chat-room"]:checked').data('room-id'); // 라디오 버튼에서 선택된 roomId 가져오기
-                const messageContent = $('#message-input').val();
-
-                if (!roomId) {
-                    alert("Please select a chat room."); // 채팅방이 선택되지 않은 경우
-                    return;
+            $(document).ready(function () {
+                // "Send" 버튼 클릭 시 메시지 전송
+                $('#send-message').click(function () {
+                    sendChatMessage();
+                });
+            
+                // Enter 키 입력 시 메시지 전송
+                $('#message-input').on('keypress', function (event) {
+                    if (event.key === 'Enter' && !event.shiftKey) { // Shift + Enter는 개행
+                        //event.preventDefault(); // 새 줄 추가 방지
+                        sendChatMessage();
+                    }
+                });
+            
+                // 메시지 전송 함수 호출 로직 분리
+                function sendChatMessage() {
+                    const roomId = $('input[name="chat-room"]:checked').data('room-id'); // 선택된 roomId 가져오기
+                    const messageContent = $('#message-input').val(); // 메시지 내용 가져오기
+            
+                    if (!roomId) {
+                        alert("Please select a chat room."); // 채팅방이 선택되지 않은 경우
+                        return;
+                    }
+            
+                    if (!messageContent) {
+                        alert("Please enter a message."); // 메시지가 비어 있는 경우
+                        return;
+                    }
+            
+                    // 메시지 전송 후 입력 필드 초기화
+                    sendMessage(roomId, messageContent);
+                    $('#message-input').val('');
                 }
-
-                if (!messageContent) {
-                    alert("Please enter a message."); // 메시지가 비어있는 경우
-                    return;
-                }
-
-                // 메시지 전송 함수 호출
-                sendMessage(roomId, messageContent);
-                $('#message-input').val(''); // 입력 필드 비우기
             });
-
     
             // 메시지 전송 함수
             function sendMessage(roomId, content) {

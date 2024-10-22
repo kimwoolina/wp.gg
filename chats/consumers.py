@@ -1,4 +1,6 @@
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import PrivateChatRoom, Message
@@ -8,7 +10,6 @@ from django.conf import settings
 User = get_user_model()
 
 # OpenAI API 설정
-openai.api_key = settings.OPENAI_API_KEY  
 
 # 욕설 및 공격적인 발언 감지 함수
 def detect_profanity_and_aggression(message):
@@ -19,15 +20,13 @@ def detect_profanity_and_aggression(message):
               f"또한, 상대방을 성적으로 모욕하는 음란한 표현도 필터링해야 합니다. 그리고 상대방을 비꼬거나 빈정거리는 표현도 걸러야 합니다."
               f"다음 메시지가 공격적이거나 상대방을 상처 줄 수 있는 말인지 확인해주세요: '{message}'")
 
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=10,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-    
+    response = client.completions.create(engine="gpt-3.5-turbo",
+    prompt=prompt,
+    max_tokens=10,
+    n=1,
+    stop=None,
+    temperature=0.5)
+
     result = response.choices[0].text.strip().lower()
     if 'yes' in result:
         return True
@@ -42,7 +41,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             # 방 존재 여부 확인
             if not await self.check_room_exists(self.room_id):
                 raise ValueError('채팅방이 존재하지 않습니다.')
-  
+
             group_name = self.get_group_name(self.room_id)  # 그룹 이름 생성
 
             # 그룹에 추가 후 WebSocket 연결 수락

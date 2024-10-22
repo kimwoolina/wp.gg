@@ -59,7 +59,7 @@
 
         // 유저 데이터를 가져오는 함수
         function fetchUserData(username, riotTag) {
-            let apiUrl = `http://127.0.0.1:8000/api/profile/${username}`;
+            let apiUrl = `/api/profile/${username}`;
             if (riotTag) {
                 apiUrl += `?riot_tag=${encodeURIComponent(riotTag)}`; // 태그가 있을 경우 추가
             }
@@ -127,7 +127,7 @@
                     resultDiv.innerHTML += `<p>Position: ${data.riot_info.preferredPosition}</p>`;
                 }
                 if(leagueInfo){
-                    resultDiv.innerHTML += `<h2>League Info:</h2><div>${leagueInfo}</div>`;
+                    resultDiv.innerHTML += `<div>${leagueInfo}</div>`;
                 }
                 
                 

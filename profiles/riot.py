@@ -13,6 +13,10 @@ import os
 import requests
 from urllib.parse import quote
 from common.cache import cache_get, cache_set
+import logging
+
+logger = logging.getLogger('django') 
+
 
 # 현재 파일의 경로를 기준으로 상위 디렉토리(프로젝트 루트)를 PYTHONPATH에 추가
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
@@ -38,7 +42,7 @@ def get_user_puuid(api_key, riot_id, tag_line):
         return response.json()['puuid']
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching PUUID: {e}")
+        logger.error(f"Error fetching PUUID: {e}")
         return None
 
 def get_user_profile(api_key, puuid):
@@ -51,7 +55,7 @@ def get_user_profile(api_key, puuid):
         return response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching profile: {e}")
+        logger.error(f"Error fetching profile: {e}")
         return None
 
 def get_user_league(api_key, summoner_id):
@@ -64,7 +68,7 @@ def get_user_league(api_key, summoner_id):
         return response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching league info: {e}")
+        logger.error(f"Error fetching league info: {e}")
         return None
 
 def get_match_ids(api_key, puuid):
@@ -77,7 +81,7 @@ def get_match_ids(api_key, puuid):
         return response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching match IDs: {e}")
+        logger.error(f"Error fetching match IDs: {e}")
         return None
 
 def get_match_info(api_key, match_id):
@@ -90,7 +94,7 @@ def get_match_info(api_key, match_id):
         return response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching match info: {e}")
+        logger.error(f"Error fetching match info: {e}")
         return None
 
 def get_user_preferred_position(api_key, puuid):
@@ -129,7 +133,7 @@ def get_top_champions(api_key, puuid):
         return response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching top champions: {e}")
+        logger.error(f"Error fetching top champions: {e}")
         return []
 
 def get_champion_name(champion_id):
@@ -140,7 +144,7 @@ def get_champion_name(champion_id):
     # 캐시에서 챔피언 ID, 이름 조회
     cached_champion = cache_get(cache_key)
     if cached_champion:
-        print(f"Cache hit for champion ID: {champion_id}")
+        logger.info(f"Cache hit for champion ID: {champion_id}")
         return cached_champion["id"], cached_champion["name"]   # 캐시된 값 반환
     
     # 캐시되지 않은 경우, API 호출

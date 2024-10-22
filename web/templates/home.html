@@ -7,11 +7,151 @@
     {% load static %}
     <script src="{% static 'app.js' %}"></script>
     <link rel="stylesheet" href="{% static '/css/home_style.css' %}">
+    <style>
+        /* 검색바 아래 로고 - 원래 애니메이션 */
+        .search-logo {
+            width: 280px;
+            margin: -2px -48px;
+            animation: bounce 0.8s ease-in-out infinite;
+        }
+        
+        /* 큰 바운스 애니메이션 */
+        @keyframes bigBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-100px); /* 훨씬 크게 뛰어오르기 */
+            }
+        }
+
+        .nav-logo {
+            width: 140px;
+            cursor: pointer;
+            margin-left: 25px;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* 네비게이션 바 로고 애니메이션 (작고 부드러운 바운스) */
+        .nav-bar:hover .nav-logo {
+            animation: smallBounce 0.8s ease-in-out infinite;
+        }
+        
+        @keyframes smallBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); /* 작게 튀기 */
+            }
+        }
+        
+        /* 전체 배경 설정 */
+        .body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+
+        /* 검색바 아래 로고 - 원래 애니메이션 */
+        .search-logo {
+            width: 280px;
+        }
+
+        @keyframes bigBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-140px); /* 큰 높이로 통통 튀기 */
+            }
+        }
+
+        /* 텍스트 컨테이너 */
+        #fade-container {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            margin-top: -20px;
+            height: 50px;
+            margin: -30px 21px 3px -7px;
+        }
+
+        /* 일반 텍스트 스타일 */
+        .fade-item {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: bold;
+            color: #fcd9ff;
+            white-space: nowrap;
+            font-family: bold;
+            font-weight: 900;
+            margin: 30px auto;
+        }
+
+        /* League of Legends 텍스트 스타일 */
+        .league-text {
+            font-size: 36px;
+            font-weight: bold;
+            color: #c4902d;
+        }
+
+        /* 커서 애니메이션 */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 28px;
+            background-color: white;
+            margin-left: 2px;
+            animation: blink 1s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        .search-bar {
+            display: flex;
+            margin-top: 102px;
+            margin-bottom: 166px;
+            justify-content: space-around;
+            margin: 112px 91px 127px 74px;
+        }
+
+        .search-box {
+            width: 600px;
+            padding: 15px;
+            background-color: #554477;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            margin: -30px 84px 48px 172px;
+            justify-content: space-between;
+        }
+        
+        .gif-container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <!-- 네비게이션 바 -->
     <div class="nav-bar">
-        <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo">
+        <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="nav_logo" class="nav-logo">
         <div class="nav-center">
             <a href="{% url 'article-list' %}">유저리뷰</a>
             <a href="{% url 'ranking' %}">매너랭킹</a>
@@ -34,7 +174,6 @@
             {% endif %}
         </div>
     </div>
-
     <div class="search-bar">
         <div class="search-box">
             <span class="hamburger">☰</span>
@@ -44,6 +183,69 @@
             </svg>
         </div>
     </div>
+    <div class="gif-container">
+        <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="search_logo" class="search-logo">
+    </div>
+    
+    <div id="fade-container">
+        <div class="fade-item" data-text="WHAT'S YOUR GAME?"></div>
+        <div class="fade-item" data-text="Who do you want to play with?"></div>
+        <div class="fade-item" data-text="WPGG matches you with people you like!"></div>
+        <div class="fade-item" data-text="Join us!"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fadeItems = document.querySelectorAll('#fade-container .fade-item');
+            let currentIndex = 0;
+    
+            function typeText(element, text, callback) {
+                let index = 0;
+                element.innerHTML = ''; // 초기화
+                const cursor = document.createElement('span');
+                cursor.classList.add('cursor');
+                element.appendChild(cursor);
+    
+                const typingInterval = setInterval(() => {
+                    if (index < text.length) {
+                        element.innerHTML = text.slice(0, index + 1) + cursor.outerHTML;
+                        index++;
+                    } else {
+                        clearInterval(typingInterval);
+                        blinkCursor(cursor, callback); // 커서 깜빡이기 시작
+                    }
+                }, 45);
+            }
+    
+            function blinkCursor(cursor, callback) {
+                let blinkCount = 0;
+                const blinkInterval = setInterval(() => {
+                    cursor.style.opacity = cursor.style.opacity === '1' ? '0' : '1';
+                    blinkCount++;
+    
+                    if (blinkCount >= 5) { // 3번 깜빡임
+                        clearInterval(blinkInterval);
+                        cursor.remove(); // 커서 제거
+                        callback(); // 다음 텍스트로 이동
+                    }
+                }, 500);
+            }
+    
+            function showNextItem() {
+                fadeItems.forEach(item => (item.style.display = 'none'));
+                const currentItem = fadeItems[currentIndex];
+                const text = currentItem.getAttribute('data-text');
+                currentItem.style.display = 'block';
+                typeText(currentItem, text, () => {
+                    currentIndex = (currentIndex + 1) % fadeItems.length;
+                    showNextItem();
+                });
+            }
+    
+            showNextItem();
+        });
+    </script>
+
 
 <!-- 로그아웃 및 마이페이지 이동 -->
 <script>
@@ -217,10 +419,10 @@
                 const [summonerName, riotTag] = inputValue.split('#');
                 // URL 인코딩
                 const encodedTag = encodeURIComponent(riotTag.trim());
-                window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+                window.location.href = `/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
             } else {
                 // 기본 검색 경우
-                window.location.href = `http://127.0.0.1:8000/${encodeURIComponent(inputValue.trim())}`;
+                window.location.href = `/${encodeURIComponent(inputValue.trim())}`;
             }
         }
         

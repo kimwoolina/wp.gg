@@ -17,8 +17,8 @@ from wpgg.settings import RIOT_API_KEY
 import re
 import logging
 
-
 logger = logging.getLogger('django') 
+
 
 class UserDetailView(generics.GenericAPIView):
     """
@@ -64,7 +64,6 @@ class UserDetailView(generics.GenericAPIView):
             
             if not user_info:
                 logger.error(f'Riot API로부터 사용자 정보 조회 실패: {username}, {riot_tag}')
-                return Response({"message": "라이엇 정보 조회 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
             # reviewee로서 해당 사용자가 작성한 게시글 목록 가져오기
             articles = Articles.objects.filter(reviewee=user)
@@ -105,9 +104,8 @@ class UserDetailView(generics.GenericAPIView):
 
         preferred_position = user_info.get('preferredPosition')
         if preferred_position:
-            user.positions.clear()
-            position, created = Positions.objects.get_or_create(position_name=preferred_position.lower())
-            user.positions.add(position)
+            user.position = preferred_position.lower()  # position 필드에 값 저장
+            user.save()
 
     def get_serializer_data(self, user, articles):
         serializer = self.get_serializer(user)
@@ -177,7 +175,7 @@ class MannerRankingView(ListAPIView):
             'teamwork': 'evaluations__teamwork',
             'communication': 'evaluations__communication',
             'mental_strength': 'evaluations__mental_strength',
-            'punctualiity': 'evaluations__punctualiity',
+            'punctuality': 'evaluations__punctuality',  # 오타 수정
             'positivity': 'evaluations__positivity',
             'mvp': 'evaluations__mvp',
             'mechanical_skill': 'evaluations__mechanical_skill',
@@ -192,18 +190,15 @@ class MannerRankingView(ListAPIView):
         # 쿼리 매개변수에 따라 정렬 기준 설정, 없으면 'score'로 정렬
         sort_by_field = sort_fields.get(sort_by, 'score')
 
-        # 포지션 필터링 처리
-        positions = request.query_params.getlist('positions')  # 다중 포지션 가져오기
+        # 포지션 필터링 처리 (단일 값으로 전달됨)
+        position = request.query_params.get('positions')  # 단일 값으로 처리
+
         # 리뷰가 존재하는 유저 정보만 가져오기
         queryset = User.objects.filter(evaluations__isnull=False).select_related('evaluations')
 
-        # 여러 포지션으로 필터링
-        if positions:
-            position_query = Q()
-            for position in positions:
-                position_query |= Q(positions__position_name=position)  # OR 조건 추가
-            queryset = queryset.filter(position_query)
-
+        # 포지션 필터링 (단일 값으로 필터링)
+        if position:
+            queryset = queryset.filter(positions__position_name=position) # position 필드로 필터링
         # 쿼리셋을 정렬
         queryset = queryset.order_by(F(sort_by_field).desc(nulls_last=True))
 
@@ -214,7 +209,8 @@ class MannerRankingView(ListAPIView):
         # 정상적인 결과가 있을 경우
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return render(request, 'users/rankings.html', {'users': serializer.data})
+
+
 
     
 class UserRecommendationView(APIView):
@@ -233,22 +229,18 @@ class UserRecommendationView(APIView):
         # positions = request.POST.getlist('positions', [])
         # filter_fields = request.POST.getlist('filter_fields', [])
         # user_preference = request.POST.get('user_preference', '')
-        riot_tiers = request.data.get('riot_tier', [])
+        # riot_tiers = request.data.get('riot_tier', [])
+        riot_tiers = request.data.get('riot_tier')
         positions = request.data.get('riot_position', [])
         filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
         user_preference = request.data.get('user_preference', '')
-
-        # print("riot_tiers >>>>>", riot_tiers)
-        # print("positions >>>>>", positions)
-        # print("filter_fields >>>>>", filter_fields)
-        # print("user_preference >>>>>", user_preference)
         
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
 
         # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
         if riot_tiers:
-            users = users.filter(riot_tier__in=riot_tiers)
+            users = users.filter(riot_tier=riot_tiers)
 
         if positions:
             users = users.filter(positions__position_name__in=positions)
@@ -276,8 +268,6 @@ class UserRecommendationView(APIView):
         all_reviews = Articles.objects.all().values('content', 'reviewee')
         reviews_text = "\n".join([f"Review ID: {review['reviewee']} - {review['content']}" for review in all_reviews])
 
-        # print("reviews_test >>>>>", reviews_text)
-        
         # 3. 사용자 입력 텍스트 처리
         if user_preference:
             # OpenAI API를 사용하여 유저의 선호도에 맞는 리뷰 분석
@@ -297,12 +287,10 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
-            # print('user_preference_analysis>>>>>>>>', user_preference_analysis)
 
             # 정규 표현식을 사용하여 숫자 추출
             matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
-            
-            # print("matching_reviewee_ids>>>>>", matching_reviewee_ids)
+            matching_reviewee_ids = list(set(matching_reviewee_ids))
 
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
@@ -310,10 +298,9 @@ class UserRecommendationView(APIView):
             else:
                 return Response({"message": "매칭되는 유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)   
             
-            # print("users>>>>>", users)
-
         # 상위 3명만 선택
         users = users[:3]
+        # print(users)
         
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)

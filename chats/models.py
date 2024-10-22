@@ -9,7 +9,7 @@ User = get_user_model()
 class PrivateChatRoom(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='private_room_user2')
-    room_name = models.CharField(max_length=15, blank=True, null=True)
+    room_name = models.CharField(max_length=35, blank=True, null=True)
     room_image = models.ImageField(upload_to='room_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -23,7 +23,7 @@ class PrivateChatRoom(models.Model):
     def save(self, *args, **kwargs):
         # 방 이름 없으면 user2의 유저네임으로 설정
         if not self.room_name:
-            self.room_name = self.user2.username
+            self.room_name = f"{self.user1.username} & {self.user2.username}"
         super().save(*args, **kwargs)
 
     def get_latest_message(self):

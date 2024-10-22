@@ -13,6 +13,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
+import logging
+
+logger = logging.getLogger('django') 
 
 User = get_user_model()
 
@@ -77,7 +80,7 @@ class ArticleAPIView(APIView):
                 img_files = []
             article = self._create_article(req_data, img_files, reviewer, reviewee_id, request)
         except Exception as e:
-            print("Error occurred:", str(e))  # 추가된 로깅
+            logger.error(f"회원가입 실패: {str(e)}")
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({"message": "소중한 리뷰가 작성 되었습니다."}, status=status.HTTP_200_OK)
@@ -107,7 +110,6 @@ class ArticleAPIView(APIView):
         article = serializer.save(reviewee=reviewee, reviewer=reviewer)
         
         return article
-
 
 class CommentAPIView(APIView):
     def get_object(self, pk):

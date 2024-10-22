@@ -181,6 +181,7 @@
         width: 57%;
         margin-left: 185px;
     }
+    
 
 </style>
 {% load static %}
@@ -188,16 +189,17 @@
 {% endblock css %}
 {% block content %}
 
-    <h1>유저 랭킹</h1>
+    <h1>매너 랭킹 🏅 </h1>
     <div class="top-container">
         <div class="filter-container">
             <label for="positions">포지션 선택:</label>
-            <select id="positions" multiple>
+            <select id="positions" size="1">
+                <option value="">전체</option>
                 <option value="top">탑</option>
                 <option value="jungle">정글</option>
                 <option value="mid">미드</option>
-                <option value="adc">원딜</option>
-                <option value="support">서포터</option>
+                <option value="bottom">봇</option>
+                {% comment %} <option value="support">서포터</option> {% endcomment %}
             </select>
 
             <label for="sort_by">정렬 기준:</label>
@@ -254,7 +256,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Initial data:', data); // API 호출 결과 출력
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
                 .catch(error => console.error('Error loading data:', error));
@@ -275,7 +276,9 @@
             users.forEach((user, index) => {
                 const row = document.createElement('dl');
                 let score = Number(user.score.toFixed(2));
-                row.innerHTML = `
+
+                if (user.riot_username == null){
+                    row.innerHTML = `
                     <dt class="user-info">
                         <h2>${index + 1}위 ${user.username} ${user.riot_username || ''} ${user.riot_tag || ''}</h2> 
                         <span class="user-score">👍${score}<span>
@@ -291,7 +294,27 @@
                     💪피지컬 ${user.evaluations.mechanical_skill} 
                     🧠운영능력 ${user.evaluations.operation} 
                     <dd>
+                    `;
+                }else{
+                    row.innerHTML = `
+                    <dt class="user-info">
+                        <h2>${index + 1}위 ${user.username} (${user.riot_username} #${user.riot_tag || 'KR1'})</h2> 
+                        <span class="user-score">👍${score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
                 `;
+                }
+                
                 tableBody.appendChild(row);
             });
         }
@@ -306,12 +329,15 @@
         function applyFilters() {
             const positions = getSelectedValues(document.getElementById('positions'));
             const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
-
             let url = '/api/profile/rankings/?';
+
             if (positions) {
-                url += `positions=${positions}&`;
+                url += `positions=${positions}`;
             }
             if (sortBy) {
+                if(positions){
+                    url += `&`;
+                }
                 url += `sort_by=${sortBy}`;
             }
 
@@ -323,7 +349,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Filtered data:', data); // 필터링된 결과 출력
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
                 .catch(error => console.error('Error applying filters:', error));

@@ -260,7 +260,8 @@ DiscordOAuth2 = {
     "CLIENT_ID": config.DISCORD_CLIENT_ID,
     "CLIENT_SECRET": config.DISCORD_SECRET_ID,
     "API_ENDPOINT": "https://discord.com/api/v10",
-    "REDIRECT_URI": "https://43.201.57.125/auth/discordlogin/",
+    # "REDIRECT_URI": "https://43.201.57.125/auth/discordlogin/",
+    "REDIRECT_URI": "https://wpgg.kr/auth/discordlogin/",
     "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
 }
 

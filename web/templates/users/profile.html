@@ -178,7 +178,7 @@
                             {% endif %}
                             <div class="username">{{ request.user.discord_username }}</div>
                         </div>
-                        {% if request.user.riot_username %}
+                        {% if request.user.discord_username %}
                         <div id="sns-button" class="action-button">디스코드 계정 연결됨</div>
                         {% else %}
                         <div id="sns-button" class="action-button">디스코드 계정 연결하기</div>

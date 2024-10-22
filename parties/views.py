@@ -100,7 +100,9 @@ class PartyView(ListCreateAPIView):
         user = request.user
         # print(user)
         # if user == "AnonymousUser":
-            # print("사용자 정보 전달 안됨")
+
+        # print("사용자 정보 전달 안됨")
+
         pk=request.data.get("id")
         delete_party = get_object_or_404(Parties, id=pk)
         # 방장만 방 폭파 가능
@@ -254,7 +256,7 @@ class PartyDetailView(APIView):
             return Response({"status": "dismissed", "message": "참여하고 있는 파티가 없습니다!"}, status=400)
         elif user is party.user:
             # if not party.top1 and not party.top2 and 
-            return response({"status": "dismissed", "message": ""})
+            return Response({"status": "dismissed", "message": ""})
         if party.top1 == user:
             # print("top1")
             party.top1 = None
@@ -306,10 +308,9 @@ class PartyDetailView(APIView):
                 party.adc2 = None
                 user.in_party = None
                 user.position = None
-            else:
-                # print("error")
-                return Response({"status":"error", "message": "no space"}, status=400)
+       
         else:
+
             # print("error")
             return Response({"status":"error", "message": "no space"}, status=400)
         party.save()
@@ -323,11 +324,11 @@ class PartyExileView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, party_pk, position, *args, **kwargs):
-        party_exile = get_object_or_404(party, id=party_pk)
+        party_exile = get_object_or_404(Parties, id=party_pk)
         party_exile.delete()
 
     def delete(self, request, party_pk, position):
-        party_exile = get_object_or_404(party, id=party_pk)
+        party_exile = get_object_or_404(Parties, id=party_pk)
         party_exile.delete()
 
 

@@ -49,6 +49,59 @@
             animation: sparkle 2s infinite ease-in-out;
         }
 
+        .action-button {
+            background-color: #574893;
+            color: white;
+            border: none;
+            border-radius: 11px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            width: 91%;
+            margin: 4px 34px 1px -3px;
+        }
+
+        .sns-category {
+            margin-top: 39px;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 22px;
+        }
+
+        .left-body {
+            display: flex;
+            align-items: center;
+            width: 60%;
+            margin-right: 63px;
+        }
+
+        .profile-container {
+            width: 65%;
+            margin: 0px -1px 17px 149px;
+        }
+
+        .left-body {
+            display: flex;
+            width: 56%;
+        }
+
+        .rating-icon {
+            width: 300px;
+            height: auto;
+            margin: 42px 105px 84px 27px;
+        }
+
+        .rating-panel {
+            background-color: transparent;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            text-align: center;
+            margin: -11px 34px -16px -43px;
+        }
+
     </style>
 </head>
 
@@ -136,20 +189,22 @@
                             <input type="text" id="email" name="email" value="{{ request.user.email }}" readonly>
                     
                             <label for="riot-username">Riot Nickname</label>
-                            <input type="text" id="riot-username" name="riot_username" value="{{ request.user.riot_username }}" readonly>
+                            <input type="text" id="riot-username" name="riot-username" value="{{ request.user.riot_username|default_if_none:'' }}" readonly>
                     
                             <label for="riot-tag">Riot Tag</label>
-                            <input type="text" id="riot-tag" name="riot_tag" value="{{ request.user.riot_tag }}" readonly>
+                            <input type="text" id="riot-tag" name="riot_tag" value="{{ request.user.riot_tag|default_if_none:'' }}" readonly>
                     
                             <label for="introduce">Introduce</label>
-                            <textarea id="introduce" name="introduction" readonly>{{ request.user.introduction }}</textarea>
+                            <textarea id="introduce" name="introduction" readonly>
+                                {{ request.user.introduction|default_if_none:'' }}
+                            </textarea>
                     
                             <label for="profile_image">Profile Image</label>
                             <input type="file" id="profile-image" name="profile_image" accept="image/*">
                     
                             <!-- 수정 및 저장 버튼 -->
                             <button id="edit-profile-btn" class="action-button">내 정보 수정하기</button>
-                            <button id="save-profile-btn" class="action-button" style="display: none;">저장하기</button>
+                            <button id="save-profile-btn" class="action-button" style="display:;">저장하기</button>
                         </div>
                     </form>
                     
@@ -239,6 +294,17 @@
 </div>
 
 <script>
+    // DOMContentLoaded 이벤트 사용: 페이지가 완전히 로드된 후 실행
+    document.addEventListener('DOMContentLoaded', function () {
+        // 이메일 필드에 클릭 방지 이벤트 추가
+        const emailInput = document.getElementById('email');
+
+        // 이메일 필드 클릭 시 경고 메시지 표시
+        emailInput.addEventListener('click', function (e) {
+            alert('이메일은 변경할 수 없습니다.');
+            e.preventDefault();  // 클릭 후 기본 동작 방지
+        });
+    });
     // 홈으로 리다이렉트 (로고 클릭 시)
     document.querySelector('.logo-home').addEventListener('click', function() {
         window.location.href = '/home/';
@@ -272,6 +338,15 @@
             }
         })
         .catch(error => console.error('Error:', error));
+
+            // 이메일 필드에 클릭 방지 이벤트 추가
+            const emailInput = document.getElementById('email');
+
+            // 이메일 필드 클릭 시 경고 메시지 표시
+            emailInput.addEventListener('click', function (e) {
+                alert('이메일은 변경할 수 없습니다.');
+                e.preventDefault();  // 클릭 후 기본 동작 방지
+            });
 
     });
     // 수정 모드로 전환
@@ -312,6 +387,7 @@
 
         const formElement = document.querySelector('form');
         const formData = new FormData(formElement);
+
 
         fetch('/auth/api/profile/', {
             method: 'PUT',

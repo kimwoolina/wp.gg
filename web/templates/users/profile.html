@@ -131,6 +131,9 @@
                         <div class="profile-info">
                             <label for="username">Username</label>
                             <input type="text" id="username" name="username" value="{{ request.user.username }}" readonly>
+
+                            <label for="username">Email</label>
+                            <input type="text" id="email" name="email" value="{{ request.user.email }}" readonly>
                     
                             <label for="riot-username">Riot Nickname</label>
                             <input type="text" id="riot-username" name="riot_username" value="{{ request.user.riot_username }}" readonly>

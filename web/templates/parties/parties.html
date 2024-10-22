@@ -113,13 +113,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.top1.profile_image %}
-                <button type="button" class="no-style-button" onclick="click_user_img({{data.top1.username}});">
-                    <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button">
+                        <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.top1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -134,13 +138,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.top2.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.top2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.top2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.top2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -157,13 +165,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
                 {% elif data.mid1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.mid1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -178,13 +190,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.mid2.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.mid2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.mid2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -201,13 +217,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.jungle1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.jungle1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -222,13 +242,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.jungle2.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.jungle2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.jungle2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -245,13 +269,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.adc1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.adc1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -266,13 +294,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.adc2.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.adc2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.adc2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -289,13 +321,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.support1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.support1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -310,13 +346,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.support2.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.support2 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -357,13 +397,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.top1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.top1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -380,13 +424,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
                 </button>
                 {% elif data.mid1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.mid1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -403,13 +451,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.jungle1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.jungle1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -426,13 +478,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.adc1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.adc1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
@@ -449,13 +505,17 @@
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.support1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% else %}
-                <button type="button" class="no-style-button" onclick="">
-                    <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
-                </button>
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
                 {% endif %}
                 {% if data.support1 == data.user %}
                 <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->

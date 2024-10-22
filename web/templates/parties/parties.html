@@ -324,19 +324,16 @@
             </div>
             {% if data.id == request.user.in_party%}
             <div class="get-out-icon-civilwar">
-                <button type="button" class="exit-button no-style-button" onclick="consoleprint('탈출버튼')"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="GetOutParty({{data.id}})"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div class="settings-icon-civilwar">
                 <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div id="dropdownMenu" class="dropdown-content">
-                {% if data.id == request.user.in_party %}
-                <a href="#" onclick="GetOutParty({{data.id}})">파티 나가기</a>
-                {% endif %}
                 {% if data.user == request.user %}
-                <a href="#" onclick="deleteparty({{data.id}})">방 삭제</a>
+                <a href="" onclick="deleteparty({{data.id}})">방 삭제</a>
                 {% endif %}
-                <a href="#">설정 3</a>
+                <a href="">설정 3</a>
             </div>
             {% endif %}
         </div>
@@ -466,19 +463,16 @@
             </div>
             {% if data.id == request.user.in_party %}
             <div class="get-out-icon">
-                <button type="button" class="exit-button no-style-button" onclick="consoleprint('나가기{{data.id}}')" id="PartyDelete"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
+                <button type="button" class="exit-button no-style-button" onclick="GetOutParty({{data.id}})" id="PartyDelete"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div class="settings-icon">
                 <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
             </div>
             <div id="dropdownMenu" class="dropdown-content">
-                {% if data.id == request.user.in_party %}
-                <a href="#" onclick="GetOutParty({{data.id}})">파티 나가기</a>
-                {% endif %}
                 {% if data.user == request.user %}
-                <a href="#" onclick="deleteparty({{data.id}})">방 삭제</a>
+                <a href="" onclick="deleteparty({{data.id}})">방 삭제</a>
                 {% endif %}
-                <a href="#">설정 3</a>
+                <a href="">설정 3</a>
             </div>
             {% endif %}
         </div>

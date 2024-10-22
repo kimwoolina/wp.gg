@@ -1,0 +1,74 @@
+.article {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px;
+    display: flex; /* Flexbox 사용하여 정렬 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer; /* 클릭 가능한 요소로 보이도록 커서 변경 */
+}
+.article-icons {
+    display: flex; /* 아이콘을 수평으로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    margin-right: 10px; /* 아이콘과 내용 사이의 간격 조정 */
+}
+.icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px; /* 아이콘 간의 간격 조정 */
+}
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.article-content {
+    margin-left: 10px;
+    color: #555;
+    flex-grow: 1; /* 남은 공간 차지 */
+}
+.username {
+    font-size: 14px;
+    font-weight: bold;
+}
+.created-at {
+    font-size: 12px;
+    color: #777;
+}
+.truncated-content {
+    font-size: 14px; /* 내용 폰트 크기 약간 증가 */
+    color: #fff; /* 내용 색상 하얀색으로 조정 */
+    margin-top: 5px; /* 닉네임과 날짜와의 간격 조정 */
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    margin-bottom: 22px; /* 버튼과 아래 요소 사이의 간격 */
+}
+.button-81 {
+    background-color: #6f69a5;
+    border: 0 solid #e2e8f0;
+    border-radius: 1.5rem;
+    box-sizing: border-box;
+    color: #ECE7F9;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Basier circle",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 1rem !important;
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.8rem 2rem !important;
+    text-align: center;
+    text-decoration: none #0d172a solid;
+    text-decoration-thickness: auto;
+    transition: all .1s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    float: right; /* 버튼을 오른쪽으로 이동 */
+}
+
+.button-81:hover {
+    background-color: #8a3ffc;
+    color: #fff;
+}

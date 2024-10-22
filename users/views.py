@@ -228,7 +228,7 @@ class UserProfileView(APIView):
 
     def put(self, request):
         user = request.user
-        serializer = UserProfileSerializer(user, data=request.data)
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({'message': '프로필이 수정되었습니다!'}, status=200)

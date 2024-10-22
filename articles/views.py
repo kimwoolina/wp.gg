@@ -111,7 +111,6 @@ class ArticleAPIView(APIView):
         
         return article
 
-
 class CommentAPIView(APIView):
     def get_object(self, pk):
         return get_object_or_404(Comments, pk=pk)

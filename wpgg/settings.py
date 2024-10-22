@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 from . import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,6 @@ RIOT_API_KEY = config.RIOT_API_KEY
 OPEN_API_KEY = config.OPEN_API_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = False
 
 ALLOWED_HOSTS = ["43.201.57.125", "localhost", "127.0.0.1", "wpgg.kr"]
@@ -230,14 +230,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 #Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
@@ -262,7 +260,8 @@ DiscordOAuth2 = {
     "CLIENT_ID": config.DISCORD_CLIENT_ID,
     "CLIENT_SECRET": config.DISCORD_SECRET_ID,
     "API_ENDPOINT": "https://discord.com/api/v10",
-    "REDIRECT_URI": "http://127.0.0.1:8000/auth/discordlogin/",
+    # "REDIRECT_URI": "https://43.201.57.125/auth/discordlogin/",
+    "REDIRECT_URI": "https://wpgg.kr/auth/discordlogin/",
     "DISCORD_OAUTH2_URL": config.DISCORD_OAUTH2_URL
 }
 

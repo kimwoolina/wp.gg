@@ -103,7 +103,7 @@
                 // resultDiv.innerHTML += `<span id="summoner-level">${data.riot_info.summonerLevel}</span>`
             }
             else {
-                const profileImageUrl = "{% if data.profile_image %}{{ data.profile_image.url }}{% else %}{% static 'img/default_profile_image.png' %}{% endif %}";
+                let profileImageUrl = data.profile_image ? data.profile_image : "{% static 'img/default_profile_image.png' %}";
                 resultDiv.innerHTML += `<img id="profile-icon" class="profile-img" src="${profileImageUrl}" alt="Profile Icon"/>`;
             }
             

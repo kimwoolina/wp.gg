@@ -182,7 +182,32 @@
         margin-left: 185px;
     }
     
-
+    {% comment %} /* 스피너 */ {% endcomment %}
+    .loader {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #FFF;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+    
+        {% comment %} /* 화면 중앙에 배치 */ {% endcomment %}
+        position: fixed; 
+        top: 50%; 
+        left: 55%; 
+        transform: translate(-50%, -50%); 
+    }
+    
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 {% load static %}
 <link rel="stylesheet" href="{% static '/css/rank.css' %}">
@@ -190,6 +215,9 @@
 {% block content %}
 
     <h1>매너 랭킹 🏅 </h1>
+    <span class="loader" id="loader" style="display: none;"></span>
+    <div id="result" style="margin-top: 20px;"></div>
+
     <div class="top-container">
         <div class="filter-container">
             <label for="positions">포지션 선택:</label>
@@ -246,8 +274,19 @@
 {% endblock content %}
 {% block javascript %}
     <script>
+        // 스피너를 보여주는 함수
+        function showSpinner() {
+            document.getElementById('loader').style.display = 'inline-block';
+        }
+
+        // 스피너를 숨기는 함수
+        function hideSpinner() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
         // 초기 데이터 로드
         function loadInitialData() {
+            showSpinner();
             fetch('/api/profile/rankings/')
                 .then(response => {
                     if (!response.ok) {
@@ -256,9 +295,13 @@
                     return response.json();
                 })
                 .then(data => {
+                    hideSpinner();
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
-                .catch(error => console.error('Error loading data:', error));
+                .catch(error => console.error('Error loading data:', error))
+                .finally(() => {
+                    hideSpinner(); // 데이터 로드 완료 후 스피너를 숨김
+                });
         }
 
         // 테이블 렌더링 함수
@@ -327,6 +370,7 @@
         }
 
         function applyFilters() {
+            showSpinner();
             const positions = getSelectedValues(document.getElementById('positions'));
             const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
             let url = '/api/profile/rankings/?';
@@ -351,7 +395,10 @@
                 .then(data => {
                     renderTable(data); // 사용자 배열을 바로 전달
                 })
-                .catch(error => console.error('Error applying filters:', error));
+                .catch(error => console.error('Error applying filters:', error))
+                .finally(() => {
+                    hideSpinner(); // 필터 적용 완료 후 스피너를 숨김
+                });
         }
 
         // 페이지 로드 시 데이터 가져오기

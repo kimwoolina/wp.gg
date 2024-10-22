@@ -98,65 +98,95 @@ class PartyView(ListCreateAPIView):
 
     def delete(self, request):
         user = request.user
-        # print(user)
-        # if user == "AnonymousUser":
-
-        # print("사용자 정보 전달 안됨")
+        status = request.data.get("status")
 
         pk=request.data.get("id")
         delete_party = get_object_or_404(Parties, id=pk)
         # 방장만 방 폭파 가능
         if user == delete_party.user:
-            # print("delete_party")
-            if delete_party.top1:
-                delete_party.top1.in_party = None
-                delete_party.top1.position = None
-                delete_party.top1.save()
-            if delete_party.jungle1:
-                delete_party.jungle1.in_party = None
-                delete_party.jungle1.position = None
-                delete_party.jungle1.save()
-            if delete_party.mid1:
-                delete_party.mid1.in_party = None
-                delete_party.mid1.position = None
-                delete_party.mid1.save()
-            if delete_party.support1:
-                delete_party.support1.in_party = None
-                delete_party.support1.position = None
-                delete_party.support1.save()
-            if delete_party.adc1:
-                delete_party.adc1.in_party = None
-                delete_party.adc1.position = None
-                delete_party.adc1.save()
-            if not delete_party.is_rank:
-                # print("내전")
-                if delete_party.top2:
-                    delete_party.top2.in_party = None
-                    delete_party.top2.position = None
-                    delete_party.top2.save()
-                if delete_party.jungle2:
-                    delete_party.jungle2.in_party = None
-                    delete_party.jungle2.position = None
-                    delete_party.jungle2.save()
-                if delete_party.mid2:
-                    delete_party.mid2.in_party = None
-                    delete_party.mid2.position = None
-                    delete_party.mid2.save()
-                if delete_party.support2:
-                    delete_party.support2.in_party = None
-                    delete_party.support2.position = None
-                    delete_party.support2.save()
-                if delete_party.adc2:
-                    delete_party.adc2.in_party = None
-                    delete_party.adc2.position = None
-                    delete_party.adc2.save()
-            delete_party.save()
-                
-            delete_party.delete()
-            return Response({"status": "succeed", "message": "delete_party", "delete_id": pk})
+            if status == "deletion":
+                print(status)
+                party_user = ""
+                # 유저가 존재하나 파티장이 아닐때(타 유저가 존재할 때 방 폭파 불가)
+                # try:
+                if delete_party.top1 is not None and delete_party.top1.pk is not user.pk:
+                    party_user += "top1 "
+                if delete_party.jungle1 is not None and delete_party.jungle1.pk is not user.pk:
+                    party_user += "jungle1 "
+                if delete_party.mid1 is not None and delete_party.mid1.pk is not user.pk:
+                    party_user += "mid1 "
+                if delete_party.support1 is not None and delete_party.support1.pk is not user.pk:
+                    party_user += "support1 "
+                if delete_party.adc1 is not None and delete_party.adc1.pk is not user.pk:
+                    party_user += "adc1 "
+                if not delete_party.is_rank:
+                    if delete_party.top2 is not None and delete_party.top2.pk is not user.pk:
+                        party_user += "top2 "
+                    if delete_party.jungle2 is not None and delete_party.jungle2.pk is not user.pk:
+                        party_user += "jungle2 "
+                    if delete_party.mid2 is not None and delete_party.mid2.pk is not user.pk:
+                        party_user += "mid2 "
+                    if delete_party.support2 is not None and delete_party.support2.pk is not user.pk:
+                        party_user += "support2 "
+                    if delete_party.adc2 is not None and delete_party.adc2.pk is not user.pk:
+                        party_user += "adc2 "
+                print(f"finish :{party_user}빈칸 확인")
+                if party_user == "":
+                    status = "Forced deletion"
+                    # return Response({"status": "succeed", "message": "delete_party", "delete_id": pk})
+                else:
+                    return Response({"status": "dismissed", "message": "another mamber is in the party"}, status=400)
+
+            if status == "Forced deletion":
+                print(status)
+                if delete_party.top1:
+                    delete_party.top1.in_party = None
+                    delete_party.top1.position = None
+                    delete_party.top1.save()
+                if delete_party.jungle1:
+                    delete_party.jungle1.in_party = None
+                    delete_party.jungle1.position = None
+                    delete_party.jungle1.save()
+                if delete_party.mid1:
+                    delete_party.mid1.in_party = None
+                    delete_party.mid1.position = None
+                    delete_party.mid1.save()
+                if delete_party.support1:
+                    delete_party.support1.in_party = None
+                    delete_party.support1.position = None
+                    delete_party.support1.save()
+                if delete_party.adc1:
+                    delete_party.adc1.in_party = None
+                    delete_party.adc1.position = None
+                    delete_party.adc1.save()
+                if not delete_party.is_rank:
+                    # print("내전")
+                    if delete_party.top2:
+                        delete_party.top2.in_party = None
+                        delete_party.top2.position = None
+                        delete_party.top2.save()
+                    if delete_party.jungle2:
+                        delete_party.jungle2.in_party = None
+                        delete_party.jungle2.position = None
+                        delete_party.jungle2.save()
+                    if delete_party.mid2:
+                        delete_party.mid2.in_party = None
+                        delete_party.mid2.position = None
+                        delete_party.mid2.save()
+                    if delete_party.support2:
+                        delete_party.support2.in_party = None
+                        delete_party.support2.position = None
+                        delete_party.support2.save()
+                    if delete_party.adc2:
+                        delete_party.adc2.in_party = None
+                        delete_party.adc2.position = None
+                        delete_party.adc2.save()
+                delete_party.save()
+                delete_party.delete()
+                return Response({"status": "succeed", "message": "delete_party", "delete_id": pk})
         else:
             # print("no party master")
-            return Response({"status": "dismissed", "message": "You are not the owner of this party."})
+            return Response({"status": "dismissed", "message": "You are not the owner of this party."}, status=400)
 
 
 class PartyDetailView(APIView):

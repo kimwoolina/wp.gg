@@ -8,6 +8,14 @@
 {% endblock css %}
 {% block content %}
 <div class="left-container"></div>
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>삭제 실패</h2>
+        <p id="errorMessage">파티에 다른 유저가 있습니다. 그래도 삭제 하시겠습니까?</p>
+        <button id="retryButton", class="error-btn">파티 해산하기.</button>
+    </div>
+</div>
 {% if request.user %}
 <label style="padding: 20px;">파티 생성하기</label><br />
 <form action="" method="POST" id="createparty">

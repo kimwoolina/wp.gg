@@ -40,37 +40,39 @@ document.getElementById('createparty').addEventListener('submit', function(event
 
 
 function deleteparty(partyId) {
+
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const headers = {
         'Content-Type': 'application/json',
         'X-CSRFToken': '{{csrftoken}}',
         'Authorization': 'Bearer ' + getAccessToken()
     }
-    console.log("headers:", headers)
 
     fetch('/api/party/', {
         method: 'DELETE',
         headers: headers,
-        body: JSON.stringify({ id: partyId })
+        body: JSON.stringify({ id: partyId, status:'deletion' })
     })
     .then(response => {
         if (response.ok) {
             alert("파티가 삭제되었습니다.");
+            return response.json(); // 응답 데이터가 있으면 처리
         } else {
-            alert("삭제 실패: " + response.statusText);
+            return response.json().then(data => { 
+                // 서버에서 받은 에러 메시지를 출력
+                alert("삭제 실패: " + (data.detail || response.statusText)); 
+                // throw new Error(data.detail || response.statusText);
+            });
         }
     })
-    .then(data => {
-        console.log(data);
-        location.reload(); // 화면 새로고침
-    })
-    .catch(error => console.error('Error:', error));
+    // .then(data => {
+    //     location.reload(); // 화면 새로고침
+    // })
+    // .catch(error => console.error('Error:', error));
 }
 
 
 function JoinParty(partyId, position) {
-    console.log(partyId);
-    console.log(position);
     const url = `/api/party/${partyId}/`; // 엔드포인트에 변수를 포함한 URL
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const headers = {
@@ -78,7 +80,6 @@ function JoinParty(partyId, position) {
         'X-CSRFToken': csrftoken,
         'Authorization': 'Bearer ' + getAccessToken()
     }
-    console.log("headers:", headers)
 
     fetch(url, {
         method: 'POST',
@@ -86,11 +87,14 @@ function JoinParty(partyId, position) {
         body: JSON.stringify({ position:position })
     })
     .then(response => {
-        if (response.ok) {
-            alert("파티에 참여하였습니다.");
-        } else {
-            alert("참여 실패: " + response.statusText);
-        }
+        return response.json().then(data => {
+            if (response.ok) {
+                alert("파티에 참여하였습니다.");
+            } else {
+                alert("참여 실패: " + data.message); // 서버에서 받은 에러 메시지를 출력
+                throw new Error(data.message);
+            }
+        });
     })
     .then(data => {
         console.log(data);
@@ -110,7 +114,6 @@ function GetOutParty(partyId) {
         'X-CSRFToken': csrftoken,
         'Authorization': 'Bearer ' + getAccessToken()
     }
-    console.log("headers:", headers)
 
     fetch(url, {
         method: 'DELETE',
@@ -182,4 +185,30 @@ document.addEventListener("click", function() {
 
 function consoleprint(action) {
     alert("준비중인 서비스입니다.")
+}
+
+function click_user_img(user_pk) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+        'Authorization': 'Bearer ' + getAccessToken()
+    }
+
+    fetch(`/${user_pk}/`, {
+        method: 'DELETE',
+        headers: headers,
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("파티에서 탈퇴하였습니다.");
+        } else {
+            alert("탈퇴 실패: " + response.statusText);
+        }
+    })
+    .then(data => {
+        console.log(data);
+        location.reload(); // 화면 새로고침
+    })
+    .catch(error => console.error('Error:', error));
 }

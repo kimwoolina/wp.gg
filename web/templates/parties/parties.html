@@ -101,11 +101,11 @@
         <div class="horizontal-container-div-civilwar">
             <div class="image-container">
                 {% if data.top1 is none %}
-                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1')">
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1');">
                     <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% elif data.top1.profile_image %}
-                <button type="button" class="no-style-button" onclick="">
+                <button type="button" class="no-style-button" onclick="click_user_img({{data.top1.username}});">
                     <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
                 </button>
                 {% else %}

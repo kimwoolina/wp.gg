@@ -225,11 +225,6 @@ class UserRecommendationView(APIView):
         matching_reviewee_id = None
 
         # 요청에서 필터링 값 가져오기
-        # riot_tiers = request.POST.getlist('riot_tier', [])
-        # positions = request.POST.getlist('positions', [])
-        # filter_fields = request.POST.getlist('filter_fields', [])
-        # user_preference = request.POST.get('user_preference', '')
-        # riot_tiers = request.data.get('riot_tier', [])
         riot_tiers = request.data.get('riot_tier')
         positions = request.data.get('riot_position', [])
         filter_fields = [field for field in request.data.get('selected_categories', '').split(',') if field]
@@ -237,13 +232,13 @@ class UserRecommendationView(APIView):
         
         # 기본 유저 리스트 가져오기
         users = User.objects.all()
-
+        
         # 1. 기본 필터링 (티어와 포지션에 따라 필터링)
         if riot_tiers:
             users = users.filter(riot_tier=riot_tiers)
 
         if positions:
-            users = users.filter(positions__position_name__in=positions)
+            users = users.filter(positions__position_name=positions)
 
         # 2. 평가 필드 필터링
         # if filter_fields:
@@ -287,11 +282,11 @@ class UserRecommendationView(APIView):
             )
 
             user_preference_analysis = ask_chatgpt(user_message=prompt, system_instructions="")
+            print("user_preference_analysis", user_preference_analysis)
 
             # 정규 표현식을 사용하여 숫자 추출
             matching_reviewee_ids = [int(num) for num in re.findall(r'\d+', user_preference_analysis)]
             matching_reviewee_ids = list(set(matching_reviewee_ids))
-
             # 유저 필터링
             if matching_reviewee_ids:  # 리스트가 비어있지 않은 경우
                 users = users.filter(id__in=matching_reviewee_ids)
@@ -300,7 +295,6 @@ class UserRecommendationView(APIView):
             
         # 상위 3명만 선택
         users = users[:3]
-        # print(users)
         
         # 직렬화하여 응답
         serializer = UserSerializer(users, many=True)

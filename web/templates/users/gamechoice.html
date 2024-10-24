@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게임 선택</title>
+    {% load static %}
+    <style>
+
+        /* 전체 배경 색상 */
+        body {
+            background-color: #1E1E1E;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+            margin: 0;
+            font-family: 'SurvivorFont', sans-serif;
+        }
+
+        /* 게임 선택 화면 스타일 */
+        .game-container {
+            text-align: center;
+        }
+
+        .game-container h2 {
+            font-family: SurvivorFont;
+            color: #c5b0ff;
+            margin-bottom: 65px; /* 텍스트와 이미지 사이 간격을 좁힘 */
+            font-family: 'SurvivorFont'; /* 생존자체 폰트 적용 */
+        }
+
+        /* 게임 이미지 선택 */
+        .games {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .game-item {
+            width: 170px;  /* 이미지 크기 증가 */
+            height: 220px; /* 이미지 크기 증가 */
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border-radius: 15px;
+            margin-bottom: 70px;
+            border: none; /* 테두리 제거 */
+            box-shadow: none; /* 그림자 제거 */
+        }
+
+        .game-item:hover {
+            transform: scale(1.1);
+        }
+
+        /* 하단 로고 */
+        .logo-container {
+            margin-top: -20px;
+        }
+
+        .logo-container img {
+            width: 100px;
+        }
+
+        /* 로고 애니메이션 추가 */
+        .logo-container img {
+            animation: bounce 0.7s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* 페이지 하단 화살표 */
+        .back-arrow {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+        }
+
+        .back-arrow img {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-bottom: 5px;
+        }
+
+        .back-arrow img:hover {
+            color: #6f69a5
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 게임 선택 컨테이너 -->
+    <div class="game-container">
+        <h2>WHAT'S YOUR GAME?</h2>
+        <div class="games">
+            <img src="{% static 'img/lol_logo.png' %}" alt="League of Legends" class="game-item" id="lol">
+            <img src="{% static 'img/valorant_logo.png' %}" alt="Valorant" class="game-item" id="valorant">
+            <img src="{% static 'img/rocket_logo.png' %}" alt="Rocket" class="game-item" id="rocket">
+            <img src="{% static 'img/dota_logo.png' %}" alt="Dota" class="game-item" id="dota">
+        </div>
+
+        <!-- 하단 로고 -->
+        <div class="logo-container">
+            <img src="{% static 'img/wpgg_logo_v1.png' %}" alt="W.PGG Logo" class="logo">
+        </div>
+    </div>
+    
+    <!-- 페이지 하단 화살표 버튼 -->
+    <div class="back-arrow">
+        <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'img/back-arrow.png' %}" alt="뒤로가기"></a>
+    </div>
+
+    <script>
+        // 홈으로 리다이렉트 (로고 클릭 시)
+        document.querySelector('.logo').addEventListener('click', function() {
+            window.location.href = '/home/';
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const lolImage = document.getElementById('lol');
+            const valorantImage = document.getElementById('valorant');
+            const rocketImage = document.getElementById('rocket');
+            const dotaImage = document.getElementById('dota');
+
+            // 리그 오브 레전드 클릭시 리다이렉트
+            lolImage.addEventListener('click', function() {
+                window.location.href = '/login_selection/';  
+            });
+
+            // 발로란트 클릭 시 팝업
+            valorantImage.addEventListener('click', function() {
+                alert('현재 발로란트는 서버 업데이트 중입니다.');
+            });
+
+            // 로켓리그 클릭 시 팝업
+            rocketImage.addEventListener('click', function() {
+                alert('현재 로켓리그는 서버 업데이트 중입니다.');
+            });
+
+            // 도타2 클릭 시 팝업
+            dotaImage.addEventListener('click', function() {
+                alert('현재 도타2는 서버 업데이트 중입니다.');
+            });
+        });
+    </script>
+</body>
+</html>

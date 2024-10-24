@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}리뷰 목록{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/article_list.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}  
+<div class="button-container">
+    <button class="button-81" role="button" onclick="window.location.href='{% url 'article-create' %}'">리뷰 작성하기</button>
+</div>
+{% endif %}
+
+<div id="article-list"></div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+// API URL
+const apiUrl = '/api/articles/';
+
+// DOM element for article list
+const articleList = document.getElementById('article-list');
+
+// Function to format the date as "YYYY.MM.DD" or "X days ago"
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+        const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+        if (diffHours === 0) {
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            return diffMinutes + " minutes ago";
+        }
+        return diffHours + " hours ago";
+    } else if (diffDays < 7) {
+        return diffDays + " days ago";
+    } else {
+        return date.toISOString().split('T')[0].replace(/-/g, '.');
+    }
+}
+
+// Function to create and append an article to the DOM
+function appendArticle(article) {
+    const reviewer = article.reviewer;
+
+    // Icons based on article score
+    const scoreIcon = article.article_score >= 5 
+        ? 'https://cdn-icons-png.flaticon.com/512/2717/2717378.png' // 따봉 아이콘
+        : 'https://cdn-icons-png.flaticon.com/512/7218/7218755.png'; // 낮은 점수 아이콘
+    const moreIcon = 'https://www.svgrepo.com/show/335225/ellipsis.svg'; // 말줄임표 아이콘
+
+    // Reviewer info
+    const reviewerUsername = reviewer.riot_username ? reviewer.riot_username : reviewer.username;
+    const reviewerProfileImage = reviewer.profile_image ? reviewer.profile_image : '{% static "img/default_profile_image.png" %}';
+
+    // Truncated content with a limit of 30 characters
+    const maxLength = 30; // 최대 글자 수
+    const truncatedContent = article.content.length > maxLength 
+        ? article.content.substring(0, maxLength) + '...' 
+        : article.content;
+
+    // Create article element
+    const articleElement = document.createElement('div');
+    articleElement.classList.add('article');
+
+    // Create article content
+    articleElement.innerHTML = `
+        <div class="article-icons">
+            <img src="${scoreIcon}" alt="Score Icon" class="icon">
+            <img src="${moreIcon}" alt="More" class="icon" style="filter: brightness(0) invert(1);"> 
+            <img src="${reviewerProfileImage}" alt="Profile Image" class="profile-image">
+        </div>
+        <div class="article-content">
+            <div class="username">${reviewerUsername}</div>
+            <div class="created-at">${formatDate(article.created_at)}</div>
+            <div class="truncated-content">${truncatedContent}</div>
+        </div>
+    `;
+
+    // Add click event to redirect to the article detail page
+    articleElement.onclick = () => {
+        window.location.href = `/article/${article.id}/`;
+    };
+
+    // Append to the list
+    articleList.appendChild(articleElement);
+}
+
+// Fetch articles from API
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(article => {
+            appendArticle(article);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching articles:', error);
+    });
+</script>
+{% endblock javascript %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}리뷰 작성{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/article_create.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+<form id="articleForm" action="{% url 'articles' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- 유저 검색 기능 -->
+    <div class="user-search-container">
+        <input type="text" id="user-search" class="search-bar" placeholder="&nbsp;유저 찾기">
+        <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="search-btn" fill="white">
+            <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
+        </svg>
+        <select id="reviewee" name="reviewee" class="reviewee-select">
+            <option value="">유저 검색 결과</option>
+        </select>
+    </div>
+    
+    <!-- 4. 이모티콘 점수 선택 -->
+    <div class="emoji-radio-container">
+        <label class="emoji-label">
+            😍
+            <input type="radio" name="article_score" class="emoji-radio" value="10">
+        </label>
+        <label class="emoji-label">
+            🥰
+            <input type="radio" name="article_score" class="emoji-radio" value="9">
+        </label>
+        <label class="emoji-label">
+            😘
+            <input type="radio" name="article_score" class="emoji-radio" value="8">
+        </label>
+        <label class="emoji-label">
+            😄
+            <input type="radio" name="article_score" class="emoji-radio" value="7">
+        </label>
+        <label class="emoji-label">
+            😙
+            <input type="radio" name="article_score" class="emoji-radio" value="6">
+        </label>
+        <label class="emoji-label">
+            🙂
+            <input type="radio" name="article_score" class="emoji-radio" value="5">
+        </label>
+        <label class="emoji-label">
+            🥺
+            <input type="radio" name="article_score" class="emoji-radio" value="4">
+        </label>
+        <label class="emoji-label">
+            😞
+            <input type="radio" name="article_score" class="emoji-radio" value="3">
+        </label>
+        <label class="emoji-label">
+            😣
+            <input type="radio" name="article_score" class="emoji-radio" value="2">
+        </label>
+        <label class="emoji-label">
+            😡
+            <input type="radio" name="article_score" class="emoji-radio" value="1">
+        </label>
+        <label class="emoji-label">
+            🤮
+            <input type="radio" name="article_score" class="emoji-radio" value="0">
+        </label>
+    </div>
+
+    <!-- 리뷰 내용 -->
+    <input type="text" name="title" class="title" id="title" placeholder="리뷰 제목" required><br>
+
+    <textarea id="content" name="content" class="content-box" placeholder="리뷰를 입력하세요..." required></textarea>
+
+    <!-- 평가 항목들 -->
+    <div class="review-categories">
+        <span class="badge" data-category="kindness">💗 상냥함</span>
+        <span class="badge" data-category="teamwork">🛠 팀워크</span>
+        <span class="badge" data-category="communication">📢 소통왕</span>
+        <span class="badge" data-category="mental_strength">🧠 멘탈</span>
+        <span class="badge" data-category="punctuality">⏰ 시간약속</span>
+        <span class="badge" data-category="positivity">💪 긍정적</span>
+        <span class="badge" data-category="mvp">⭐ MVP</span>
+        <span class="badge" data-category="mechanical_skill">⚙️ 피지컬</span>
+        <span class="badge" data-category="operation">🎮 운영</span>
+        <span class="badge" data-category="negativity">☹️ 부정적태도</span>
+        <span class="badge" data-category="profanity">🤬 욕설</span>
+        <span class="badge" data-category="afk">💤 탈주/자리비움</span>
+        <span class="badge" data-category="cheating">😈 핵사용</span>
+        <span class="badge" data-category="verbal_abuse">😡 언어폭력</span>
+    </div>
+    
+    <!-- 이미지 업로드 및 미리보기 -->
+    <input type="file" name="img" id="img" multiple accept="image/*" onchange="previewImages(event)">
+    <div id="image-preview"></div>
+
+    <input type="hidden" name="selected_categories" id="selected_categories">
+    <input type="submit" value="Save" class="submit-btn">
+</form>
+
+{% endblock content %}
+
+{% block javascript%}
+<script src="{% static '/js/article_create.js' %}"></script>
+{% endblock javascript %}

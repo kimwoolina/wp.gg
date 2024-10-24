@@ -1,0 +1,556 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}party{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/party.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock css %}
+{% block content %}
+<div class="left-container"></div>
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>삭제 실패</h2>
+        <p id="errorMessage">파티에 다른 유저가 있습니다. 그래도 삭제 하시겠습니까?</p>
+        <button id="retryButton", class="error-btn">파티 해산하기.</button>
+    </div>
+</div>
+{% if request.user %}
+<label style="padding: 20px;">파티 생성하기</label><br />
+<form action="" method="POST" id="createparty">
+    {% csrf_token %}
+    <div class="grid-container">
+        <div class="grid-header">랭크</div>
+        <div class="grid-header">서버</div>
+        <div class="grid-header">성별</div>
+        <div class="grid-header">나이</div>
+        <div class="grid-header">언어</div>
+        <div class="grid-header">포지션</div>
+        <!-- 추가된 칸에 대한 2줄 병합 -->
+        <div class="grid-item grid-item-merged submit-div">
+            <div class="mar-bot-20">
+                <input type="checkbox" id="is_rank" name="is_rank" />
+                <label for="is_rank">내전</label>
+            </div>
+            <button type="submit">제출</button>
+        </div>
+
+        <div class="grid-item">
+            <select name="rank" id="rank">
+                <option value="0">Unrank</option>
+                <option value="1">Iron</option>
+                <option value="2">Bronze</option>
+                <option value="3">Silver</option>
+                <option value="4">Gold</option>
+                <option value="5">Platinum</option>
+                <option value="6">Amarald</option>
+                <option value="7">Diamond</option>
+                <option value="8">Master</option>
+                <option value="9">Grand Master</option>
+                <option value="10">Challenger</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="server" id="server">
+                <option value="KR">Korean</option>
+                <option value="EN">English</option>
+                <option value="JP">Japanese</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="gender" id="gender">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="age" id="age">
+                <option value="10">청소년</option>
+                <option value="20">청년</option>
+                <option value="30">중년</option>
+                <option value="40">중장년</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="language" id="language">
+                <option value="KR">Korean</option>
+                <option value="EN">English</option>
+                <option value="JP">Japanese</option>
+            </select>
+        </div>
+
+        <div class="grid-item">
+            <select name="position" id="position">
+                <option value="top">Top</option>
+                <option value="mid">Mid</option>
+                <option value="jun">Jungle</option>
+                <option value="adc">ADC</option>
+                <option value="sup">Support</option>
+            </select>
+        </div>
+    </div>
+</form>
+{% else %}
+로그인이 필요합니다.
+{% endif %}
+
+
+<div class="vertical-container">
+    {% for data in party %}
+    {% if data.is_rank %}
+    <!-- 내전 -->
+    <div class="horizontal-container">
+        <div class="horizontal-container-div-civilwar">
+            <div class="image-container">
+                {% if data.top1 is none %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1');">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.top1.profile_image %}
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button">
+                        <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.top1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div style="gap: 10px;">
+                {{data.top1.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+            <div class="image-container">
+                {% if data.top2 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top2')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.top2.profile_image %}
+                <form action="/{{data.top2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.top2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.top2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.top2 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.top2.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div-civilwar">
+            <div class="image-container">
+                {% if data.mid1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
+                </button>
+                {% elif data.mid1.profile_image %}
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.mid1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.mid1.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+            <div class="image-container">
+                {% if data.mid2 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid2')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.mid2.profile_image %}
+                <form action="/{{data.mid2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.mid2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.mid2 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.mid2.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div-civilwar">
+            <div class="image-container">
+                {% if data.jungle1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.jungle1.profile_image %}
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.jungle1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.jungle1.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+            <div class="image-container">
+                {% if data.jungle2 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun2')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.jungle2.profile_image %}
+                <form action="/{{data.jungle2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.jungle2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.jungle2 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.jungle2.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div-civilwar">
+            <div class="image-container">
+                {% if data.adc1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.adc1.profile_image %}
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.adc1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.adc1.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+            <div class="image-container">
+                {% if data.adc2 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc2')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.adc2.profile_image %}
+                <form action="/{{data.adc2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc2.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.adc2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.adc2 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.adc2.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div-civilwar">
+            <div class="image-container">
+                {% if data.support1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.support1.profile_image %}
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.support1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.support1.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+            <div class="image-container">
+                {% if data.support2 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup2')" >
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.support2.profile_image %}
+                <form action="/{{data.support2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.support2.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.support2 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.support2.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="option-container">
+            <div class="chat-icon-civilwar">
+                <button type="button" class="exit-button no-style-button" onclick="consoleprint('내전 파티 채팅')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            {% if data.id == request.user.in_party%}
+            <div class="get-out-icon-civilwar">
+                <button type="button" class="exit-button no-style-button" onclick="GetOutParty({{data.id}})"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            <div class="settings-icon-civilwar">
+                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            <div id="dropdownMenu" class="dropdown-content">
+                {% if data.user == request.user %}
+                <span onclick="deleteparty({{data.id}})">방 삭제</span>
+                {% endif %}
+                <span>설정 3</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <!-- 일반 -->
+    <div class="horizontal-container">
+        <div class="horizontal-container-div">
+            <div class="image-container">
+                {% if data.top1 is none %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'top1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.top1.profile_image %}
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.top1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.top1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.top1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.top1.username}}<img src="{% static 'party/top.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div">
+            <div class="image-container">
+                {% if data.mid1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'mid1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;"class="profile-image">
+                </button>
+                {% elif data.mid1.profile_image %}
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.mid1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.mid1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.mid1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.mid1.username}}<img src="{% static 'party/mid.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div">
+            <div class="image-container">
+                {% if data.jungle1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'jun1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.jungle1.profile_image %}
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.jungle1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.jungle1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.jungle1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.jungle1.username}}<img src="{% static 'party/jungle.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div">
+            <div class="image-container">
+                {% if data.adc1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'adc1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.adc1.profile_image %}
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.adc1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.adc1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.adc1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.adc1.username}}<img src="{% static 'party/bot.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="horizontal-container-div">
+            <div class="image-container">
+                {% if data.support1 is null %}
+                <button type="button" class="no-style-button" onclick="JoinParty({{ data.id }}, 'sup1')">
+                    <img src="{% static 'party/plus-circle.svg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                </button>
+                {% elif data.support1.profile_image %}
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{{ data.support1.profile_image.url }}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% else %}
+                <form action="/{{data.support1.username}}">
+                    <button type="submit" class="no-style-button" onclick="">
+                        <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Icon" style="width: 40px; height: 40px;" class="profile-image">
+                    </button>
+                </form>
+                {% endif %}
+                {% if data.support1 == data.user %}
+                <img src="{% static 'party/star.svg' %}" alt="Icon" style="width: 20px;" class="overlay-icon"><!--방장-->
+                {% endif %}
+            </div>
+            <div>
+                {{data.support1.username}}<img src="{% static 'party/spt.svg' %}" alt="Icon" style="width: 20px;">
+            </div><!--라인-->
+        </div>
+        <div class="option-container">
+            <div class="chat-icon">
+                <button type="button" class="exit-button no-style-button" onclick="alert('준비중인 서비스입니다.');consoleprint('일반 파티 채팅{{data.id}}')"><img src="{% static 'party/chat-dots.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            {% if data.id == request.user.in_party %}
+            <div class="get-out-icon">
+                <button type="button" class="exit-button no-style-button" onclick="GetOutParty({{data.id}})" id="PartyDelete"><img src="{% static 'party/box-arrow-right.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            <div class="settings-icon">
+                <button type="button" class="exit-button no-style-button" onclick="toggleDropdown(event)" id="PartyDelete"><img src="{% static 'party/three-dots-vertical.svg' %}" alt="Icon" style="width: 25px;"></button>
+            </div>
+            <div id="dropdownMenu" class="dropdown-content">
+                {% if data.user == request.user %}
+                <span href="" onclick="deleteparty({{data.id}})">방 삭제</span>
+                {% endif %}
+                <span href="">설정 3</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block javascript%}
+<script src="{% static '/js/party.js' %}"></script>
+{% endblock javascript%}

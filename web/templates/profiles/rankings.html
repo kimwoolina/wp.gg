@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}유저 랭킹{% endblock title %}
+
+{% block css %}
+<style>
+    /* 전체 배경색 */
+    body {
+        background-color: #1E1E1E;
+        color: #fff;
+    }
+
+    /* 유저 검색 상자 */
+    .user-search-container {
+        margin: 30px;
+        padding: 4px;
+        display: flex;
+        gap: 10px;
+        max-width: 820px;
+        width: 100%;
+        margin: 5%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        border-radius: 10px;
+        overflow-y: auto;
+        max-height: 1000px;
+        font-family: 'Arial', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .reviewee-select {
+        width: 176px;
+        padding: 10px;
+        border-radius: 13px;
+        background-color: #333;
+        color: #deddec;
+        margin-top: 34px;
+        font-size: 14px;
+        margin-left: 5px;
+        border: transparent;
+    }
+
+    /* 이모티콘 점수 선택 */
+    .emoji-score label {
+        font-size: 50px;
+        margin-right: 15px;
+        cursor: pointer;
+        margin-bottom: 30px;
+    }
+
+    /* 리뷰 내용 */
+    .content-box {
+        width: 91%;
+        height: 100px;
+        border-radius: 15px;
+        background-color: #333;
+        color: #dbe1ff;
+        border: none;
+        padding: 16px;
+        font-size: 16px;
+        margin-top: 29px;
+    }
+
+    /* 평가 항목 스타일 */
+    .review-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 11px;
+        padding: 20px;
+    }
+
+    .review-categories label {
+        background-color: #444;
+        padding: 10px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .review-categories .badge {
+        background-color: #fdfdfd;
+        color: #31273d;
+        padding: 4px 10px;
+        border-radius: 14px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 18px;
+    }
+
+    .review-categories .badge:hover {
+        background-color: #f0f0f0;
+        border: 3px solid #119c77;
+        color: #119c77;
+    }
+
+    .review-categories .badge.selected {
+        background-color: #6d618b;
+        color: #e3d8ff;
+        border: 2px solid #119c77;
+    }
+
+    /* 제출 버튼 */
+    .submit-btn {
+        margin-top: 40px;
+        padding: 8px 17px;
+        background-color: #716490;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .submit-btn:hover {
+        background-color: #8B72B1;
+    }
+
+    /* 태그 컨테이너 */
+    .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+        background-color: #1e1e1e;
+    }
+
+    .tag-label {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        padding: 7px 10px;
+        border-radius: 25px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 18px;
+    }
+
+    .tag-label span {
+        margin-left: 8px;
+        font-weight: bold;
+        color: black;
+    }
+
+    .tag-label:hover {
+        background-color: #f0f0f0;
+        border-color: #716490;
+    }
+
+    .tag-label input:checked + span {
+        background-color: #6f69a5;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 25px;
+    }
+
+    /* 돋보기 아이콘 스타일 */
+    .search-btn {
+        width: 24px;
+        height: 29px;
+        cursor: pointer;
+        margin-left: 635px;
+        margin-top: -70px;
+    }
+
+    .search-btn:hover {
+        fill: #8B72B1;
+    }
+
+    /* 검색 바 스타일 */
+    .search-bar {
+        padding: 16px;
+        border-radius: 19px;
+        background-color: #464646;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 20px;
+        width: 57%;
+        margin-left: 185px;
+    }
+    
+    {% comment %} /* 스피너 */ {% endcomment %}
+    .loader {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #FFF;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+    
+        {% comment %} /* 화면 중앙에 배치 */ {% endcomment %}
+        position: fixed; 
+        top: 50%; 
+        left: 55%; 
+        transform: translate(-50%, -50%); 
+    }
+    
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% load static %}
+<link rel="stylesheet" href="{% static '/css/rank.css' %}">
+{% endblock css %}
+{% block content %}
+
+    <h1>매너 랭킹 🏅 </h1>
+    <span class="loader" id="loader" style="display: none;"></span>
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <div class="top-container">
+        <div class="filter-container">
+            <label for="positions">포지션 선택:</label>
+            <select id="positions" size="1">
+                <option value="">전체</option>
+                <option value="top">탑</option>
+                <option value="jungle">정글</option>
+                <option value="mid">미드</option>
+                <option value="bottom">봇</option>
+                {% comment %} <option value="support">서포터</option> {% endcomment %}
+            </select>
+
+            <label for="sort_by">정렬 기준:</label>
+            <select id="sort_by">
+                <option value="score">점수</option>
+                <option value="kindness">친절함</option>
+                <option value="teamwork">팀워크</option>
+                <option value="communication">소통</option>
+                <option value="mental_strength">정신력</option>
+                <option value="punctuality">성실함</option>
+                <option value="positivity">긍정적</option>
+                <option value="mvp">MVP</option>
+                <option value="mechanical_skill">피지컬</option>
+                <option value="operation">운영</option>
+            </select>
+
+            <button onclick="applyFilters()">필터 적용</button>
+        </div>
+    </div>
+
+    <table id="ranking-table">
+        <!-- <thead>
+            <tr>
+                <th>순위</th>
+                <th>사용자 이름</th>
+                <th>라이엇 사용자 이름</th>
+                <th>라이엇 태그</th>
+                <th>총점</th>
+                <th>친절함</th>
+                <th>팀워크</th>
+                <th>소통</th>
+                <th>정신력</th>
+                <th>성실함</th>
+                <th>긍정적</th>
+                <th>MVP</th>
+                <th>피지컬</th>
+                <th>운영</th>
+            </tr>
+        </thead> -->
+        <tbody>
+            <!-- 데이터가 여기에 추가됩니다. -->
+        </tbody>
+    </table>
+{% endblock content %}
+{% block javascript %}
+    <script>
+        // 스피너를 보여주는 함수
+        function showSpinner() {
+            document.getElementById('loader').style.display = 'inline-block';
+        }
+
+        // 스피너를 숨기는 함수
+        function hideSpinner() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        // 초기 데이터 로드
+        function loadInitialData() {
+            showSpinner();
+            fetch('/api/profile/rankings/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideSpinner();
+                    renderTable(data); // 사용자 배열을 바로 전달
+                })
+                .catch(error => console.error('Error loading data:', error))
+                .finally(() => {
+                    hideSpinner(); // 데이터 로드 완료 후 스피너를 숨김
+                });
+        }
+
+        // 테이블 렌더링 함수
+        function renderTable(users) {
+            const tableBody = document.querySelector('#ranking-table tbody');
+            tableBody.innerHTML = ''; // 기존 내용 초기화
+
+            if (!users || users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="18">해당 조건에 맞는 유저 정보가 없습니다.</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
+            users.forEach((user, index) => {
+                const row = document.createElement('dl');
+                let score = Number(user.score.toFixed(2));
+
+                if (user.riot_username == null){
+                    row.innerHTML = `
+                    <dt class="user-info">
+                        <h2>${index + 1}위 ${user.username} ${user.riot_username || ''} ${user.riot_tag || ''}</h2> 
+                        <span class="user-score">👍${score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
+                    `;
+                }else{
+                    row.innerHTML = `
+                    <dt class="user-info">
+                        <h2>${index + 1}위 ${user.username} (${user.riot_username} #${user.riot_tag || 'KR1'})</h2> 
+                        <span class="user-score">👍${score}<span>
+                    </dt>
+                    <dd>
+                    💗상냥함 ${user.evaluations.kindness} 
+                    🙌🏻팀워크 ${user.evaluations.teamwork} 
+                    🤝소통 ${user.evaluations.communication} 
+                    😇멘탈 ${user.evaluations.mental_strength} 
+                    ⏱시간약속 ${user.evaluations.punctuality} 
+                    🥰긍정적 ${user.evaluations.positivity} 
+                    👑mvp ${user.evaluations.mvp} 
+                    💪피지컬 ${user.evaluations.mechanical_skill} 
+                    🧠운영능력 ${user.evaluations.operation} 
+                    <dd>
+                `;
+                }
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function getSelectedValues(selectElement) {
+            const selectedOptions = Array.from(selectElement.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+            return selectedOptions.join(',');
+        }
+
+        function applyFilters() {
+            showSpinner();
+            const positions = getSelectedValues(document.getElementById('positions'));
+            const sortBy = document.getElementById('sort_by').value; // 선택한 정렬 기준 가져오기
+            let url = '/api/profile/rankings/?';
+
+            if (positions) {
+                url += `positions=${positions}`;
+            }
+            if (sortBy) {
+                if(positions){
+                    url += `&`;
+                }
+                url += `sort_by=${sortBy}`;
+            }
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderTable(data); // 사용자 배열을 바로 전달
+                })
+                .catch(error => console.error('Error applying filters:', error))
+                .finally(() => {
+                    hideSpinner(); // 필터 적용 완료 후 스피너를 숨김
+                });
+        }
+
+        // 페이지 로드 시 데이터 가져오기
+        window.onload = loadInitialData;
+    </script>
+{% endblock javascript %}

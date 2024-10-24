@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}나에게 꼭 맞는 유저찾기❤️{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/matching.css' %}"> 
+{% endblock css %}
+
+{% block content %}
+
+    <form id="recommendation-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <div class="cute-dropdown">
+                <select id="riot_tier" name="riot_tier">
+                    <option value="" disabled selected>티어 선택</option>
+                    <option value="BRONZE">브론즈</option>
+                    <option value="SILVER">실버</option>
+                    <option value="GOLD">골드</option>
+                    <option value="PLATINUM">플래티넘</option>
+                    <option value="DIAMOND">다이아몬드</option>
+                    <option value="MASTER">마스터</option>
+                    <option value="GRANDMASTER">그랜드마스터</option>
+                    <option value="CHALLENGER">챌린저</option>
+                </select>
+            </div>
+        
+            <div class="cute-dropdown">
+                <select id="riot_position" name="riot_position">
+                    <option value="" disabled selected>포지션 선택</option>
+                    <option value="top">탑</option>
+                    <option value="jungle">정글</option>
+                    <option value="mid">미드</option>
+                    <option value="bottom">원거리 딜러</option>
+                    <option value="utility">서포터</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 선호도 항목들 -->
+        <div class="review-categories">
+            <span class="badge" data-value="kindness">💗 상냥함</span>
+            <span class="badge" data-value="teamwork">🛠 팀워크</span>
+            <span class="badge" data-value="communication">📢 소통왕</span>
+            <span class="badge" data-value="mental_strength">🧠 멘탈</span>
+            <span class="badge" data-value="punctuality">⏰ 시간약속</span>
+            <span class="badge" data-value="positivity">💪 긍정적</span>
+            <span class="badge" data-value="mvp">⭐ MVP</span>
+            <span class="badge" data-value="mechanical_skill">⚙️ 피지컬</span>
+            <span class="badge" data-value="operation">🎮 운영</span>
+        </div>
+
+        <!-- 선호 스타일 -->
+        <div class="form-group preference-group">
+            <label for="user_preference" class="preference-label">선호하는 스타일 입력하기</label>
+            <textarea id="user_preference" name="user_preference" class="content-box" placeholder="예: 목소리 예쁜 유저를 선호합니다.." required></textarea>
+        </div>
+
+        <input type="hidden" name="selected_categories" id="selected_categories">
+        <input type="submit" value="❤️&nbsp나랑 맞는 유저 찾아줘&nbsp❤️" class="submit-btn">
+
+    </form>
+
+{% endblock content %}
+
+{% block javascript%}
+<script src="{% static '/js/matching.js' %}"></script>
+{% endblock javascript %}

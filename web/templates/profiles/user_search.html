@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}유저 검색{% endblock title %}
+
+{% block content %}
+
+
+{% block css %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* 간단한 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .result-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+<div class="search-container">
+        <h2>유저 검색</h2>
+        <input type="text" id="username" placeholder="유저네임 (riot_username)">
+        <input type="text" id="riot_tag" placeholder="태그 (riot_tag)">
+        <button id="search-button">검색</button>
+    </div>
+    
+    <div class="result-container" id="result-container">
+        <!-- 검색 결과가 여기에 표시됩니다. -->
+    </div>
+{% endblock content %}
+
+{% block javascript%}
+    <script>
+        $(document).ready(function() {
+            $('#search-button').click(function() {
+                const username = $('#username').val().trim();
+                const riotTag = $('#riot_tag').val().trim();
+    
+                if (username === '') {
+                    alert('유저네임을 입력해주세요.');
+                    return;
+                }
+    
+                $.ajax({
+                    url: `/api/profile/${username}/`,  // UserDetailView URL
+                    method: 'GET',
+                    data: { riot_tag: riotTag },
+                    success: function(response) {
+                        $('#result-container').empty(); // 기존 결과 지우기
+                        if (response.users) {
+                            // 여러 유저가 검색된 경우
+                            response.users.forEach(user => {
+                                $('#result-container').append(`<div>${user.riot_username} - ${user.riot_tag}</div>`);
+                            });
+                        } else {
+                            // 단일 유저 정보 처리
+                            $('#result-container').append(`<div>${response.riot_username}의 정보:</div>`);
+                            $('#result-container').append(`<div>태그: ${response.riot_tag || '없음'}</div>`);
+                            $('#result-container').append(`<div>평가: ${response.evaluations || '없음'}</div>`);
+                            
+                            // 게시글 목록 출력
+                            if (response.articles && response.articles.length > 0) {
+                                $('#result-container').append('<div>게시글 목록:</div>');
+                                response.articles.forEach(article => {
+                                    $('#result-container').append(`<div>${article.title}</div>`);
+                                });
+                            } else {
+                                $('#result-container').append('<div>게시글이 없습니다.</div>');
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON?.message || '알 수 없는 오류가 발생했습니다.';
+                        $('#result-container').html(`<div class="error">${errorMessage}</div>`);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock javascript %}

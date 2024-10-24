@@ -1,0 +1,454 @@
+{% load custom_filters %}
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>내 정보</title>
+    <link rel="icon" href="{% static '/wpgg_logo_v1 2.png' %}">
+    <!-- Static CSS -->
+
+    <link rel="stylesheet" href="{% static '/css/profile_style.css' %}">
+    <style>
+        .icon-background {
+            width: 80px;
+            height: 116px;
+            margin: 0 auto;
+            background-color: transparent;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rating-icon {
+            width: 300px;
+            height: auto;
+            margin: 25px 29px 84px 27px;
+        }
+        .rating-value {
+            font-size: 24px;
+            margin-top: 46px;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #ffd700);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.3); /* 조금 더 커짐 */
+                filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #ffd700);
+            }
+        }
+        
+        /* 반짝반짝 효과 적용 */
+        .sparkle-effect {
+            animation: sparkle 2s infinite ease-in-out;
+        }
+
+        .action-button {
+            background-color: #574893;
+            color: white;
+            border: none;
+            border-radius: 11px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            width: 91%;
+            margin: 4px 34px 1px -3px;
+        }
+
+        .sns-category {
+            margin-top: 39px;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 22px;
+        }
+
+        .left-body {
+            display: flex;
+            align-items: center;
+            width: 60%;
+            margin-right: 63px;
+        }
+
+        .profile-container {
+            width: 65%;
+            margin: 0px -1px 17px 149px;
+        }
+
+        .left-body {
+            display: flex;
+            width: 56%;
+        }
+
+        .rating-icon {
+            width: 300px;
+            height: auto;
+            margin: 42px 105px 84px 27px;
+        }
+
+        .rating-panel {
+            background-color: transparent;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            text-align: center;
+            margin: -11px 34px -16px -43px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- 왼쪽 -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{% static 'img/wpgg_logo_v2.png' %}" alt="logo" class="logo logo-home">
+        </div>
+        <div class="search-box">
+            <span class="hamburger">☰</span>
+                <div class="search-box">
+                    <input type="text" placeholder="소환사 이름 +  #태그">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M10 2a8 8 0 105.29 14.29l4.63 4.63 1.41-1.41-4.63-4.63A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z"/>
+                    </svg>
+                <div class="profile-section">
+                </div>
+            </div>
+        </div>
+
+        <ul class="menu">
+            <li class="menu-item" onclick="location.href='{% url 'article-list' %}';">
+                <img src="{% static 'img/thumbs-up_v2.png' %}" class="menu-icon" alt="User Review Icon">
+                유저 리뷰
+            </li>
+            <li class="menu-item" onclick="location.href='{% url 'ranking' %}';">
+                <img src="{% static 'img/rank_v2.png' %}" class="menu-icon" alt="Manner Ranking Icon">
+                매너 랭킹
+            </li>
+            <li class="menu-item" onclick="location.href='{% url 'user_matching' %}';">
+                <img src="{% static 'img/recommend.png' %}" class="menu-icon" alt="Team Match Icon">
+                유저 추천
+            </li>
+            <li class="menu-item" onclick="location.href='/party/';">
+                <img src="{% static 'img/team.png' %}" class="menu-icon" alt="Team Match Icon">
+                팀매칭
+            </li>
+            <li class="menu-item" onclick="location.href='{% url 'chat-room-template' %}';">
+                <img src="{% static 'img/chatting.png' %}" class="menu-icon" alt="Chat Icon">
+                채팅
+            </li>
+            <li class="menu-item">
+                <img src="{% static 'img/card_v3.png' %}" class="menu-icon" alt="Credit Icon">
+                크레딧
+            </li>
+        </ul>
+        
+    </div>
+    
+    <div class="main-content">
+        <header>
+            <div class="right-logout">
+                <img src="{% static 'img/logout.png' %}" class="logout-button" alt="로그아웃 버튼">
+            </div>
+        </header>
+
+        <main>
+            <div class="left-body">
+                <div class="profile-container">
+                    <div class="profile-title">
+                        <h2>My Page</h2><br>
+                    </div>
+
+                    <div class="profile-header">
+                        <div class="profile-picture">
+                            {% if request.user.profile_image %}
+                                <img src="{{ request.user.profile_image.url }}" alt="Profile Picture">
+                            {% elif request.user.riot_profile_image %}
+                                <img src="{{ request.user.riot_profile_image }}" alt="Profile Picture">
+                            {% else %}
+                                <img src="{% static 'img/userprofile_05.jpeg' %}" alt="Profile Picture">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <br>
+                    <form id="profile_update" method="POST" action="/profile/update/" enctype="multipart/form-data">
+                        <div class="profile-info">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" value="{{ request.user.username }}" readonly>
+
+                            <label for="username">Email</label>
+                            <input type="text" id="email" name="email" value="{{ request.user.email }}" readonly>
+                    
+                            <label for="riot-username">Riot Nickname</label>
+                            <input type="text" id="riot-username" name="riot_username" value="{{ request.user.riot_username|default_if_none:'' }}" readonly>
+                    
+                            <label for="riot-tag">Riot Tag</label>
+                            <input type="text" id="riot-tag" name="riot_tag" value="{{ request.user.riot_tag|default_if_none:'' }}" readonly>
+                    
+                            <label for="introduce">Introduce</label>
+                            <textarea id="introduce" name="introduction" readonly>{{ request.user.introduction|default_if_none:'' }}</textarea>
+                    
+                            <label for="profile_image">Profile Image</label>
+                            <input type="file" id="profile-image" name="profile_image" accept="image/*">
+                    
+                            <!-- 수정 및 저장 버튼 -->
+                            <button id="edit-profile-btn" class="action-button">내 정보 수정하기</button>
+                            <button id="save-profile-btn" class="action-button" style="display: none;">저장하기</button>
+                        </div>
+                    </form>
+                    
+                    
+                    <div class="sns-category">라이엇 계정</div>
+                    <div class="sns-container">
+                        <div class="account-info">
+                            {% if request.user.riot_profile_image %}
+                                <img src="{{ request.user.riot_profile_image }}" alt="profile" class="profile-img">
+                            {% else %}
+                                <img src="{% static 'img/userprofile_02.png' %}" alt="profile" class="profile-img">
+                            {% endif %}
+                            <div class="username">{{ request.user.riot_username }}</div>
+                        </div>
+                        {% if request.user.riot_username %}
+                        <div id="sns-button" class="action-button">라이엇 계정 연결됨</div>
+                        {% else %}
+                        <div id="sns-button" class="action-button">라이엇 계정 연결하기</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="sns-category">디스코드 계정</div>
+                    <div class="sns-container">
+                        <div class="account-info">
+                            {% if request.user.profile_image %}
+                                <img src="{{ request.user.profile_image.url }}" alt="profile" class="profile-img">
+                            {% else %}
+                                <img src="{% static 'img/userprofile_03.png' %}" alt="profile" class="profile-img">
+                            {% endif %}
+                            <div class="username">{{ request.user.discord_username }}</div>
+                        </div>
+                        {% if request.user.discord_username %}
+                        <div id="sns-button" class="action-button">디스코드 계정 연결됨</div>
+                        {% else %}
+                        <div id="sns-button" class="action-button">디스코드 계정 연결하기</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="right-body">
+                <div class="rating-container">
+                    <div class="icon-background">
+                        {% if request.user.score >= 0 and request.user.score < 1 %}
+                            <img src="{% static 'img/1.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 1 and request.user.score < 2 %}
+                            <img src="{% static 'img/2.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 2 and request.user.score < 3 %}
+                            <img src="{% static 'img/3.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 3 and request.user.score < 4 %}
+                            <img src="{% static 'img/4.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 4 and request.user.score < 5 %}
+                            <img src="{% static 'img/5.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 5 and request.user.score < 6 %}
+                            <img src="{% static 'img/6.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 6 and request.user.score < 7 %}
+                            <img src="{% static 'img/7.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 7 and request.user.score < 8 %}
+                            <img src="{% static 'img/8.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 8 and request.user.score < 9 %}
+                            <img src="{% static 'img/9.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score >= 9 and request.user.score < 10 %}
+                            <img src="{% static 'img/10.png' %}" alt="Rating Icon" class="rating-icon">
+                        {% elif request.user.score == 10 %}
+                            <img src="{% static 'img/10.png' %}" alt="Rating Icon" class="rating-icon sparkle-effect">
+                        {% endif %}
+                    </div>
+
+                    <div class="rating-panel">
+                        <div class="rating-value">{{ request.user.score|floatformat:2 }}</div>
+                        <div class="rating-scale">
+                            <span class="thumb-down">&#128078;</span>
+                            <div class="rating-bar">
+                                <div class="rating-fill" style="width: {{ request.user.score|multiply:10 }}%;"></div>
+                            </div>
+                            <span class="thumb-up">&#128077;</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<!-- 페이지 하단 화살표 버튼 -->
+<div class="back-arrow">
+    <a href="javascript:void(0);" onclick="history.back();"><img src="{% static 'img/back-arrow.png' %}" alt="뒤로가기"></a>
+</div>
+
+<script>
+    // DOMContentLoaded 이벤트 사용: 페이지가 완전히 로드된 후 실행
+    document.addEventListener('DOMContentLoaded', function () {
+        // 이메일 필드에 클릭 방지 이벤트 추가
+        const emailInput = document.getElementById('email');
+
+        // 이메일 필드 클릭 시 경고 메시지 표시
+        emailInput.addEventListener('click', function (e) {
+            alert('이메일은 변경할 수 없습니다.');
+            e.preventDefault();  // 클릭 후 기본 동작 방지
+        });
+    });
+    
+    // 홈으로 리다이렉트 (로고 클릭 시)
+    document.querySelector('.logo-home').addEventListener('click', function() {
+        window.location.href = '/home/';
+    });
+
+    // 로그아웃 이벤트 처리
+    document.querySelector('.logout-button').addEventListener('click', function() {
+        const refreshToken = localStorage.getItem('refresh_token');
+        
+        if (!refreshToken) {
+            alert('로그인되지 않았습니다.');
+            return;
+        }
+
+        fetch('/auth/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({ "refresh_token": refreshToken })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('로그아웃 성공!');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/home/';
+            } else {
+                alert('로그아웃 실패!');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+            // 이메일 필드에 클릭 방지 이벤트 추가
+            const emailInput = document.getElementById('email');
+
+            // 이메일 필드 클릭 시 경고 메시지 표시
+            emailInput.addEventListener('click', function (e) {
+                alert('이메일은 변경할 수 없습니다.');
+                e.preventDefault();  // 클릭 후 기본 동작 방지
+            });
+
+    });
+    // 수정 모드로 전환
+    document.getElementById('edit-profile-btn').addEventListener('click', function (e) {
+        e.preventDefault();  // 폼 자동 제출 버튼 막기
+        toggleEditMode(true);  // 수정 모드 활성화
+    });
+
+    // 저장 버튼 클릭 시 서버에 변경 내용 전송
+    document.getElementById('save-profile-btn').addEventListener('click', function (e) {
+        e.preventDefault(); // 폼 자동 제출 버튼 막기
+        saveProfile();  // 프로필 저장 함수 호출
+    });
+
+    // 수정 모드 활성화 및 해제 함수
+    function toggleEditMode(isEdit) {
+        const inputs = document.querySelectorAll('#username, #introduce, #riot-username, #riot-tag');
+        
+        inputs.forEach(input => {
+            input.readOnly = !isEdit;  // 수정 가능 여부 설정
+        });
+    
+        // 파일 업로드 필드는 항상 활성화
+        const fileInput = document.getElementById('profile-image');
+        fileInput.disabled = !isEdit;
+    
+        // 버튼 표시 전환
+        document.getElementById('edit-profile-btn').style.display = isEdit ? 'none' : 'inline-block';
+        document.getElementById('save-profile-btn').style.display = isEdit ? 'inline-block' : 'none';
+    }    
+        // 프로필 저장 함수
+        function saveProfile() {
+        const username = document.getElementById('username').value;
+        const introduction = document.getElementById('introduce').value;
+        const riotUsername = document.getElementById('riot-username').value;
+        const riotTag = document.getElementById('riot-tag').value;
+        const profileImage = document.getElementById('profile-image').files[0];
+
+        const formElement = document.querySelector('form');
+        const formData = new FormData(formElement);
+
+        fetch('/auth/api/profile/', {
+            method: 'PUT',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // CSRF 보호,
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: formData
+                })
+        .then(response => response.json())  // JSON 응답 파싱
+        .then(data => {
+            if (data.message) {
+                alert(data.message);  // 성공 메시지
+                window.location.reload();  // 새로고침으로 최신 데이터 표시
+            } else {
+                alert(`프로필 수정 실패: ${data.error || '다시 시도해주세요.'}`);  // 오류 메시지
+            }
+        })
+        .catch(error => console.error('Error:', error));  // 에러 처리
+    }
+
+    // 유저 검색을 위한 함수
+    function searchUser(inputValue) {
+        // 입력값이 비어있는지 확인
+        if (!inputValue) {
+            alert('검색어를 입력해주세요.');
+            return;
+        }
+
+        // 입력값이 '#' 문자를 포함하는지 확인
+        if (inputValue.includes('#')) {
+            // 태그가 포함된 경우
+            const [summonerName, riotTag] = inputValue.split('#');
+            // URL 인코딩
+            const encodedTag = encodeURIComponent(riotTag.trim());
+            window.location.href = `/${encodeURIComponent(summonerName.trim())}?riot_tag=${encodedTag}`;
+        } else {
+            // 기본 검색 경우
+            window.location.href = `/${encodeURIComponent(inputValue.trim())}`;
+        }
+    }
+    
+    // 검색 박스에 엔터키 이벤트 추가
+    const searchInput = document.querySelector('.search-box input[type="text"]');
+    const searchIcon = document.querySelector('.search-icon');
+
+    searchInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // 기본 엔터키 동작 방지
+            searchUser(searchInput.value);
+        }
+    });
+
+    searchIcon.addEventListener('click', function() {
+        searchUser(searchInput.value);
+    });   
+
+    // "계정 연결하기" 버튼 클릭 시 alert 표시
+    document.getElementById('sns-button').onclick = function() {
+        alert('죄송합니다. 소셜 계정 연결/해제 서비스는 준비 중입니다.');
+    };
+
+</script>
+</body>
+</html>

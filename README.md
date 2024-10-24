@@ -13,13 +13,14 @@
 
 ## 📖 Navigation
 
-1. [Introduction](#introduction)
-2. [Setup](#setup)
-3. [Features](#features)
-4. [Techstack](#techstack)
-5. [Architecture](#architecture)
-6. [ERD](#erd)
-7. [Team](#team)
+1. [👀 Introduction](#introduction)
+2. [🛠 Setup](#setup)
+3. [👩🏻‍💻 Features](#features)
+4. [📝 Techstack](#techstack)
+5. [🌐 Architecture](#architecture)
+6. [🗂 ERD](#erd)
+7. [🎬 Demo Video](#video)
+8. [👨‍👩‍👧‍👦 Team](#team)
 
 <br>
 
@@ -346,6 +347,12 @@ To set up and run the project, follow these steps:
 <img width="822" alt="스크린샷 2024-10-08 오후 12 56 04" src="https://github.com/user-attachments/assets/168bb3a7-d400-4570-813e-f64298595284">
 
 <br><br>
+
+<a name="video"></a>
+## 🎬 Demo Video
+[![YouTube Video](https://img.youtube.com/vi/eLv3s862O4I/0.jpg)](https://www.youtube.com/watch?v=eLv3s862O4I)
+
+<br>
 
 <a name="team"></a>
 ## 👨‍👩‍👧‍👦 Team

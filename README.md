@@ -10,6 +10,9 @@
 [![OpenAI Python Client](https://img.shields.io/badge/OpenAI%20Python%20Client-0.28.0-4B92DB)](https://github.com/openai/openai-python)
 
 <br>
+<img width="850" alt="스크린샷 2024-11-07 오후 4 37 30" src="https://github.com/user-attachments/assets/fa677479-5519-4e23-bfde-2f2bb32e7e55">
+<br>
+
 
 ## 📖 Navigation
 
